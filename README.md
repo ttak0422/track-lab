@@ -1,5 +1,8 @@
 # track-lab
 
+> [!CAUTION]
+> This project is currently experimental. Destructive changes may be applied.
+
 Agent plugins and skills for track-related workflows.
 
 ## Plugins
