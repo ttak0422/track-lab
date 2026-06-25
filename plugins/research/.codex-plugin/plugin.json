@@ -1,0 +1,22 @@
+{
+  "name": "research",
+  "version": "0.1.0",
+  "description": "Structured research workflows for Codex.",
+  "author": {
+    "name": "track-lab"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Research",
+    "shortDescription": "Plan, source, verify, and summarize research tasks.",
+    "longDescription": "Research packages a reusable Codex workflow for investigation tasks that need source selection, evidence tracking, uncertainty handling, and concise reporting.",
+    "developerName": "track-lab",
+    "category": "Productivity",
+    "capabilities": [
+      "Research planning",
+      "Source evaluation",
+      "Evidence-backed summaries"
+    ],
+    "defaultPrompt": "Use Research to investigate this question and report the findings with sources."
+  }
+}

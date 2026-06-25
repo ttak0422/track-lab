@@ -1,0 +1,20 @@
+{
+  "name": "track-lab",
+  "owner": {
+    "name": "track-lab"
+  },
+  "description": "Experimental research and workflow plugins from track-lab.",
+  "plugins": [
+    {
+      "name": "research",
+      "source": "./plugins/research",
+      "description": "Structured research workflow for source selection, fact checking, and evidence-backed summaries.",
+      "version": "0.1.0",
+      "author": {
+        "name": "track-lab"
+      },
+      "category": "Productivity",
+      "skills": "./skills/"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "track-lab",
+  "interface": {
+    "displayName": "Track Lab"
+  },
+  "plugins": [
+    {
+      "name": "research",
+      "source": {
+        "source": "local",
+        "path": "./plugins/research"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
