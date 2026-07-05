@@ -9,4 +9,4 @@ Agent plugins and skills for track-related workflows.
 
 | Plugin | Description |
 | ------ | ----------- |
-| [research](plugins/research/) | Workflow for research planning, source evaluation, verification, and summarization |
+| [memory](plugins/memory/) | Persistent agent memory and consolidation (dream) backed by a track vault |
