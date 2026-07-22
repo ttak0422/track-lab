@@ -1,0 +1,22 @@
+{
+  "name": "memory",
+  "version": "0.1.0",
+  "description": "Persistent agent memory and consolidation for Codex.",
+  "author": {
+    "name": "track-lab"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Memory",
+    "shortDescription": "Remember, recall, and consolidate knowledge in a track vault.",
+    "longDescription": "Memory stores durable facts as tagged track notes so agents keep knowledge across sessions, and the dream skill consolidates them: merging duplicates, resolving contradictions, and pruning stale entries with generation-based revert.",
+    "developerName": "track-lab",
+    "category": "Productivity",
+    "capabilities": [
+      "Cross-session memory",
+      "Memory recall",
+      "Memory consolidation"
+    ],
+    "defaultPrompt": "Recall relevant memory before this task and record any durable facts you learn."
+  }
+}

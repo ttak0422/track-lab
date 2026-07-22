@@ -5,10 +5,10 @@
   },
   "plugins": [
     {
-      "name": "research",
+      "name": "memory",
       "source": {
         "source": "local",
-        "path": "./plugins/research"
+        "path": "./plugins/memory"
       },
       "policy": {
         "installation": "AVAILABLE",

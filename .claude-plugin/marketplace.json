@@ -6,9 +6,9 @@
   "description": "Experimental research and workflow plugins from track-lab.",
   "plugins": [
     {
-      "name": "research",
-      "source": "./plugins/research",
-      "description": "Structured research workflow for source selection, fact checking, and evidence-backed summaries.",
+      "name": "memory",
+      "source": "./plugins/memory",
+      "description": "Persistent agent memory and consolidation (dream) backed by a track vault.",
       "version": "0.1.0",
       "author": {
         "name": "track-lab"
