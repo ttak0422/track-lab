@@ -1,0 +1,27 @@
+{
+  "name": "note",
+  "version": "0.1.0",
+  "description": "Notes as the shared record between developer and agent, backed by the track CLI.",
+  "author": {
+    "name": "track-lab"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Note",
+    "shortDescription": "Keep the developer and the agent on the same page in a track vault.",
+    "longDescription": "A track vault is where the developer and the agent record what they both need to know: decisions, findings, and outstanding work. These skills create and search notes, record incoming project work as checklist items, file research reports, and keep a plan and worklog for the work an agent carries out.",
+    "developerName": "track-lab",
+    "category": "Productivity",
+    "capabilities": [
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use $track-create-note to create a linked note in my vault.",
+      "Use $track-search-notes to search my notes.",
+      "Use $track-project-intake to record this bug/TODO in my project's note.",
+      "Use $track-report to write up what you found as a report note.",
+      "Use $track-task-runner to work through my project note's checklist.",
+      "Use $track to rename a note and update backlinks."
+    ]
+  }
+}

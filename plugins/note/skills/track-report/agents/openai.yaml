@@ -1,0 +1,4 @@
+interface:
+  display_name: "Track Report"
+  short_description: "File investigation findings as a report note"
+  default_prompt: "Use $track-report to write up what you found as a report note in my track vault."
