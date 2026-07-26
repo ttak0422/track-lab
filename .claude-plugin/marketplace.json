@@ -15,6 +15,17 @@
       },
       "category": "Productivity",
       "skills": "./skills/"
+    },
+    {
+      "name": "note",
+      "source": "./plugins/note",
+      "description": "Notes as the shared record between developer and agent: create, search, and maintain track notes, record project work, file research reports, and keep task plans and worklogs.",
+      "version": "0.1.0",
+      "author": {
+        "name": "track-lab"
+      },
+      "category": "Productivity",
+      "skills": "./skills/"
     }
   ]
 }

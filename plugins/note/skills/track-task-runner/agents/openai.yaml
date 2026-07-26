@@ -1,0 +1,4 @@
+interface:
+  display_name: "Track Task Runner"
+  short_description: "Work through a track note's TODO/Bug checklist"
+  default_prompt: "Use $track-task-runner to work through my project note's TODO and Bug checklist."
