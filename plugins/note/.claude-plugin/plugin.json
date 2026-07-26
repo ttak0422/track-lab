@@ -1,6 +1,6 @@
 {
   "name": "note",
-  "description": "Notes as the shared record between developer and agent: create, search, and maintain track notes, record project work, file research reports, and keep task plans and worklogs.",
+  "description": "Notes as the shared record between developer and agent: create, search, and maintain track notes, write track-flavored Markdown, clip web pages, record project work, file research reports, and keep task plans and worklogs.",
   "version": "0.1.0",
   "author": {
     "name": "track-lab"
