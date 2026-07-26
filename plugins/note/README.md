@@ -18,7 +18,7 @@ the `track` plugin. track itself now carries only the CLI and its tool-neutral c
 | [track-task-runner](skills/track-task-runner/SKILL.md) | Work through a project note's checklist autonomously, following any linked plan, and move each finished item into a dated **worklog note** with its commit. |
 | [track-report](skills/track-report/SKILL.md) | File the findings of an investigation as a **report note**, so the answer survives the session. |
 | [track](skills/track/SKILL.md) | Vault maintenance: rename with backlink rewrite, doctor, reindex, generations, task toggles. |
-| [track-markdown](skills/track-markdown/SKILL.md) | The body syntax itself: wikilinks and level-based heading anchors, block anchors, transclusion, GitHub alerts, task lines, inline properties, `track fmt` house style, and an Obsidian→track conversion table. |
+| [track-markdown](skills/track-markdown/SKILL.md) | The body syntax itself: wikilinks and level-based heading anchors, block anchors, transclusion, GitHub alerts, task lines, inline properties, and the `track fmt` house style. |
 | [track-clip](skills/track-clip/SKILL.md) | Read a web page as clean Markdown with `track-fetch-web` instead of WebFetch, and save it as a `clip`-tagged note with provenance. |
 
 ## The record
@@ -43,11 +43,13 @@ project note, so `track backlinks --title "<project>"` shows the whole trail.
 
 `track-markdown` and `track-clip` are adapted from
 [obsidian-skills](https://github.com/kepano/obsidian-skills) by Steph Ango (MIT) — the same strategy,
-re-aimed at track primitives. `obsidian-markdown` became `track-markdown`: no frontmatter (metadata is
-a sidecar plus inline `key:: value` fields), Obsidian callouts are GitHub alerts, heading anchors count
-`#` for the level, and the conversion table says what to do with the Obsidian syntax that has no track
-surface. `defuddle` became `track-clip`, but the engine is track's own `track-fetch-web` rather than a
-Node CLI, so the plugin adds no external dependency.
+re-aimed at track primitives. `obsidian-markdown` became `track-markdown`, rewritten to describe track's
+own dialect only — no frontmatter (metadata is a sidecar plus inline `key:: value` fields), GitHub
+alerts, heading anchors that count `#` for the level. `defuddle` became `track-clip`, but the engine is
+track's own `track-fetch-web` rather than a Node CLI, so the plugin adds no external dependency.
+
+The skills themselves never mention Obsidian: an agent writing track notes has no use for what the
+syntax used to be, so that context lives here in the README instead.
 
 | obsidian-skills skill | Disposition |
 | --------------------- | ----------- |

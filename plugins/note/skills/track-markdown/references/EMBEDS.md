@@ -1,6 +1,6 @@
 # Embeds Reference
 
-Two distinct mechanisms: `![[Note]]` transcludes another **note's body**; a standalone `![alt](src)` line embeds **media or a URL**. Obsidian's `![[file.ext]]` file-embed syntax does not exist in track.
+Two distinct mechanisms: `![[Note]]` transcludes another **note's body**; a standalone `![alt](src)` line embeds **media or a URL**. `![[...]]` always names a note — it is never file-embed syntax, so `![[image.png]]` embeds nothing.
 
 ## Transclusion: `![[...]]`
 

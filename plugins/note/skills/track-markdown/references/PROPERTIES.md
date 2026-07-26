@@ -52,7 +52,7 @@ Choosing a home: a fact that is not prose (a title, a tag, an icon, a status tha
 
 ## `up`: The One Structural Property
 
-`up` is an ordinary property with one conventional meaning: it names the note's parent, and track derives hierarchy navigation from it — breadcrumbs, a children list, and `track nav`. There is no outline file to maintain. Obsidian vaults and org-mode use the same `up`/`parent` convention.
+`up` is an ordinary property with one conventional meaning: it names the note's parent, and track derives hierarchy navigation from it — breadcrumbs, a children list, and `track nav`. There is no outline file to maintain.
 
 ```markdown
 up:: [[Projects]]
