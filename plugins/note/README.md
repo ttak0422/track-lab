@@ -18,6 +18,8 @@ the `track` plugin. track itself now carries only the CLI and its tool-neutral c
 | [track-task-runner](skills/track-task-runner/SKILL.md) | Work through a project note's checklist autonomously, following any linked plan, and move each finished item into a dated **worklog note** with its commit. |
 | [track-report](skills/track-report/SKILL.md) | File the findings of an investigation as a **report note**, so the answer survives the session. |
 | [track](skills/track/SKILL.md) | Vault maintenance: rename with backlink rewrite, doctor, reindex, generations, task toggles. |
+| [track-markdown](skills/track-markdown/SKILL.md) | The body syntax itself: wikilinks and level-based heading anchors, block anchors, transclusion, GitHub alerts, task lines, inline properties, `track fmt` house style, and an Obsidian→track conversion table. |
+| [track-clip](skills/track-clip/SKILL.md) | Read a web page as clean Markdown with `track-fetch-web` instead of WebFetch, and save it as a `clip`-tagged note with provenance. |
 
 ## The record
 
@@ -37,9 +39,28 @@ flowchart LR
 Three note kinds carry a tag so they stay findable: `plan`, `worklog`, `report`. Each links back to the
 project note, so `track backlinks --title "<project>"` shows the whole trail.
 
+## Imported from obsidian-skills
+
+`track-markdown` and `track-clip` are adapted from
+[obsidian-skills](https://github.com/kepano/obsidian-skills) by Steph Ango (MIT) — the same strategy,
+re-aimed at track primitives. `obsidian-markdown` became `track-markdown`: no frontmatter (metadata is
+a sidecar plus inline `key:: value` fields), Obsidian callouts are GitHub alerts, heading anchors count
+`#` for the level, and the conversion table says what to do with the Obsidian syntax that has no track
+surface. `defuddle` became `track-clip`, but the engine is track's own `track-fetch-web` rather than a
+Node CLI, so the plugin adds no external dependency.
+
+| obsidian-skills skill | Disposition |
+| --------------------- | ----------- |
+| `obsidian-markdown` | → `track-markdown` |
+| `defuddle` | → `track-clip`, on `track-fetch-web` |
+| `obsidian-cli` | Not imported — `track` and `track-search-notes` already cover the CLI. |
+| `json-canvas` | Not imported — track has no `.canvas` surface (nearest: mermaid/dot/mindmap fences). |
+| `obsidian-bases` | Not imported — track has no `.base` surface (nearest: `track-query` blocks and viewspec charts). |
+
 ## Requirements
 
 - `track` CLI on `PATH`, resolving against the user's normal vault.
+- `track-fetch-web` on `PATH` for `track-clip`. It ships with track as a separate binary.
 
 ## Layout
 
@@ -49,7 +70,11 @@ plugins/note/
 ├── .codex-plugin/plugin.json
 └── skills/
     ├── track/SKILL.md
+    ├── track-clip/SKILL.md
     ├── track-create-note/SKILL.md
+    ├── track-markdown/
+    │   ├── SKILL.md
+    │   └── references/{EMBEDS,PROPERTIES}.md
     ├── track-project-intake/SKILL.md
     ├── track-report/SKILL.md
     ├── track-search-notes/SKILL.md
