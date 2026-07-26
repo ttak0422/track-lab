@@ -1,11 +1,11 @@
 ---
 name: track-markdown
-description: Write and edit note bodies in track's Markdown dialect - wikilinks with level-based heading anchors, block anchors, transclusion, rich embeds, GitHub alerts, task lines with states and date tokens, sidecar metadata, inline properties, and the canonical track fmt style. Use when writing or editing note bodies in a track vault, when wikilink/transclusion/alert/task/property syntax questions come up, or when converting Obsidian notes to track. For creating, searching, or renaming notes use the track skills; this skill covers body syntax only.
+description: Write and edit note bodies in track's Markdown dialect - wikilinks with level-based heading anchors, block anchors, transclusion, rich embeds, GitHub alerts, task lines with states and date tokens, sidecar metadata, inline properties, and the canonical track fmt style. Use when writing or editing note bodies in a track vault, or when wikilink/transclusion/alert/task/property syntax questions come up. For creating, searching, or renaming notes use the track skills; this skill covers body syntax only.
 ---
 
 # track Markdown
 
-track note bodies are CommonMark plus GFM (tables, task lists, strikethrough, footnotes with back-links) with a small set of track-specific constructs. Standard Markdown is assumed knowledge; this skill covers only the deltas. track borrows Obsidian conventions where they fit — a note written for Obsidian mostly reads the same — but it is not Obsidian: no frontmatter, level-based heading anchors, block-level-only transclusion, and exactly five alert types.
+track note bodies are CommonMark plus GFM (tables, task lists, strikethrough, footnotes with back-links) with a small set of track-specific constructs. Standard Markdown is assumed knowledge; this skill covers only the deltas: no frontmatter, level-based heading anchors, block-level-only transclusion, and exactly five alert types.
 
 ## Preconditions
 
@@ -25,7 +25,7 @@ track note bodies are CommonMark plus GFM (tables, task lists, strikethrough, fo
 ```
 
 - Resolution is **exact title match** only. No paths, no `.md` extension, no aliases — the title is the one link keyword, and titles are unique vault-wide.
-- **Heading anchors differ from Obsidian**: the number of `#` selects the heading **level**. `[[Note#foo]]` targets `# foo` (h1), `[[Note##bar]]` targets `## bar` (h2), up to h6. The first heading matching both level and text by document order wins.
+- **Heading anchors are level-based**: the number of `#` selects the heading **level**. `[[Note#foo]]` targets `# foo` (h1), `[[Note##bar]]` targets `## bar` (h2), up to h6. The first heading matching both level and text by document order wins.
 - `[[#Heading]]` (same-note anchor with no title) is **not** a link. Write the full title or drop it.
 - Never rename a note by editing its body H1 — retitle with `track rename` so backlinks are rewritten:
 
@@ -35,7 +35,7 @@ track rename --title "<old title>" --to "<new title>"
 
 ## Block Anchors
 
-A trailing `^id` on a paragraph or list item marks that block as a link target — Obsidian's block references, with the same syntax:
+A trailing `^id` on a paragraph or list item marks that block as a link target:
 
 ```markdown
 The paragraph worth pointing at. ^explicit-links
@@ -89,11 +89,11 @@ track callouts are GitHub alerts. Exactly five types, nothing else:
 | `[!WARNING]` | Something that needs care |
 | `[!CAUTION]` | Risky action |
 
-Obsidian callout features do **not** exist: no other types, no custom titles after the marker, no foldable `-`/`+` modifiers. A blockquote without a `[!TYPE]` marker is an ordinary quote.
+Nothing beyond those five exists: no other types, no custom titles after the marker, no foldable `-`/`+` modifiers. A blockquote without a `[!TYPE]` marker is an ordinary quote.
 
 ## Task Lines
 
-A GFM checkbox item is a task, and the character inside the brackets names its state — the Obsidian custom-checkbox convention, with a **fixed** five-state set:
+A GFM checkbox item is a task, and the character inside the brackets names its state, from a **fixed** five-state set:
 
 ```markdown
 - [ ] TODO — not started
@@ -165,31 +165,6 @@ track fmt --check --all    # CI check; track fmt <path> formats in place
 
 ## Unsupported Syntax
 
-These render as literal text — never emit them: `%%comments%%` (use `<!-- HTML comments -->`), `==highlight==`, inline `#tags` in bodies (tags are sidecar-only; `#tag` works only in search queries), inline footnotes `^[text]` (use GFM `[^label]` + definition). Obsidian's `.canvas` and `.base` file formats have no track surface at all.
+These render as literal text — never emit them: `%%comments%%` (use `<!-- HTML comments -->`), `==highlight==`, inline `#tags` in bodies (tags are sidecar-only; `#tag` works only in search queries), inline footnotes `^[text]` (use GFM `[^label]` + definition), sized images `![alt|300](url)`, and cross-note ` ```tasks ` or ` ```query ` blocks (use ` ```taskboard ` for the note's own tasks, `track tasks` / `track search` from the CLI for the vault).
 
-## Converting Obsidian Markdown
-
-| Obsidian | track |
-| --- | --- |
-| YAML frontmatter | Delete from body; set tags with `--tag`, the rest with `track meta` |
-| `up:` / `parent:` in frontmatter | `up:: [[Parent]]` in the body, or `track meta --set "up=[[Parent]]"` |
-| `![[img.png]]` / `![[img.png\|300]]` | `track asset import` the file, then `![alt](assets/img.png)` on its own line |
-| `[[Note#Heading]]` | `[[Note##Heading]]` — repeat `#` to match the actual heading level |
-| `[[#Heading]]` (same-note) | Drop, or `[[Title#Heading]]` with the full title and level-adjusted `#` |
-| `[[Note#^block-id]]` / `^block-id` markers | Kept as written — same syntax, except track never auto-generates an id |
-| `%%comment%%` | `<!-- comment -->` |
-| `==highlight==` | `**bold**` or plain text |
-| Inline `#tag` | Remove from body; add via `--tag` |
-| Callout types beyond the five (`info`, `danger`, `faq`, ...) | Nearest of `NOTE`/`TIP`/`IMPORTANT`/`WARNING`/`CAUTION`; drop custom titles and fold markers |
-| Custom checkboxes `- [/]` `- [?]` `- [-]` | Kept as written — track's state set uses the same three markers |
-| Custom checkboxes outside that set (`- [>]`, `- [!]`, ...) | Not a task in track; map to the nearest of the five or leave as a plain bullet |
-| Tasks-plugin dates 📅 / ⏳ / ✅ | `[due:YYYY-MM-DD]` / `[sched:YYYY-MM-DD]` / `[done:YYYY-MM-DD]` |
-| Tasks-plugin priorities 🔺 ⏫ 🔼 🔽 ⏬ | `[#A]`…`[#E]` — any single letter, `A` highest |
-| Tasks-plugin 🔁 recurrence, 🛫 start date | No equivalent — drop, or keep as prose on the line |
-| ` ```tasks ` query blocks | No cross-note task query in a body: ` ```taskboard ` for the note's own tasks, `track tasks` from the CLI for the vault |
-| `![[audio.mp3]]` / `![[video.mp4]]` | No player embed — link the asset: `[label](assets/file.mp3)` |
-| `![[doc.pdf#page=3]]` | `![doc](assets/doc.pdf)` — the viewer is paged, but `#page=` targeting is dropped |
-| `![alt\|300](url)` (sized external image) | `![alt](url)` — no size syntax |
-| ` ```query ` search embeds | No equivalent — drop, or run `track search` and paste results |
-| `^[inline footnote]` | GFM footnote: `[^label]` plus a `[^label]: text` definition |
-| `.canvas` / `.base` files | No equivalent — leave as files, do not convert |
+Audio and video have no player: link the asset instead — `[label](assets/file.mp3)`.
