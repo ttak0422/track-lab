@@ -41,7 +41,7 @@ loop: `track search --query "#<topic> #daily"` then replays the history in one c
 - `## 概況` — the current stance, one paragraph, revised in place by weekly runs (history lives in
   the dated notes, not here). For market topics add a `viewspec` fence with
   `data.source: "<topic>.jsonl"` — the chart re-renders whenever the fetcher refreshes that file, so
-  the dashboard stays current at **zero token cost** (`track-fetch-market` is cron-safe).
+  the dashboard stays current at **zero token cost** (`track-fetch-jquants` is cron-safe).
 - `## 懸念` — open concerns as task lines, priority-tagged (`[#A]` = tomorrow's run checks first).
   This is what "事前に懸念していた事項" means mechanically: daily runs answer to this list, resolve
   items via `track task set ... --state DONE`, and append new ones.
@@ -65,7 +65,7 @@ lifting:
 1. Read the state: the watch note (`track export`), its open concerns (`track tasks`), and the
    previous brief (`track search --query "#<topic> #daily"`, newest hit).
 2. If the topic has a data feed, refresh it first:
-   `track-fetch-market --code <code> --out <vault>/data/<topic>.jsonl` — numbers from the feed are
+   `track-fetch-jquants --code <code> --out <vault>/data/<topic>.jsonl` — numbers from the feed are
    already validated; never spend searches on what the feed answers.
 3. Research exactly three questions, nothing else:
    - (a) did anything today respond to an open concern? — at most one query per open concern;

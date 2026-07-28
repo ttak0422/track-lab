@@ -18,7 +18,7 @@ Use the `track` CLI as the source of truth. Mind an ambient `TRACK_VAULT` in the
 - The Workflow tool (agents need WebSearch/WebFetch via ToolSearch).
 - A vault `analysis` template (`track template list`); create one from the skill's structure below if
   absent.
-- For market events: `track-fetch-market` (J-Quants; `TRACK_JQUANTS_REFRESH_TOKEN`) can supply real
+- For market events: `track-fetch-jquants` (J-Quants; `TRACK_JQUANTS_REFRESH_TOKEN`) can supply real
   OHLCV bars for a `data.source` candlestick. Without credentials, chart researched values inline.
 
 ## Workflow
@@ -77,7 +77,7 @@ Fill it with the researched material, and treat these as hard rules:
   ```
 
   Paste the lines into a `metric`-kind viewspec: `y[0]` the value as a line, `change` as bars on
-  `axis: "y2"`. Real OHLCV from `track-fetch-market` skips this entirely — `data.source` it.
+  `axis: "y2"`. Real OHLCV from `track-fetch-jquants` skips this entirely — `data.source` it.
 - Cite with GFM footnotes, split into "primary-verified" and "agent-collected". Flag anything
   unverified in a `[!WARNING]` alert and list it under 未解決の問い as checkboxes.
 - Set sidecar metadata: `track meta --description ... --set subject-date=... --set verify-status=...`
