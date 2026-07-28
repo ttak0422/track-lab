@@ -1,6 +1,6 @@
 ---
 name: track-news-analysis
-description: Research a current-events topic (a market move, a policy decision, an incident) from multiple independent lenses and file a visualized, source-cited analysis note in the track vault. Use when the user asks for a multi-angle analysis note, a 多角分析/時事分析 of an event, or to "analyze what happened around <date>". Pairs with track-report for single-question investigations; this skill is for events that need several perspectives and charts.
+description: Research a current-events topic (a market move, a policy decision, an incident) from multiple independent lenses and file a visualized, source-cited analysis note in the track vault. Use when the user asks for a multi-angle analysis note, a 多角分析/時事分析 of an event, or to "analyze what happened around <date>". Pairs with track-report for single-question investigations and with track-watch for the recurring daily/weekly loop; this skill is the one-shot deep dive for events that need several perspectives and charts.
 ---
 
 # Track News Analysis
