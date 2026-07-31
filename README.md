@@ -10,4 +10,4 @@ Agent plugins and skills for track-related workflows.
 | Plugin | Description |
 | ------ | ----------- |
 | [memory](plugins/memory/) | Persistent agent memory and consolidation (dream) backed by a track vault |
-| [note](plugins/note/) | Notes as the shared record between developer and agent: create/search notes, track-flavored Markdown, web clipping, project intake with plan notes, research reports, Japanese report readability, and task worklogs |
+| [note](plugins/note/) | Notes as the shared record between developer and agent: create/search notes, track-flavored Markdown, web clipping, project intake with plan notes, research reports, Japanese report readability, topic explainers, and task worklogs |

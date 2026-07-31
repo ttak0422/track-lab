@@ -17,6 +17,7 @@ the `track` plugin. track itself now carries only the CLI and its tool-neutral c
 | [track-project-intake](skills/track-project-intake/SKILL.md) | Record an incoming bug/TODO against the project's note, and draft a linked **plan note** when the work needs agreement before code. |
 | [track-task-runner](skills/track-task-runner/SKILL.md) | Work through a project note's checklist autonomously, following any linked plan, and move each finished item into a dated **worklog note** with its commit. |
 | [track-report](skills/track-report/SKILL.md) | File the findings of an investigation as a **report note**, so the answer survives the session. |
+| [track-explainer](skills/track-explainer/SKILL.md) | Fold a topic's reports into one **explainer note** — the page a human actually opens, with a diagram and routes down into the reports and their sources. |
 | [track-news-analysis](skills/track-news-analysis/SKILL.md) | Research a current-events topic from multiple lenses (a bundled Workflow script sweeps, verifies, and gap-fills) and file a visualized, source-cited **analysis note**. |
 | [track-watch](skills/track-watch/SKILL.md) | Run a recurring watch loop over a topic at three depths — `light` daily brief, `mid` weekly review, `high` deep review (assumption excavation, break scenarios, falsifiable forecasts) — with a standing **watch note** as the loop state. |
 | [track](skills/track/SKILL.md) | Vault maintenance: rename with backlink rewrite, doctor, reindex, generations, task toggles. |
@@ -37,10 +38,17 @@ flowchart LR
   plan --> runner
   runner --> worklog["worklog note<br/>#worklog"]
   report --> reportnote["report note<br/>#report"]
+  reportnote --> explainer["explainer note<br/>#explainer"]
 ```
 
-Three note kinds carry a tag so they stay findable: `plan`, `worklog`, `report`. Each links back to the
-project note, so `track backlinks --title "<project>"` shows the whole trail.
+Four note kinds carry a tag so they stay findable: `plan`, `worklog`, `report`, `explainer`. Each links
+back to the project note, so `track backlinks --title "<project>"` shows the whole trail.
+
+The last arrow runs the other way from the rest. `plan`, `worklog` and `report` accumulate — one per
+piece of work. An `explainer` is one per *topic*, rebuilt from the reports underneath it, and it is the
+only one of the four written to be read rather than to be found. Reports optimise for coverage;
+the explainer optimises for how fast someone understands the topic, which means it is mostly a
+subtraction from what the reports hold.
 
 `japanese-report-readability` is the odd one out: it touches no vault and runs no CLI. It governs the
 prose an agent puts *into* those notes. A report nobody rereads is as lost as one nobody can find, and
@@ -86,6 +94,7 @@ plugins/note/
     ├── track-markdown/
     │   ├── SKILL.md
     │   └── references/{EMBEDS,PROPERTIES}.md
+    ├── track-explainer/SKILL.md
     ├── track-project-intake/SKILL.md
     ├── track-report/SKILL.md
     ├── track-search-notes/SKILL.md

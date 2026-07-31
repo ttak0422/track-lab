@@ -1,0 +1,117 @@
+---
+name: track-explainer
+description: Fold a topic's report notes into one explainer note — the single page a human actually opens, with a diagram, a reading order of its own, and routes down into the reports and their primary sources. Use when reports on a topic have piled up, when someone needs the whole picture of a subject, when asked to "まとめて" / "全体像がほしい" / "explain this topic", and after filing a new report so the topic's explainer stays current. Not a summary of the reports — a rebuilt document optimised for understanding rather than for coverage.
+---
+
+# track explainer
+
+report note は情報量に最適化されている。人間が日常的に開くのはそれではない。
+**explainer note は、あるテーマについて人間が既定で見る唯一の面**であり、report 群はその裏側のソースになる。
+疑問が出たときにだけ、explainer から report へ、report から一次ソースへ、二段降りる。
+
+report が「調べた結果の記録」なら、explainer は「そのテーマを理解するための資料」である。
+両者は同じ内容の詳細版と要約版ではない。**片方は網羅に、片方は理解速度に最適化されている**。
+
+## 併用する規範
+
+同じディレクトリの `../japanese-report-readability/SKILL.md` を先に読む。
+あちらは一本のレポートの構造と総量を扱う。この skill は、複数の report を一枚に畳む変換だけを扱う。
+
+## 原則
+
+- **要約ではなく再構成**。report の縮約ではなく、読者が理解する順に組み直した別の資料である。
+  report の順に並べた時点で、report の構造が読者に透ける。
+- **削ることが最大の効き目**。余計な素材を除くほど理解は深まる（Mayer の coherence principle は
+  23 件の実験すべてで支持され、効果量の中央値は 0.86）。情報量を増やす方向の判断は、ここでは全部逆に働く。
+- **図は追加であって併記ではない**。同じ内容を図と本文の両方に置くと、図がない場合より悪くなる
+  （redundancy principle）。図を置いたら、その内容を説明していた本文を削る。
+- **そこにないものは存在しない**。report を書いても explainer に導線がなければ、誰も辿り着かない。
+
+## いつ書くか、更新するか
+
+- あるテーマの report が 3 本を超えたとき。
+- そのテーマを人に説明する必要が出たとき。
+- **report を新しく書いたとき**。既存の explainer に導線を足す。これを怠ると report は孤立する。
+
+一つのテーマに explainer は一つ。report は増えるが、面は増えない。
+
+## 作り方
+
+### 1. 対象を集める
+
+```sh
+track search --query "#explainer <topic>"    # 既存の面があれば更新する
+track search --query "#report <topic>"       # 素材
+```
+
+既存の explainer があるなら、追記ではなく**作り直す**ほうが速いことが多い。追記を重ねると、
+report の到着順という新しい時系列が面に刻まれる。
+
+### 2. 主題の順に組み直す
+
+report ごとに節を作らない。読者が理解する順に主題を並べる。
+一つの主題が複数の report にまたがってよいし、一本の report の内容が複数の主題に散ってよい。
+
+**節の数と report の数が一致していたら、組み直していない。** 並べ替えただけである。
+
+### 3. 図を一つ置く
+
+全体像を ` ```mermaid ` の flowchart か、**空の** ` ```mindmap ` フェンス（そのノートの見出し木がそのまま
+図になる）で示す。二つ目の図から coherence を損なうので、図は一つに絞る。
+
+図を置いたら、その流れを説明していた本文を消す。図と本文で同じ道順を二度たどらせない。
+
+数量の比較があるなら ` ```viewspec ` を一つ足してよい。図と合わせて二つまで。
+
+### 4. 導線を書く
+
+「詳細は [[X]]」では降りない。**降りる理由**を一行添える。
+
+- 悪い: 詳細は [[20260731 A の測定]] を参照。
+- 良い: この数字の取り方に疑問があるなら、[[20260731 A の測定]] に測定条件がある。
+
+導線は本文の中に埋める。末尾の参照一覧だけに置くと、読者は本文を読み終えるまで降り口に気付かない。
+
+**一次ソースまで二段降りられることを確認する。** report が出典を持っていなければ、explainer から先は
+行き止まりになる。その report を先に直す。
+
+### 5. 削る
+
+`japanese-report-readability` の削除パスをかける。explainer で特に落ちやすいのは次の三つ。
+
+- **各 report の要約** — リンク先で読める。ここに置くと量が戻り、explainer である理由が消える。
+- **調査の経緯と判断の変遷** — report にも要らないものが、面に残る道理はない。
+- **transclusion** — `![[...]]` は本文を引き込むので、量の制御を失う。explainer では使わない。
+
+## 形
+
+```sh
+printf '## 全体像\n\n## いま未解決なもの\n\n## ソース\n' \
+  | track new --title "<topic>" --tag explainer
+```
+
+タイトルはテーマ名そのもの。report と違って**日付を付けない** — 面は更新され続けるからである。
+
+| 節 | 中身 |
+| --- | --- |
+| 全体像 | 図一つと、その下に三〜五行。ここだけ読んで話が通じる状態にする |
+| 主題ごとの節 | 一節一主題。導線を本文に埋める。report 単位で切らない |
+| いま未解決なもの | report を横断して残っている問い。各 report の `Open questions` の再掲ではなく、横断して残ったものだけ |
+| ソース | report の一覧。ここだけは網羅的でよい |
+
+`up:: [[<parent>]]` を置くと親テーマからたどれる。テーマが階層を持つなら使う。
+
+## Verify
+
+```sh
+track export --title "<topic>"
+track backlinks --id <report-id>    # 各 report に explainer からの導線があるか
+```
+
+出す前に三つだけ確認する。
+
+1. 節の数が report の数と一致していないか（していたら並べ替えただけ）。
+2. 図の内容を説明する本文が残っていないか。
+3. リンクに降りる理由が添えてあるか。
+
+そのうえで、**全体像の節だけを読んで話が通じるか**を見る。通じないなら、主題の節から一行上げる。
