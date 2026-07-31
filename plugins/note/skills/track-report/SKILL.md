@@ -97,8 +97,9 @@ track search --query "#explainer <topic>"
 
 If the topic has an explainer note — the page a human opens instead of the reports — add a route to
 this report from it, with a line saying why someone would go down there. A report nobody routes to is
-findable but unread. See `track-explainer`; if no explainer exists yet and the topic now has more than
-about three reports, that skill covers building one.
+findable but unread. See `track-explainer`; if no explainer exists yet and this report now leaves the
+topic in a state where no single report answers "so where does this stand", that skill covers building
+one.
 
 ## Verify
 
