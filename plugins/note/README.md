@@ -22,6 +22,7 @@ the `track` plugin. track itself now carries only the CLI and its tool-neutral c
 | [track](skills/track/SKILL.md) | Vault maintenance: rename with backlink rewrite, doctor, reindex, generations, task toggles. |
 | [track-markdown](skills/track-markdown/SKILL.md) | The body syntax itself: wikilinks and level-based heading anchors, block anchors, transclusion, GitHub alerts, task lines, inline properties, and the `track fmt` house style. |
 | [track-clip](skills/track-clip/SKILL.md) | Read a web page as clean Markdown with `track-fetch-web` instead of WebFetch, and save it as a `clip`-tagged note with provenance. |
+| [japanese-report-readability](skills/japanese-report-readability/SKILL.md) | Keep a Japanese report readable while it stays detailed: conclusion-first layers, a density gradient, and a deletion pass over the writing an agent produced. |
 
 ## The record
 
@@ -40,6 +41,11 @@ flowchart LR
 
 Three note kinds carry a tag so they stay findable: `plan`, `worklog`, `report`. Each links back to the
 project note, so `track backlinks --title "<project>"` shows the whole trail.
+
+`japanese-report-readability` is the odd one out: it touches no vault and runs no CLI. It governs the
+prose an agent puts *into* those notes. A report nobody rereads is as lost as one nobody can find, and
+the failure mode of an agent-written Japanese report is not missing detail — it is uniform detail with
+no gradient, which costs the reader the same effort on the conclusion as on a footnote.
 
 ## Imported from obsidian-skills
 
@@ -73,6 +79,7 @@ plugins/note/
 ├── .claude-plugin/plugin.json
 ├── .codex-plugin/plugin.json
 └── skills/
+    ├── japanese-report-readability/SKILL.md
     ├── track/SKILL.md
     ├── track-clip/SKILL.md
     ├── track-create-note/SKILL.md
