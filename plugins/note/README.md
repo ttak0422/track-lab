@@ -17,6 +17,7 @@ the `track` plugin. track itself now carries only the CLI and its tool-neutral c
 | [track-project-intake](skills/track-project-intake/SKILL.md) | Record an incoming bug/TODO against the project's note, and draft a linked **plan note** when the work needs agreement before code. |
 | [track-task-runner](skills/track-task-runner/SKILL.md) | Work through a project note's checklist autonomously, following any linked plan, and move each finished item into a dated **worklog note** with its commit. |
 | [track-report](skills/track-report/SKILL.md) | File the findings of an investigation as a **report note**, so the answer survives the session. |
+| [track-news-analysis](skills/track-news-analysis/SKILL.md) | Research a current-events topic from multiple lenses (a bundled Workflow script sweeps, verifies, and gap-fills) and file a visualized, source-cited **analysis note**. |
 | [track](skills/track/SKILL.md) | Vault maintenance: rename with backlink rewrite, doctor, reindex, generations, task toggles. |
 | [track-markdown](skills/track-markdown/SKILL.md) | The body syntax itself: wikilinks and level-based heading anchors, block anchors, transclusion, GitHub alerts, task lines, inline properties, and the `track fmt` house style. |
 | [track-clip](skills/track-clip/SKILL.md) | Read a web page as clean Markdown with `track-fetch-web` instead of WebFetch, and save it as a `clip`-tagged note with provenance. |

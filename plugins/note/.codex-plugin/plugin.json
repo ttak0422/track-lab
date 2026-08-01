@@ -1,6 +1,6 @@
 {
   "name": "note",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Notes as the shared record between developer and agent, backed by the track CLI.",
   "author": {
     "name": "track-lab"
@@ -20,6 +20,7 @@
       "Use $track-search-notes to search my notes.",
       "Use $track-project-intake to record this bug/TODO in my project's note.",
       "Use $track-report to write up what you found as a report note.",
+      "Use $track-news-analysis to research this event from multiple lenses and file an analysis note.",
       "Use $track-task-runner to work through my project note's checklist.",
       "Use $track-markdown to write this note body in track's Markdown dialect.",
       "Use $track-clip to read this URL and save it as a note.",
