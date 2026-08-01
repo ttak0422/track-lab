@@ -94,10 +94,9 @@ claude --plugin-dir ./plugins/note
 
 Claude Code (marketplace):
 
-```text
-/plugin marketplace add ttak0422/track-lab
-/plugin install note@track-lab
-/reload-plugins
+```sh
+claude plugin marketplace add ttak0422/track-lab
+claude plugin install note@track-lab
 ```
 
 Codex:

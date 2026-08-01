@@ -36,10 +36,9 @@ claude --plugin-dir ./plugins/memory
 
 Claude Code (marketplace):
 
-```text
-/plugin marketplace add ttak0422/track-lab
-/plugin install memory@track-lab
-/reload-plugins
+```sh
+claude plugin marketplace add ttak0422/track-lab
+claude plugin install memory@track-lab
 ```
 
 Codex:
