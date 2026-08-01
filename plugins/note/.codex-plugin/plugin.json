@@ -1,6 +1,6 @@
 {
   "name": "note",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Notes as the shared record between developer and agent, backed by the track CLI.",
   "author": {
     "name": "track-lab"
@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "Note",
     "shortDescription": "Keep the developer and the agent on the same page in a track vault.",
-    "longDescription": "A track vault is where the developer and the agent record what they both need to know: decisions, findings, and outstanding work. These skills create and search notes, write bodies in track's Markdown dialect, clip web pages into the vault, record incoming project work as checklist items, file research reports, and keep a plan and worklog for the work an agent carries out.",
+    "longDescription": "A track vault is where the developer and the agent record what they both need to know: decisions, findings, and outstanding work. These skills create and search notes, write bodies in track's Markdown dialect, clip web pages into the vault, record incoming project work as checklist items, file research reports, keep those reports readable when they are written in Japanese, and keep a plan and worklog for the work an agent carries out.",
     "developerName": "track-lab",
     "category": "Productivity",
     "capabilities": [
@@ -20,6 +20,8 @@
       "Use $track-search-notes to search my notes.",
       "Use $track-project-intake to record this bug/TODO in my project's note.",
       "Use $track-report to write up what you found as a report note.",
+      "Use $japanese-report-readability to make this Japanese report readable instead of exhausting.",
+      "Use $track-explainer to fold my reports on this topic into one explainer note.",
       "Use $track-news-analysis to research this event from multiple lenses and file an analysis note.",
       "Use $track-watch to run today's light brief (or this week's mid/high review) for my watch topic.",
       "Use $track-task-runner to work through my project note's checklist.",
