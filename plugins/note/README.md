@@ -123,7 +123,11 @@ codex plugin marketplace add ttak0422/track-lab
 codex plugin add note@track-lab
 ```
 
-Standalone: copy or symlink `plugins/note/skills/<name>` into `.claude/skills/<name>`.
+OpenCode: run `scripts/sync-opencode-skills.sh` from the repo root — the plugin's skills are
+then discoverable in `.opencode/skills/` from any opencode session in this repository.
+
+Standalone: copy or symlink `plugins/note/skills/<name>` into `.claude/skills/<name>` or
+`.opencode/skills/<name>`.
 
 If you previously installed the `track` plugin from the track repository, uninstall it first — the
 skill names are the same and would otherwise collide.
