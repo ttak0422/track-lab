@@ -51,7 +51,7 @@ Note bodies are more than prose. When the content is structural, prefer the matc
 
 | Construct | Fence / syntax | Use for |
 | --- | --- | --- |
-| Diagrams | ` ```mermaid `, ` ```dot `, ` ```d2 ` | flows, sequences, ER, state machines |
+| Diagrams | ` ```mermaid `, ` ```dot `, ` ```d2 ` | flows, sequences, ER, state machines — no colors, see below |
 | Mindmaps | ` ```mindmap ` | indented outline rendered as a mindmap |
 | Charts | ` ```viewspec ` | plots over JSONL data in the vault |
 | Query | ` ```track-query ` | live table/board/gallery/calendar over notes |
@@ -60,6 +60,8 @@ Note bodies are more than prose. When the content is structural, prefer the matc
 | Embeds | `![alt](url)` alone on a line | YouTube, Google Maps, tweets, PDFs, `assets/` media |
 
 Full syntax lives in `docs/help/{diagrams,mindmaps,charts,query,dashboard,babel,embeds}.md`, also published on the help site.
+
+Diagrams take their colors from the reader's theme and re-draw when it changes, so leave color out of the source: no `style`/`classDef` fill, no `%%{init: …}%%` `themeVariables`, no `fillcolor`/`bgcolor`. A color written into a diagram holds in *both* themes, so one of them ends up showing a diagram drawn for the other — dark text on a dark node. Carry distinctions with shape, label, and layout instead. The **track-markdown** skill has the rule in full, including the one case where colors are the content.
 
 ## Template-Backed Creation
 

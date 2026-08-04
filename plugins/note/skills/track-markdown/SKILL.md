@@ -149,6 +149,8 @@ Math is LaTeX by KaTeX: inline `$...$`, block `$$...$$`.
 
 Fenced blocks that render instead of showing code — ` ```mermaid `, ` ```dot `/` ```graphviz `, ` ```d2 `, ` ```mindmap `, ` ```viewspec `, ` ```track-query `, ` ```dashboard `, ` ```taskboard `, and babel-annotated language fences — are catalogued in the **track-create-note** skill, with full syntax in the track repo's `docs/help/`. Two non-obvious ones: an **empty** ` ```mindmap ` fence renders the note's own heading tree, and a ` ```viewspec ` block's `data.source` resolves under the vault's `data/` directory.
 
+**A diagram names no colors.** Diagram fences are handed to the renderer as written, initialized with the reader's current theme and re-drawn when the theme changes — so a diagram that specifies no colors is legible in light and dark alike. Colors written into the source pass through untouched and hold in *both* themes, which means one of the two shows a diagram drawn for the other: dark text on a dark node, a pale line on a pale page. Write no `style` or `classDef` fill, no `%%{init: …}%%` block setting `themeVariables`, and no `fillcolor`/`bgcolor` in `dot`. Where a distinction matters, carry it with shape, label, or layout, which read the same either way. The exception is a diagram whose colors *are* the content (a palette, a traffic-light legend); there, set both foreground and background explicitly so the pair is self-contained.
+
 ## House Style (track fmt)
 
 `track fmt` rewrites notes into a canonical style. Generate Markdown that already conforms so `fmt` is a no-op:
