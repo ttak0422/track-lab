@@ -19,11 +19,11 @@ ships relative symlinks from [`.opencode/skills/`](.opencode/skills/) to every p
 Open an opencode session with this repository as the working directory and the skills are
 available via the `skill` tool — no marketplace or install step needed.
 
-Regenerate the symlinks after adding, renaming, or removing a skill:
+Install the skills globally so they are available in every project:
 
 ```sh
 scripts/sync-opencode-skills.sh
 ```
 
-For another project, symlink or copy the skill directories you want into that project's
-`.opencode/skills/` (or `~/.config/opencode/skills/` for global use).
+This creates symlinks in `~/.config/opencode/skills/` pointing to the plugin skill
+directories. Run it again after adding, renaming, or removing a skill.
