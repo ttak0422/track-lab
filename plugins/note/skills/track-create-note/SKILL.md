@@ -1,6 +1,6 @@
 ---
 name: track-create-note
-description: Use the track CLI to create or open linked Markdown notes, journals, and template-backed notes in a track vault. Use when the user asks to take a note, create/open a note by title, create today's/yesterday's/tomorrow's journal, create a note from a template, or manage note templates before creating notes.
+description: Create or open linked Markdown notes, journals, and template-backed notes in a track vault with the track CLI. The vault is the shared knowledge source between the developer and the agent, so record durable findings, decisions, and outstanding work there as they emerge, on your own initiative and without waiting for an explicit "take a note". Also use when the user asks to take a note, create/open a note by title, create today's/yesterday's/tomorrow's journal, create a note from a template, or manage note templates.
 ---
 
 # Track Create Note

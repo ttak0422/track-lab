@@ -1,6 +1,6 @@
 ---
 name: track-search-notes
-description: Use the track CLI to search, resolve, inspect, and read linked Markdown notes in a track vault. Use when the user asks to find notes by title/body text/tag, look up a note, read/export note contents, check backlinks, or inspect the local note graph without creating or modifying notes.
+description: Search, resolve, inspect, and read linked Markdown notes in a track vault with the track CLI. The vault is the shared knowledge source between the developer and the agent, so search it on your own initiative — before answering a question about this project, a past decision, a person, or prior work, and before starting any substantial task — without waiting to be told to look. Also use when the user asks to find notes by title/body text/tag, look up a note, read/export note contents, check backlinks, or inspect the local note graph.
 ---
 
 # Track Search Notes
