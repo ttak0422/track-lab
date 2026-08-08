@@ -9,7 +9,7 @@ Agent plugins and skills for track-related workflows.
 
 | Plugin | Description |
 | ------ | ----------- |
-| [memory](plugins/memory/) | Persistent agent memory and consolidation (dream) backed by a track vault |
+| [memory](plugins/memory/) | Proactive project memory shared by Claude, Codex, and OpenCode through a track vault, with consolidation (dream) |
 | [note](plugins/note/) | Notes as the shared record between developer and agent: create/search notes, track-flavored Markdown, web clipping, project intake with plan notes, research reports, Japanese report readability, news analyses, watch loops, topic explainers, and task worklogs |
 
 ## OpenCode

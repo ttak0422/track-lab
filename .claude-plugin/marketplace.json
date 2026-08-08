@@ -8,8 +8,8 @@
     {
       "name": "memory",
       "source": "./plugins/memory",
-      "description": "Persistent agent memory and consolidation (dream) backed by a track vault.",
-      "version": "0.1.0",
+      "description": "Proactive cross-agent project memory and consolidation backed by a track vault.",
+      "version": "0.2.0",
       "author": {
         "name": "track-lab"
       },
