@@ -1,0 +1,22 @@
+{
+  "name": "clean-room",
+  "version": "0.1.0",
+  "description": "A clean-room compatibility implementation workflow with separated specification, implementation, and verification roles.",
+  "author": {
+    "name": "track-lab"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Clean Room",
+    "shortDescription": "Build compatible software across an explicit information barrier.",
+    "longDescription": "Coordinates a black-box observation and specification phase, an isolated implementation phase that receives only approved artifacts, and a fresh-context conformance review. The workflow records provenance and distinguishes observed behavior from inference, but does not replace legal review or operating-system-level isolation.",
+    "developerName": "track-lab",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Behavioral specification",
+      "Isolated implementation",
+      "Conformance verification"
+    ],
+    "defaultPrompt": "Use $clean-room-implementation to build a compatible implementation from black-box behavior."
+  }
+}

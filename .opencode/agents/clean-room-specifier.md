@@ -1,0 +1,1 @@
+../../plugins/clean-room/agents/opencode/clean-room-specifier.md

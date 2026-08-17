@@ -3,12 +3,13 @@
 > [!CAUTION]
 > This project is currently experimental. Destructive changes may be applied.
 
-Agent plugins and skills for track-related workflows.
+Agent plugins and skills for reusable workflows.
 
 ## Plugins
 
 | Plugin | Description |
 | ------ | ----------- |
+| [clean-room](plugins/clean-room/) | Human-approved black-box specification, independent implementation, and fresh-context conformance verification using GPT agents |
 | [memory](plugins/memory/) | Persistent agent memory and consolidation (dream) backed by a track vault |
 | [note](plugins/note/) | Notes as the shared record between developer and agent: create/search notes, track-flavored Markdown, web clipping, project intake with plan notes, research reports, Japanese report readability, news analyses, watch loops, topic explainers, and task worklogs |
 
@@ -19,11 +20,13 @@ ships relative symlinks from [`.opencode/skills/`](.opencode/skills/) to every p
 Open an opencode session with this repository as the working directory and the skills are
 available via the `skill` tool — no marketplace or install step needed.
 
-Install the skills globally so they are available in every project:
+Install the skills and OpenCode-specific agents globally so they are available in every project:
 
 ```sh
 scripts/sync-opencode-skills.sh
 ```
 
 This creates symlinks in `~/.config/opencode/skills/` pointing to the plugin skill
-directories. Run it again after adding, renaming, or removing a skill.
+directories and links definitions from `plugins/*/agents/opencode/` into
+`~/.config/opencode/agents/`. Run it again after adding, renaming, or removing a skill or agent,
+then restart OpenCode.

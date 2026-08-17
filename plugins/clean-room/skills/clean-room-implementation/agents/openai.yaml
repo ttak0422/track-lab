@@ -1,0 +1,4 @@
+interface:
+  display_name: "Clean Room Implementation"
+  short_description: "Build compatible software across an information barrier"
+  default_prompt: "Use $clean-room-implementation to coordinate specification, implementation, and verification in separate clean-room sessions."
