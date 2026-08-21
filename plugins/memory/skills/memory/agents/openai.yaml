@@ -1,0 +1,7 @@
+interface:
+  display_name: "Track Memory"
+  short_description: "Recall shared project memory before substantial work"
+  default_prompt: "Use $memory to recall relevant project context before this task and retain any durable knowledge afterward."
+
+policy:
+  allow_implicit_invocation: true

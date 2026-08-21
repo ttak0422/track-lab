@@ -1,22 +1,23 @@
 {
   "name": "memory",
-  "version": "0.1.0",
-  "description": "Persistent agent memory and consolidation for Codex.",
+  "version": "0.2.0",
+  "description": "Proactive cross-agent project memory and consolidation backed by a track vault.",
   "author": {
     "name": "track-lab"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "Memory",
-    "shortDescription": "Remember, recall, and consolidate knowledge in a track vault.",
-    "longDescription": "Memory stores durable facts as tagged track notes so agents keep knowledge across sessions, and the dream skill consolidates them: merging duplicates, resolving contradictions, and pruning stale entries with generation-based revert.",
+    "shortDescription": "Recall shared project context before substantial work.",
+    "longDescription": "Memory proactively recalls project-scoped context from a shared track vault before substantial work, records durable facts for Claude, Codex, and OpenCode, and consolidates duplicates, contradictions, and stale entries with the dream skill.",
     "developerName": "track-lab",
     "category": "Productivity",
     "capabilities": [
-      "Cross-session memory",
+      "Cross-agent project memory",
+      "Proactive project recall",
       "Memory recall",
       "Memory consolidation"
     ],
-    "defaultPrompt": "Recall relevant memory before this task and record any durable facts you learn."
+    "defaultPrompt": "Recall relevant track memory for this project before the task and record any durable facts you learn."
   }
 }
