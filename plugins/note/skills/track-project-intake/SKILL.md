@@ -1,155 +1,124 @@
 ---
 name: track-project-intake
-description: Use when the user asks for project work (fix a bug, add a feature, a TODO) that should be recorded against the project before or instead of doing it immediately. Finds the track note for the current repository/project, creating it if missing, records the request under its `## Bug` or `## TODO` checklist, and drafts a linked plan note when the work needs one. Pairs with track-task-runner, which later implements those checklist items.
+description: プロジェクトに紐づく作業（バグ修正、機能追加、TODO）をユーザーが頼み、それを即座に行うのではなく、あるいは行う前に、プロジェクトに対して記録すべきときに使う。現在のリポジトリ/プロジェクトの track ノートを探し、なければ作成し、その `## Bug` または `## TODO` チェックリストに依頼内容を記録し、作業がプランを必要とする場合はリンクするプランノートを下書きする。後でそれらのチェックリスト項目を実装する track-task-runner と対になる。
 ---
 
 # Track Project Intake
 
-Turn an incoming project work request into a tracked checklist item in the project's track note. This
-is the **intake** side of the workflow: it captures and records work. `track-task-runner` is the
-**execution** side that later picks items off the same checklists, implements them, and moves them to a
-worklog note.
+入ってきたプロジェクト作業の依頼を、プロジェクトの track ノートにあるチェックリスト項目へ変換する。これはワークフローの**取り込み**側であり、作業を捕捉して記録する。`track-task-runner` は**実行**側で、同じチェックリストから後で項目を取り上げ、実装し、worklog ノートへ移す。
 
-The project note is the **shared record between the developer and the agent**: it is where both sides
-look to see what is outstanding and what was already decided. Record enough that the other party can
-act without re-asking.
+プロジェクトノートは**開発者とエージェントの共有記録**である。双方が、未処理のものと既に決定したものを見るために参照する場所である。相手が問い直さずに行動できるだけの情報を記録すること。
 
-Use the `track` CLI as the source of truth for finding, creating, and updating notes. In the track
-source repo, `go run ./cmd/track` is an acceptable substitute for `track`.
+ノートの検索・作成・更新の真実の情報源として `track` CLI を使う。track のソースリポジトリでは、`go run ./cmd/track` を `track` の代わりとして使ってよい。
 
-## When to use
+## 使う場面
 
-Trigger when the user gives a work request scoped to a project — "fix this bug", "add a feature",
-"here's a TODO for X" — and the request should be logged against that project rather than (or before)
-being acted on. Typical phrasings: "record this bug for <repo>", "note that we need to …", "add a TODO
-to the <project> note".
+プロジェクトにスコープされた作業依頼をユーザーがしたときに発動する。たとえば「このバグを直して」（fix this bug）、「機能を追加して」（add a feature）、「X の TODO がある」（here's a TODO for X）といった依頼で、その依頼を実行するのではなく（あるいは実行する前に）そのプロジェクトに対して記録すべき場合である。典型的な言い回し: 「このバグを <repo> 用に記録して」（record this bug for <repo>）、「〜する必要があるとメモして」（note that we need to …）、「<project> ノートに TODO を追加して」（add a TODO to the <project> note）。
 
-Do not use this for pure note creation (`track-create-note`), read-only lookup (`track-search-notes`),
-or for *implementing* already-recorded items (`track-task-runner`).
+純粋なノート作成（`track-create-note`）、読み取り専用の検索（`track-search-notes`）、既に記録された項目の*実装*（`track-task-runner`）にはこれを使わない。
 
-## Preconditions
+## 前提条件
 
-- `track` CLI on `PATH`, resolving against the user's normal vault. `TRACK_VAULT` is only for tests and
-  one-off overrides.
-- Every command prints single-line JSON; parse stdout and treat `{"error":...}` with exit code 1 as
-  failure.
-- Titles are link keywords; write `[[Title]]` in bodies to link related notes.
+- `track` CLI が `PATH` 上にあり、ユーザーの通常のボールトに対して解決できること。`TRACK_VAULT` はテストと一回限りの上書き専用である。
+- 各コマンドは単一行の JSON を出力する。stdout をパースし、exit code 1 の `{"error":...}` は失敗として扱う。
+- タイトルはリンク語である。本文で `[[Title]]` を書いて関連ノートをリンクする。
 
-## Workflow
+## ワークフロー
 
-### 1. Identify the project
+### 1. プロジェクトを特定する
 
-Derive the project name from the working directory — usually the git repository name (the basename of
-`git rev-parse --show-toplevel`, falling back to the current directory's basename). That name is the
-note title to look for (e.g. repo `track` → note titled `track`). If the user names the note or project
-explicitly, use that instead.
+作業ディレクトリからプロジェクト名を導出する。通常は git リポジトリ名（`git rev-parse --show-toplevel` のベース名、失敗したら現在のディレクトリのベース名）。その名前が探すノートタイトルである（例: リポジトリ `track` → タイトル `track` のノート）。ユーザーがノートやプロジェクトを明示的に名指しした場合は、そちらを使う。
 
-### 2. Find the project's note
+### 2. プロジェクトのノートを探す
 
 ```sh
 track resolve --term "<project>"      # {"found":true,"note_id":N,"path":"…"} when it exists
 ```
 
-If `resolve` reports `found:false`, widen with a title search before concluding it is missing:
+`resolve` が `found:false` を返したら、存在しないと結論づける前にタイトル検索で範囲を広げる:
 
 ```sh
 track search --scope title --query "<project>"
 ```
 
-### 3a. Note exists — review, then record
+### 3a. ノートが存在する場合 — 確認してから記録する
 
-Read the note and inspect its existing checklists so you do not file a duplicate:
+重複を登録しないよう、ノートを読み、既存のチェックリストを確認する:
 
 ```sh
 track export --id <note_id>
 ```
 
-Check the `## TODO` and `## Bug` sections for an item that already covers the request. If one exists,
-tell the user and stop (optionally clarify/augment the existing item rather than adding a new one).
-Otherwise continue to step 4.
+`## TODO` と `## Bug` セクションに、既に依頼内容をカバーする項目がないか確認する。あれば、ユーザーに伝えて停止する（新規に追加するのではなく、任意で既存項目を明確化/補強する）。なければステップ 4 へ進む。
 
-### 3b. Note missing — create it
+### 3b. ノートが存在しない場合 — 作成する
 
-Create the note idempotently, seeding the two checklist headings the runner expects:
+ランナーが期待する2つのチェックリスト見出しを仕込みつつ、冪等にノートを作成する:
 
 ```sh
 printf '## TODO\n\n## Bug\n' | track open --title "<project>"
 ```
 
-`open` is a no-op if the note already appeared between steps 2 and 3, so this is safe.
+ステップ 2 と 3 の間にノートが現れていた場合、`open` は no-op なので安全である。
 
-### 4. Clarify before recording
+### 4. 記録する前に明確化する
 
-If the request is vague, **ask the user for the missing details before writing the item** — this is the
-"指示を乞う" step. For a bug: reproduction steps, expected vs. actual behavior, affected area. For a
-feature/TODO: the concrete outcome wanted and any constraints. Capture enough that `track-task-runner`
-could later act on the item without re-interviewing the user.
+依頼が曖昧なら、**項目を書く前にユーザーへ不足する詳細を尋ねる**。これが「指示を乞う」ステップである。バグなら再現手順、期待動作と実際の動作、影響範囲。機能/TODO なら望む具体的な結果と制約。`track-task-runner` が後でユーザーへ再インタビューせずに項目に取りかかれるだけの情報を確保する。
 
-### 5. Record the item under the right heading
+### 5. 適切な見出しの下に項目を記録する
 
-Classify the request: a defect goes under `## Bug`, new work or an enhancement under `## TODO`. Write it
-as a single unchecked checklist line, in the note's existing language:
+依頼を分類する。欠陥は `## Bug` の下、新規作業や改良は `## TODO` の下に置く。ノートの既存の言語で、1つの未チェックのチェックリスト行として書く:
 
 ```text
 - [ ] <concise, actionable description of the request>
 ```
 
-`track append` only adds to the end of a note, so it cannot place a line under a specific heading. To
-file the item under `## Bug` or `## TODO`, **edit the note body directly** (path from step 2/3): insert
-the `- [ ]` line beneath the target heading, after any existing items in that section. (This mirrors how
-`track-task-runner` removes lines in place — track has no line-insert command.)
+`track append` はノートの末尾にしか追加できないため、特定の見出しの下に行を置けない。`## Bug` または `## TODO` の下に項目を登録するには、**ノート本文を直接編集する**（ステップ 2/3 のパス）。対象の見出しの下、そのセクションの既存項目の後ろに `- [ ]` 行を挿入する。（`track-task-runner` が行をその場で削除するのと同様である。track には行挿入コマンドがない。）
 
-For a brand-new note whose section is still empty, the line is simply the first entry under the heading.
+セクションがまだ空の新規ノートでは、その行が単に見出しの下の最初のエントリになる。
 
-### 6. Draft a plan note when the item warrants one
+### 6. 項目がプランを必要とする場合はプランノートを下書きする
 
-Most items need nothing beyond the checklist line. Write a **plan note** only when the developer and
-the agent have to agree on something *before* code is written: work spanning several files or
-subsystems, a design choice with real alternatives, a migration or anything needing a rollback path,
-or an item the user explicitly asks to plan first. A one-line fix never gets a plan note.
+大半の項目はチェックリストの行だけで十分である。**プランノート**を書くのは、コードを書く*前に*開発者とエージェントが何かについて合意する必要がある場合だけである。複数のファイルやサブシステムにまたがる作業、現実的な代替案がある設計判断、移行やロールバック経路を要するもの、ユーザーが最初に計画するよう明示的に求めた項目など。1行の修正にプランノートは決して必要ない。
 
 ```sh
 printf 'from [[<project>]]\n\n## Goal\n\n## Approach\n\n## Steps\n\n## Risks\n' \
   | track new --title "<YYYYMMDD> <item summary>" --tag plan
 ```
 
-Fill the sections and keep them decision-shaped, not narrative:
+各セクションを埋め、物語的ではなく決定志向に保つ:
 
-- **Goal** — what "done" means, in a line or two.
-- **Approach** — the approach chosen, plus the alternatives rejected and why. This is the part that
-  stops the decision being re-litigated at implementation time.
-- **Steps** — `- [ ]` items in the order they land.
-- **Risks** — what could break, and how it gets verified.
+- **Goal** —— 「完了」が何を意味するか。1〜2行で。
+- **Approach** —— 選んだアプローチと、棄却した代替案とその理由。実装時に決定が蒸し返されるのを防ぐ部分である。
+- **Steps** —— 着地する順の `- [ ]` 項目。
+- **Risks** —— 何が壊れ得るか、どう検証されるか。
 
-Link the plan from the checklist item so the two stay connected and the backlink resolves:
+チェックリスト項目からプランをリンクし、両者がつながったまま、バックリンクが解決されるようにする:
 
 ```text
 - [ ] <concise description> → [[<YYYYMMDD> <item summary>]]
 ```
 
-`track-task-runner` reads a linked plan before implementing the item.
+`track-task-runner` は項目を実装する前に、リンクされたプランを読む。
 
-### 7. Reindex
+### 7. 再インデックス
 
-Keep search, links, and backlinks consistent:
+検索・リンク・バックリンクを一貫させる:
 
 ```sh
 track reindex
 ```
 
-## Verify
+## 検証
 
-Confirm the item landed under the intended heading:
+項目が意図した見出しの下に入ったことを確認する:
 
 ```sh
 track export --id <note_id>     # the new - [ ] line appears under ## Bug or ## TODO
 ```
 
-## Handoff
+## 引き渡し
 
-Once recorded, the item is ready for `track-task-runner` to implement and move to a dated worklog note.
-If the user wants the work done now rather than just logged, record it first (so nothing is lost), then
-proceed — or hand off to `track-task-runner` to sweep the checklist.
+記録されれば、その項目は `track-task-runner` が実装し、日付つき worklog ノートへ移せる状態になる。ユーザーが記録だけでなく今すぐ作業を望む場合は、まず記録して（何も失われないように）から進めるか、チェックリストを片付けるために `track-task-runner` へ引き渡す。
 
-If the request was to *investigate* rather than to change code, it does not belong on a checklist at
-all: use `track-report` to file the findings as a report note.
+依頼がコード変更ではなく*調査*なら、そもそもチェックリストには載らない。`track-report` を使って発見をレポートノートとして保存する。

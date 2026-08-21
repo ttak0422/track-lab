@@ -1,111 +1,111 @@
 ---
 name: track-report
-description: File the findings of an investigation as a report note in the track vault. Use when the user asks you to investigate, research, analyze, compare, or find out why something behaves the way it does — write the answer up as a note so the finding survives the session instead of scrolling away. Pairs with track-project-intake, which records work to be done rather than what was found out.
+description: 調査の結果をレポートノートとして track ボールトに保存する。ユーザーが調査・リサーチ・分析・比較を依頼したとき、あるいは何かがそのように振る舞う理由を突き止めるよう求められたときに使う。答えをノートとして書き留め、発見がセッションの流れで消えずに残るようにする。やるべき仕事を記録する track-project-intake と対になる。
 ---
 
 # Track Report
 
-An investigation the user asked for produces two things: an answer in the conversation, and a finding
-that is worth keeping. This skill handles the second. The report note is the **shared record between
-the developer and the agent** — the next person to ask the same question, human or agent, reads the
-note instead of redoing the work.
+ユーザーから依頼された調査は2つのものを生む。会話の中の答えと、残す価値のある発見である。
+このスキルは後者を扱う。レポートノートは**開発者とエージェントの共有記録**である。同じ質問を
+する次の人（人間でもエージェントでも）は、作業をやり直す代わりにそのノートを読む。
 
-Use the `track` CLI as the source of truth for note creation. In the track source repo,
-`go run ./cmd/track` is an acceptable substitute for `track`.
+ノート作成の信頼できる情報源として `track` CLI を使う。track のソースリポジトリ内では
+`go run ./cmd/track` が `track` の代わりとして使える。
 
-## When to write a report
+## いつレポートを書くか
 
-Write one when the user asked you to **find something out** and the answer took real work:
+ユーザーが**何かを調べる**よう求め、その答えに実際の作業が必要だったときに書く。
 
-- "why is X slow / failing / behaving like this" — a diagnosis with evidence.
-- "how does X work" — reading a subsystem, a dependency, or a spec end to end.
-- "should we use A or B" — a comparison with a recommendation.
-- "look into X" / "調査して" — anything explicitly framed as investigation.
+- 「なぜ X は遅い／失敗する／このように振る舞うのか」—— 証拠を伴う診断。
+- 「X はどのように動くのか」—— サブシステム・依存・仕様を端から端まで読む。
+- 「A と B のどちらを使うべきか」—— 推奨を伴う比較。
+- 「X を調べて」/「調査して」—— 調査として明示されたもの全般。
 
-Do **not** write one when:
+次の場合は書いては**ならない**。
 
-- The answer came from a single lookup, one file, or one command — that is a reply, not a finding.
-- The user asked for a change, not an answer. That is `track-project-intake` (record it) or
-  `track-task-runner` (do it).
-- The finding is already recorded. Search first (below) and update the existing note instead.
+- 答えが1回のルックアップ、1ファイル、1コマンドで得られた場合。それは返答であって発見ではない。
+- ユーザーが答えではなく変更を求めた場合。それは `track-project-intake`（記録する）または
+  `track-task-runner`（実行する）の担当である。
+- 発見が既に記録されている場合。まず（下記の手順で）検索し、既存ノートを更新する。
 
-When in doubt, ask the user whether to file it — do not silently skip a report they expected.
+迷ったら、保存してよいかユーザーに尋ねる。期待しているレポートを黙ってスキップしてはならない。
 
-## Workflow
+## ワークフロー
 
-### 1. Investigate first
+### 1. まず調査する
 
-Do the actual work — read the code, run the commands, check the sources. This skill governs how the
-result is recorded, not how it is found. Never write a report from assumption; every claim in it has to
-be one you verified.
+実際の作業を行う。コードを読み、コマンドを実行し、ソースを確認する。このスキルは結果の
+**記録方法**を定めるものであり、発見方法ではない。仮定からレポートを書いてはならない。
+そこに書く主張はすべて、検証済みのものでなければならない。
 
-### 2. Check for an existing report
+### 2. 既存のレポートを確認する
 
 ```sh
 track search --query "#report <topic keywords>"
 ```
 
-If a report already covers the question, update that note (`track append`, or edit the body directly to
-revise a section) rather than filing a near-duplicate. Note the date of the update in the body.
+既存のレポートが既にその質問を扱っているなら、ほぼ重複したものを新しく作るのではなく、その
+ノートを更新する（`track append`、またはセクションを改訂するために本文を直接編集する）。
+更新日を本文に記す。
 
-### 3. Create the report note
+### 3. レポートノートを作成する
 
-Title it with today's date and a summary of the *question*, not the answer — that is what a future
-search looks for. Tag it `report`, and link the project or subject note it belongs to:
+タイトルには今日の日付と、答えではなく*質問*の要約を付ける。未来の検索が探すのはそれだから
+である。タグ `report` を付け、それが属するプロジェクトまたは主題ノートへリンクする。
 
 ```sh
 printf 'from [[<project>]]\n\n## Question\n\n## Answer\n\n## Evidence\n\n## Open questions\n' \
   | track new --title "<YYYYMMDD> <question summary>" --tag report
 ```
 
-Then fill it in:
+それから中身を埋める。
 
-- **Question** — what was asked, in the form it was asked. One or two lines.
-- **Answer** — the conclusion, stated directly, at the top. If the answer is "it depends", say what it
-  depends on. If the investigation was inconclusive, say so — an inconclusive report is still a
-  finding, and prevents the next agent from re-running a dead end.
-- **Evidence** — what the conclusion rests on: file and line references (`internal/cli/note.go:88`),
-  command output, measurements, links to sources. Enough that a reader can check the reasoning without
-  redoing it, not a transcript of everything you read.
-- **Open questions** — what remains unanswered, and anything deliberately left out of scope.
+- **Question** —— 何が問われたか。問われた形のまま。1〜2行。
+- **Answer** —— 結論を、冒頭に直接述べる。答えが「場合による」なら、何に依存するかを書く。
+  調査が不確かだったなら、そう書く。不確かなレポートも発見であり、次のエージェントが行き止まり
+  を再実行するのを防ぐ。
+- **Evidence** —— 結論が依拠するもの。ファイルと行の参照（`internal/cli/note.go:88`）、コマンド
+  出力、計測値、ソースへのリンク。読者が推論をやり直さずに確認できる程度で十分。読んだもの
+  すべての書き起こしではない。
+- **Open questions** —— 未解決のままのこと、意図的に範囲外としたこと。
 
-Prefer track's rich constructs over prose when the finding is structural — a `mermaid` diagram for a
-flow you traced, a `viewspec` chart for measurements, a table for a comparison. See
-`track-create-note` for what note bodies support.
+発見が構造的である場合、散文よりも track の豊かな構造を使う。辿ったフローには `mermaid`
+ダイアグラム、計測値には `viewspec` チャート、比較には表を。ノート本文が何をサポートするかは
+`track-create-note` を参照。
 
-### 4. Link it back
+### 4. 出典へリンクする
 
-A report nobody can find is not a record. Make sure it is reachable:
+誰も見つけられないレポートは記録ではない。到達可能にする。
 
-- The `from [[<project>]]` line gives the project note a backlink — verify with
-  `track backlinks --title "<project>"`.
-- If the report answers a checklist item in a project note, link it from that line:
-  `- [ ] <item> → [[<YYYYMMDD> <question summary>]]`.
-- If it supersedes an earlier report, link that one and say what changed.
+- `from [[<project>]]` の行がプロジェクトノートにバックリンクを与える。`track backlinks --title
+  "<project>"` で確認する。
+- レポートがプロジェクトノートのチェックリスト項目に答えるなら、その行からリンクする。
+  `- [ ] <item> → [[<YYYYMMDD> <question summary>]]`。
+- 以前のレポートを置き換えるなら、それへリンクし、何が変わったかを書く。
 
-### 5. Reindex
+### 5. 再インデックスする
 
 ```sh
 track reindex
 ```
 
-### 6. Update the topic's explainer
+### 6. トピックの explainer を更新する
 
 ```sh
 track search --query "#explainer <topic>"
 ```
 
-If the topic has an explainer note — the page a human opens instead of the reports — add a route to
-this report from it, with a line saying why someone would go down there. A report nobody routes to is
-findable but unread. See `track-explainer`; if no explainer exists yet and this report now leaves the
-topic in a state where no single report answers "so where does this stand", that skill covers building
-one.
+そのトピックに explainer ノート（人間がレポートの代わりに開くページ）があるなら、そこからこの
+レポートへの導線を加え、誰かがそこへ降りていく理由を1行添える。誰にも導線されないレポートは、
+見つけられはしても読まれない。`track-explainer` を参照。explainer がまだなく、このレポートに
+よって「このトピックは今どうなっているか」に単一のレポートでは答えられない状態になったなら、
+explainer の構築はそのスキルの担当である。
 
-## Verify
+## 検証
 
 ```sh
 track export --title "<YYYYMMDD> <question summary>"
 ```
 
-Then tell the user the note's title in one line, so they know where the finding went. Do not paste the
-whole report back into the conversation — answer their question, and point at the note for the detail.
+それから、ノートのタイトルを1行でユーザーに伝える。発見がどこへ行ったかを知らせるためである。
+レポート全体を会話に貼り戻してはならない。質問に答え、詳細はノートを指し示す。

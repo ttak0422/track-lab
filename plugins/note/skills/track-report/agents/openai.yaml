@@ -1,4 +1,4 @@
 interface:
   display_name: "Track Report"
-  short_description: "File investigation findings as a report note"
-  default_prompt: "Use $track-report to write up what you found as a report note in my track vault."
+  short_description: "調査結果をレポートノートとして保存する"
+  default_prompt: "$track-report を使って、見つけた内容を私の track ボールトにレポートノートとして書き出してください。"

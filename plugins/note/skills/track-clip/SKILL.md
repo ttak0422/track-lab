@@ -1,27 +1,27 @@
 ---
 name: track-clip
-description: Read a web page as clean Markdown with track-fetch-web, and save it into the track vault as a note when it is worth keeping. Use instead of WebFetch when the user provides a URL to read, analyze, clip, or save — online docs, articles, blog posts — or says "clip this page". Do NOT use for URLs ending in .md (already Markdown; fetch them directly), and skip the save step when the user only wants a quick answer from a page.
+description: track-fetch-web で Web ページをきれいな Markdown として読み、保存に値する場合は track ボールトにノートとして保存する。ユーザーが読む・分析する・クリップする・保存するための URL（オンラインドキュメント・記事・ブログ投稿など）を渡したときや、「このページをクリップして」("clip this page")と言ったときは WebFetch の代わりに使う。末尾が .md の URL（すでに Markdown なので、直接取得する）には使わないこと。ユーザーがページから手早く答えだけ欲しい場合は保存の手順を省略する。
 ---
 
 # Track Clip
 
-`track-fetch-web` fetches a page, drops navigation, sidebars, ads, and the rest of the furniture, and converts what is left to Markdown. Read pages with it instead of WebFetch — the output is smaller and already in the vault's format. When a page is worth keeping, the same output pipes straight into `track new`.
+`track-fetch-web` はページを取得し、ナビゲーション・サイドバー・広告・その他の付帯要素を取り除き、残りを Markdown に変換する。WebFetch の代わりにこれでページを読むこと。出力はより小さく、すでにボールトの形式になっている。保存に値するページは、同じ出力をそのまま `track new` にパイプで渡せる。
 
-## Preconditions
+## 前提条件
 
-- Use the `track` CLI as the source of truth. In the track source repo, `go run ./cmd/track` is an acceptable substitute.
-- Prefer the user's normal track config. `TRACK_VAULT` is for tests and one-off overrides.
-- Commands print single-line JSON (`export` prints Markdown). Treat `{"error":...}` with exit code 1 as failure.
-- `track-fetch-web` on `PATH`. It ships with track as a separate binary — track itself never talks to the network. From the source repo: `go run ./cmd/track-fetch-web`.
+- 真実の情報源として `track` CLI を使う。track のソースリポジトリでは、`go run ./cmd/track` を代わりとして使ってよい。
+- ユーザーの通常の track 設定を優先する。`TRACK_VAULT` はテストや一回限りの上書き用である。
+- コマンドは単一行の JSON を出力する（`export` は Markdown を出力する）。exit code 1 の `{"error":...}` は失敗として扱う。
+- `track-fetch-web` を `PATH` 上に置く。これは track に付属する別バイナリであり、track 本体はネットワーク通信をしない。ソースリポジトリからは `go run ./cmd/track-fetch-web`。
 
-## Read a page
+## ページを読む
 
 ```sh
 track-fetch-web --note "<url>"                 # Markdown note body on stdout
 track-fetch-web --note --timeout 60s "<url>"   # the fetch timeout defaults to 30s
 ```
 
-The body starts with a provenance line and the lead image, then the content:
+本文は出典行とリード画像で始まり、その後に内容が続く:
 
 ```markdown
 [Source](https://example.com/essays/growing-tomatoes) — clipped 2026-07-26
@@ -31,55 +31,55 @@ The body starts with a provenance line and the lead image, then the content:
 Container gardening rewards small, steady adjustments…
 ```
 
-Two limits to expect rather than debug: a page rendered entirely by JavaScript has no readable HTML to extract, so the clip degrades to the page metadata; and fetches refuse private, loopback, and link-local addresses (an SSRF guard), so an internal page has to be saved to a file first and passed as a path instead of a URL.
+デバッグするより想定しておくべき制限が2つある。JavaScript だけで描画されるページには抽出できる読み取り可能な HTML がないため、クリップはページのメタデータに落ちる。また、取得はプライベート・ループバック・リンクローカルアドレスを拒否する（SSRF ガード）。そのため内部ページは先にファイルへ保存し、URL ではなくパスとして渡す必要がある。
 
-If the user only wanted an answer from the page, stop here. Do not create a note.
+ユーザーがページから答えだけ欲しかった場合は、ここで止める。ノートを作成しない。
 
-## Clip it into the vault
+## ボールトにクリップする
 
-Save the body once, then choose the title from what you just read:
+本文を一度保存し、その後で読み取った内容からタイトルを選ぶ:
 
 ```sh
 track-fetch-web --note "<url>" > /tmp/clip.md
 ```
 
-The title is the note's identity — unique vault-wide, and the `[[link]]` keyword every other note will use. Start from the page's own title, but strip the site furniture (`Growing tomatoes | Example Blog` → `Growing tomatoes`) and disambiguate one that is too generic to stand alone in a vault.
+タイトルはノートの同一性であり、ボールト全体で一意で、他の全ノートが使う `[[link]]` キーワードになる。ページ自身のタイトルから始めるが、サイトの付帯要素を取り除き（`Growing tomatoes | Example Blog` → `Growing tomatoes`）、ボールト内で単独では曖昧すぎるタイトルは明確化する。
 
-Look for an existing clip before creating: `track new` fails on a title collision, and the same page may already be saved under a different title.
+作成前に既存のクリップを探す。`track new` はタイトル衝突で失敗し、同じページが別のタイトルで既に保存されていることがある。
 
 ```sh
 track search --query "<title>" --scope title
 track search --query "<domain>"           # matches the Source line in already-clipped bodies
 ```
 
-Then create it, tagged `clip` (stdin becomes the body when `--body` is omitted):
+それから、`clip` タグを付けて作成する（`--body` を省略すると stdin が本文になる）:
 
 ```sh
 track new --title "<title>" --tag clip < /tmp/clip.md
 track meta --title "<title>" --description "<one line on what the page says>"
 ```
 
-Re-clipping a page you already have: replace that note's body rather than inventing a suffixed title — `track update --id <id> < /tmp/clip.md`.
+すでに持っているページを再クリップする場合: 接尾辞付きタイトルを新たに作らず、そのノートの本文を置き換える — `track update --id <id> < /tmp/clip.md`。
 
-Optionally log it in today's journal so the clip is also reachable by date. Pass `--body` to `track journal`: without it the command reads stdin and will hang an agent.
+必要に応じて今日のジャーナルにも記録し、日付からもクリップに到達できるようにする。`track journal` には `--body` を渡すこと。これがないとコマンドは stdin を読み込み、エージェントがハングする。
 
 ```sh
 track journal --body ""                                        # ensure today's journal exists
 track append --id "$(date +%Y%m%d)" --body "- [[<title>]]"     # journal ids are yyyyMMdd
 ```
 
-## Finish the body
+## 本文を仕上げる
 
-- The extractor emits ordinary Markdown, but a page can still carry syntax track renders literally — `==highlight==`, `%%comments%%`, inline `#tags`, `![[file]]` embeds. Convert them; the **track-markdown** skill has the full table.
-- Run `track fmt <path>` on the note (the create JSON prints its path) so the body matches the vault's canonical formatting.
-- Add `[[links]]` to the notes this one relates to. A clip nothing links to is a clip nobody finds again.
+- 抽出器は通常の Markdown を出力するが、ページには track が文字どおり描画する構文（`==highlight==`、`%%comments%%`、インラインの `#tags`、`![[file]]` 埋め込み）が残ることがある。これらを変換する。完全な表は **track-markdown** スキルにある。
+- ノート（作成時の JSON がパスを出力する）に `track fmt <path>` を実行し、本文をボールトの正規形式に合わせる。
+- このノートが関連するノートへ `[[links]]` を追加する。何からもリンクされないクリップは、二度と誰にも見つからないクリップである。
 
-## Clipping as data
+## データとしてのクリップ
 
-Without `--note` the tool emits one Canonical Data Model record as JSONL — the contract every `track-fetch-*` tool follows — so a reading log can feed a chart:
+`--note` を付けないと、このツールは Canonical Data Model レコードを1件 JSONL として出力する。これはすべての `track-fetch-*` ツールが従う契約であり、読書ログをグラフに供給できる:
 
 ```sh
 track-fetch-web --out "$TRACK_VAULT/data/clips.jsonl" "<url>"   # prints a JSON summary including the title
 ```
 
-`--out` **overwrites** the file, so accumulate a log by appending stdout instead: `track-fetch-web "<url>" >> data/clips.jsonl`. Use this path when the user wants clips counted or plotted over time, not when they want one page to read.
+`--out` はファイルを**上書き**するため、ログを蓄積するには stdout を追記する: `track-fetch-web "<url>" >> data/clips.jsonl`。この方法は、ユーザーが1ページを読みたいのではなく、クリップを時系列で集計・グラフ化したいときに使う。
