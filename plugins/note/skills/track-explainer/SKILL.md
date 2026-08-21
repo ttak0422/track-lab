@@ -1,6 +1,6 @@
 ---
 name: track-explainer
-description: Fold a topic's report notes into one explainer note — the single page a human actually opens, with a diagram, a reading order of its own, and routes down into the reports and their primary sources. Use when reports on a topic have piled up, when someone needs the whole picture of a subject, when asked to "まとめて" / "全体像がほしい" / "explain this topic", and after filing a new report so the topic's explainer stays current. Not a summary of the reports — a rebuilt document optimised for understanding rather than for coverage.
+description: あるテーマの report note 群を一枚の explainer note に畳む。図と独自の読み順を持ち、各 report とその一次ソースへ降りられる、人間が実際に開く唯一の面を作る。テーマについて report が溜まったとき、ある主題の全体像が必要なとき、「まとめて」「全体像がほしい」「explain this topic」と頼まれたとき、そして新しい report を書いた後にテーマの explainer を最新に保つために使う。report の要約ではなく、網羅ではなく理解に最適化して再構築した資料である。
 ---
 
 # track explainer
@@ -107,11 +107,10 @@ printf '## 全体像\n\n## いま未解決なもの\n\n## ソース\n' \
 
 `up:: [[<parent>]]` を置くと親テーマからたどれる。テーマが階層を持つなら使う。
 
-## Verify
+## 検証
 
 ```sh
 track export --title "<topic>"
-track backlinks --id <report-id>    # 各 report に explainer からの導線があるか
 ```
 
 出す前に三つだけ確認する。

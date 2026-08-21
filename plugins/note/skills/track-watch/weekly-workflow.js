@@ -1,6 +1,6 @@
 export const meta = {
   name: 'watch-weekly-high',
-  description: 'Weekly high review: excavate hidden assumptions, stress-test due ones, forecast with falsifiers',
+  description: '週次 high レビュー: 隠れた前提の発掘、要点検の前提のストレステスト、反証条件付きの予想',
   phases: [
     { title: 'Excavate', detail: '現在の見立てが暗黙に依存する前提の洗い出し' },
     { title: 'Stress', detail: '要点検の前提ごとに独立Web照合と崩壊シナリオ' },

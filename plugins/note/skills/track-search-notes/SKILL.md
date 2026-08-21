@@ -1,55 +1,55 @@
 ---
 name: track-search-notes
-description: Search, resolve, inspect, and read linked Markdown notes in a track vault with the track CLI. The vault is the shared knowledge source between the developer and the agent, so search it on your own initiative — before answering a question about this project, a past decision, a person, or prior work, and before starting any substantial task — without waiting to be told to look. Also use when the user asks to find notes by title/body text/tag, look up a note, read/export note contents, check backlinks, or inspect the local note graph.
+description: track CLI で track ボールト内のリンク付き Markdown ノートを検索・解決・検査・閲覧する。ボールトは開発者とエージェントの共有知識源なので、このプロジェクト・過去の決定・人物・以前の作業についての質問に答える前や、まとまったタスクを始める前には、指示を待たずに自発的に検索すること。タイトル・本文・タグでノートを探す、ノートを調べる、ノート内容の閲覧・エクスポート、バックリンクの確認、ローカルノートグラフの検査をユーザーが求めたときにも使う。
 ---
 
 # Track Search Notes
 
-Use the `track` CLI as the source of truth for note search, indexing, link resolution, backlinks, and graph queries. In the track source repo, `go run ./cmd/track` is an acceptable substitute for `track`.
+ノート検索・インデックス・リンク解決・バックリンク・グラフクエリの真実の情報源として `track` CLI を使う。track のソースリポジトリでは、`go run ./cmd/track` を `track` の代わりとして使ってよい。
 
-## Preconditions
+## 前提条件
 
-- Prefer the user's normal track config. `TRACK_VAULT` is for tests and one-off overrides.
-- Commands print single-line JSON. Parse stdout as JSON and treat `{"error":...}` with exit code 1 as failure.
-- Use this skill for read-only discovery. Use `track-create-note` when the task requires creating or appending notes.
+- ユーザーの通常の track 設定を優先する。`TRACK_VAULT` はテストや一回限りの上書き用である。
+- コマンドは単一行の JSON を出力する。stdout を JSON としてパースし、exit code 1 の `{"error":...}` は失敗として扱う。
+- このスキルは読み取り専用の調査に使う。ノートの作成・追記が必要なタスクでは `track-create-note` を使う。
 
-## Search
+## 検索
 
-Search across note titles and indexed fields:
+ノートのタイトルとインデックス済みフィールドを横断して検索する:
 
 ```sh
 track search --query "distributed systems" --limit 20
 ```
 
-Limit the scope:
+範囲を絞り込む:
 
 ```sh
 track search --scope title --query "roadmap"
 track search --scope body --query "TODO"
 ```
 
-Filter by tags with `#tag` terms. Multiple tags combine with remaining text:
+`#tag` の語でタグ絞り込みができる。複数のタグは残りのテキストと組み合わされる:
 
 ```sh
 track search --query "#project"
 track search --query "#graph #web Workspace"
 ```
 
-Results include note IDs, titles, file kind, paths when available, tags, and body snippets/line numbers for body hits. Search misses return an empty `results` array.
+結果には、ノート ID・タイトル・ファイル種別・利用可能な場合はパス・タグ・本文ヒット時の本文スニペットと行番号が含まれる。ヒットしない検索は空の `results` 配列を返す。
 
-When the machine config registers named vaults (`vaults:`), search crosses the active vault and every registered one; each hit then carries a `vault` name (`""` = the active unregistered vault) and the response adds an `unavailable` array for unreachable vaults. A note id is only unique within its vault, so pass `--vault <name>` (a global flag, any command) when following up on a hit from another vault. `--vault NAME` also scopes the search itself to that one vault.
+マシン設定で名前付きボールトが登録されている場合（`vaults:`）、検索はアクティブなボールトと登録済みの全ボールトを横断する。各ヒットには `vault` 名（`""` = アクティブな未登録ボールト）が付き、応答には到達不能なボールト用の `unavailable` 配列が追加される。ノート ID はボールト内でのみ一意なので、別のボールトからのヒットを追うときは `--vault <name>`（グローバルフラグ、どのコマンドでも可）を渡す。`--vault NAME` は検索自体もそのボールト1つに限定する。
 
-Notes may reference other vaults as `[[vault:title]]` (the prefix must be a registered vault name). `track resolve --term "vault:title"` resolves such a reference, and `track backlinks` lists inbound cross-vault references under `external` plus unreachable vaults under `unavailable`.
+ノートは他ボールトを `[[vault:title]]` の形で参照できる（プレフィックスは登録済みボールト名でなければならない）。`track resolve --term "vault:title"` はそのような参照を解決し、`track backlinks` はボールトをまたぐ内向き参照を `external` の下に、到達不能なボールトを `unavailable` の下に列挙する。
 
-## Resolve and Read
+## 解決と閲覧
 
-Resolve an exact title/link term to a note:
+完全一致のタイトル/リンク語をノートに解決する:
 
 ```sh
 track resolve --term "Title"
 ```
 
-Read full Markdown for a known note:
+既知ノートの完全な Markdown を読む:
 
 ```sh
 track export --title "Title"
@@ -57,22 +57,22 @@ track export --id 123
 track export --path /path/to/note.md
 ```
 
-Prefer `export` before making claims about a note's contents.
+ノートの内容について断定する前に `export` を使うこと。
 
-## Links and Graph
+## リンクとグラフ
 
-Inspect inbound links:
+内向きリンクを調べる:
 
 ```sh
 track backlinks --id 123
 track backlinks --path /path/to/note.md
 ```
 
-Inspect the local note graph around a note:
+ノート周辺のローカルノートグラフを調べる:
 
 ```sh
 track graph --id 123
 track graph --path /path/to/note.md
 ```
 
-Backlinks and graph output are JSON and should be summarized for the user unless they ask for raw output.
+バックリンクとグラフの出力は JSON であり、ユーザーが生の出力を求める場合を除き、ユーザー向けに要約すべきである。

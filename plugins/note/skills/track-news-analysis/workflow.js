@@ -1,10 +1,10 @@
 export const meta = {
   name: 'news-multi-lens-research',
-  description: 'Research a news event from independent lenses, verify key claims, find gaps',
+  description: 'ニュース事象を独立したレンズで調査し、主要な主張を検証し、欠落を見つける',
   phases: [
-    { title: 'Sweep', detail: 'one web-research agent per lens' },
-    { title: 'Verify', detail: 'adversarial cross-check of each lens against independent sources' },
-    { title: 'Gaps', detail: 'completeness critic, then fill the top gaps' },
+    { title: 'Sweep', detail: 'レンズごとに 1 体の Web 調査エージェント' },
+    { title: 'Verify', detail: '各レンズを独立ソースと照合する敵対的な突き合わせ' },
+    { title: 'Gaps', detail: '完全性チェッカー、その上位の欠落を埋める' },
   ],
 }
 

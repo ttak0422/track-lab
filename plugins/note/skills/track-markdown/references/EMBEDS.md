@@ -1,8 +1,8 @@
-# Embeds Reference
+# 埋め込みリファレンス
 
-Two distinct mechanisms: `![[Note]]` transcludes another **note's body**; a standalone `![alt](src)` line embeds **media or a URL**. `![[...]]` always names a note — it is never file-embed syntax, so `![[image.png]]` embeds nothing.
+2つの異なる仕組みがある: `![[Note]]` は別の**ノートの本文**をトランスクルージョンする。独立した `![alt](src)` 行は**メディアまたは URL** を埋め込む。`![[...]]` は常にノートを指す — これはファイル埋め込み構文ではないため、`![[image.png]]` は何も埋め込まない。
 
-## Transclusion: `![[...]]`
+## トランスクルージョン: `![[...]]`
 
 ```markdown
 ![[Note]]                          Whole note body
@@ -13,27 +13,27 @@ Two distinct mechanisms: `![[Note]]` transcludes another **note's body**; a stan
 ![[Note]] :lines 1-20              Line slice of the extracted region
 ```
 
-Rules:
+ルール:
 
-- **Block-level only.** The `![[...]]` must start the line (leading whitespace allowed) with nothing else but the option tail. Inside running text it is not a directive — its `[[...]]` part still counts as an ordinary link, the `!` stays literal.
-- The link part shares the full wikilink grammar: exact-title resolution key, level-based `##heading` anchors, `#^id` block anchors, `|display` alias. It is also a plain link — it appears in the graph and backlinks, is rewritten by `track rename`, and gets the unresolved-link diagnostic when the title does not match.
-- Without an anchor, the whole note body is embedded. With a heading anchor, the region runs from the matched heading line through the line before the next heading of the same or shallower level. Headings inside fenced code blocks neither match nor terminate the region. With a block anchor, the region is the marked paragraph or list item, and the `^id` marker is stripped.
-- A non-matching anchor renders as **unresolved** — it does not fall back to the whole note (unlike link navigation, which falls back to the note top).
-- Leading and trailing blank lines of the extracted region are trimmed.
-- **Not recursive**: an include line inside the embedded region renders as text, so include cycles are harmless.
+- **ブロックレベル限定。** `![[...]]` は行頭に置く必要がある（先頭の空白は許容）が、行末にはオプションテイル以外を置かない。本文中の文章の途中ではディレクティブにならず — その `[[...]]` 部分は通常のリンクとして数えられ、`!` はリテラルのまま残る。
+- リンク部分は完全な wikilink 文法を共有する: 完全一致タイトルの解決キー、レベルベースの `##heading` アンカー、`#^id` ブロックアンカー、`|display` エイリアス。これは通常のリンクでもある — グラフとバックリンクに現れ、`track rename` で書き換えられ、タイトルが一致しない場合は未解決リンクの診断が出る。
+- アンカーがない場合、ノート本文全体が埋め込まれる。見出しアンカーの場合、範囲は一致した見出し行から、同じかより浅いレベルの次の見出しの前の行まで。フェンス付きコードブロック内の見出しは一致も範囲の終端にもならない。ブロックアンカーの場合、範囲はマークされた段落またはリスト項目で、`^id` マーカーは除去される。
+- 一致しないアンカーは **unresolved** として描画される — ノート全体へのフォールバックはしない（リンクナビゲーションがノート先頭にフォールバックするのとは異なる）。
+- 抽出された範囲の先頭と末尾の空行はトリミングされる。
+- **再帰しない**: 埋め込み範囲内の include 行はテキストとして描画されるため、include の循環は無害である。
 
-### Option tail
+### オプションテイル
 
-Options come after the closing `]]`, Org-style `:key value` (same shape as the `:height` embed option):
+オプションは閉じ括弧 `]]` の後に置き、Org スタイルの `:key value` 形式（`:height` 埋め込みオプションと同じ形）をとる:
 
-- `:only-contents` — drop the matched heading line and embed only its body. A no-op without an anchor.
-- `:lines 4-5,8` — 1-based inclusive ranges over the extracted region (applied after `:only-contents`), concatenated in the order written; out-of-range parts are clipped.
+- `:only-contents` — 一致した見出し行を落とし、その本文だけを埋め込む。アンカーなしでは何もしない（no-op）。
+- `:lines 4-5,8` — 抽出された範囲に対する1始まりの包括範囲（`:only-contents` の後に適用）、書かれた順に連結される。範囲外の部分は切り詰められる。
 
-Unknown keys and malformed values surface as diagnostics rather than being silently ignored.
+未知のキーや不正な値は、黙って無視されるのではなく診断として表示される。
 
-## Asset Images
+## アセット画像
 
-Local media lives in the vault's single top-level `assets/` directory:
+ローカルメディアは vault の単一トップレベル `assets/` ディレクトリに置く:
 
 ```sh
 track asset import "<file>"    # copies the file into assets/ and prints the reference
@@ -43,37 +43,37 @@ track asset import "<file>"    # copies the file into assets/ and prints the ref
 ![track logo](assets/logo.png)
 ```
 
-On its own line the image renders as an embed; inline inside a paragraph it stays a plain image. A relative `assets/<file>` reference is served from the vault and never treated as a remote URL.
+画像はそれ自体が1行の場合に埋め込みとして描画され、段落の途中にインラインで置いた場合は通常の画像のまま。相対 `assets/<file>` 参照は vault から提供され、リモート URL として扱われることはない。
 
-## Rich URL Embeds
+## リッチ URL 埋め込み
 
-A standalone `![alt](src)` line is routed by target:
+独立した `![alt](src)` 行は対象に応じてルーティングされる:
 
-| Target | Renders as |
+| 対象 | 描画結果 |
 | --- | --- |
-| Image file (asset or URL) | Image |
-| YouTube watch/share/embed URL | Inline player |
-| Google Maps share/embed URL | Inline map (short `maps.app.goo.gl` links fall back to an OGP card) |
-| Tweet URL (`x.com` / `twitter.com` status) | The actual post via Twitter widgets |
-| PDF (asset or URL) | Paged slide-deck viewer |
-| Text asset (`.txt`, `.json`, `.yaml`, `.csv`, `.sh`, ...) | Syntax-highlighted code block |
-| Mermaid source asset (`.mmd` / `.mermaid`) | Rendered diagram |
-| `.viewspec.json` asset | Interactive chart |
-| HTML asset or `http(s)` page URL ending in `.html` | Sandboxed iframe |
-| Any other `http(s)` page | Open Graph card (title, description, preview image) |
+| 画像ファイル（アセットまたは URL） | 画像 |
+| YouTube の watch/share/embed URL | インラインプレーヤー |
+| Google Maps の share/embed URL | インラインマップ（短い `maps.app.goo.gl` リンクは OGP カードにフォールバック） |
+| ツイート URL（`x.com` / `twitter.com` の status） | Twitter ウィジェットによる実際の投稿 |
+| PDF（アセットまたは URL） | ページ送りのスライドデッキビューア |
+| テキストアセット（`.txt`, `.json`, `.yaml`, `.csv`, `.sh`, ...） | シンタックスハイライト付きコードブロック |
+| Mermaid ソースアセット（`.mmd` / `.mermaid`） | 描画されたダイアグラム |
+| `.viewspec.json` アセット | インタラクティブチャート |
+| HTML アセット、または `.html` で終わる `http(s)` ページ URL | サンドボックス化された iframe |
+| その他の `http(s)` ページ | Open Graph カード（タイトル、説明、プレビュー画像） |
 
-HTML embeds take a `:height` option after the embed (bare number = pixels; `%` or `vh` = share of the viewport height):
+HTML 埋め込みは、埋め込みの後に `:height` オプションをとる（素の数値 = ピクセル。`%` または `vh` = ビューポート高の割合）:
 
 ```markdown
 ![Widget](assets/widget.html) :height 480
 ![Map](assets/map.html) :height 90%
 ```
 
-## Fence Renderers
+## フェンスレンダラー
 
-Special fenced blocks render instead of showing code: ` ```mermaid `, ` ```dot `/` ```graphviz `, ` ```d2 `, ` ```mindmap `, ` ```viewspec `, ` ```track-query `, ` ```dashboard `, ` ```taskboard `, and babel-annotated language fences. The **track-create-note** skill catalogues what each is for; full syntax lives in the track repo's `docs/help/{diagrams,mindmaps,charts,query,dashboard,babel}.md`, also published on the help site.
+特別なフェンス付きブロックは、コードを表示する代わりに描画する: ` ```mermaid `, ` ```dot `/` ```graphviz `, ` ```d2 `, ` ```mindmap `, ` ```viewspec `, ` ```track-query `, ` ```dashboard `, ` ```taskboard `, および babel 注釈付き言語フェンス。**track-create-note** スキルがそれぞれの用途を目録化している。完全な構文は track リポジトリの `docs/help/{diagrams,mindmaps,charts,query,dashboard,babel}.md` にあり、ヘルプサイトにも公開されている。
 
-Two behaviours worth knowing while writing a body:
+本文を書く際に知っておくべき2つの挙動:
 
-- An **empty** ` ```mindmap ` fence renders the note's own heading tree — no fence content needed.
-- A ` ```viewspec ` block's `data.records` keeps it self-contained, while `data.source` reads a JSONL file relative to the vault's `data/` directory. Invalid specs show the error at the block's position rather than failing the note.
+- **空の** ` ```mindmap ` フェンスは、そのノート自身の見出しツリーを描画する — フェンス内容は不要。
+- ` ```viewspec ` ブロックの `data.records` は自己完結させ、`data.source` は vault の `data/` ディレクトリ相対で JSONL ファイルを読み込む。不正な spec は、ノート全体を失敗させるのではなく、そのブロックの位置にエラーを表示する。

@@ -1,77 +1,75 @@
 ---
 name: track-watch
-description: Run a recurring watch loop over a topic in the track vault, at three thinking depths — light (the daily brief, token-lean, the day's moves / reactions to open concerns / new events), mid (the weekly review, trend + assumption check), and high (on-demand deep review, assumption excavation, break-scenario analysis, falsifiable forecasts). Use when the user asks for a daily brief, weekly review, 定点観測, デイリー/ウィークリー分析, a light/mid/high watch run, or to set up or continue a recurring news/market watch. Pairs with track-news-analysis, which deep-dives one event; this skill runs the loop between events.
+description: track vault 内のあるトピックに対して、3段階の思考深度で定点観測ループを実行する — light（デイリーブリーフ、トークン最小、その日の動き・懸念事項への反応・新規イベント）、mid（ウィークリーレビュー、トレンド＋前提の点検）、high（オンデマンドの深掘りレビュー、前提の発掘、崩壊シナリオ分析、反証可能な予想）。ユーザーが daily brief、weekly review、定点観測、デイリー/ウィークリー分析、light/mid/high の watch 実行、あるいは継続的なニュース・マーケット watch のセットアップや継続を求めたときに使う。1つのイベントを深掘りする track-news-analysis と対をなす。本スキルはイベントとイベントの間のループを回す。
 ---
 
 # Track Watch
 
-A watch is a loop, not a report. Each run reads what previous runs left behind, adds one day's (or
-one week's) delta, and updates the shared state so the next run starts smarter. The vault **is** the
-loop state; tags are the retrieval index. The one sin in this skill is re-researching what a
-previous run already established.
+watch はレポートではなくループである。各回は前回が残したものを読み、1日分（または1週間分）の差分を
+加え、次回がより賢く始められるよう共有状態を更新する。vault こそがループ状態であり、タグが検索
+インデックスである。このスキルで唯一の罪は、前回の実行がすでに確立したことを再調査することだ。
 
-Use the `track` CLI as the source of truth. Mind an ambient `TRACK_VAULT` in the shell — strip it
-(`env -u TRACK_VAULT`) unless the user asked for a specific vault.
+`track` CLI を正（source of truth）として使う。シェルに環境変数 `TRACK_VAULT` が設定されていないか
+注意し、ユーザーが特定の vault を指定していない限り、`env -u TRACK_VAULT` で取り除くこと。
 
-## Depth tiers
+## 深度の段階
 
-Runs are named by thinking depth, not cadence — the cadence is just each tier's usual schedule:
+実行はケイデンスではなく思考深度で名付ける — ケイデンスは各段階の通常スケジュールにすぎない:
 
-| Depth | Usual cadence | Output note | Focus |
+| 深度 | 通常のケイデンス | 出力ノート | 焦点 |
 | --- | --- | --- | --- |
-| `light` | daily (the anchor run) | daily brief | the day's moves, reactions to open concerns, new events |
-| `mid` | weekly | weekly review | trend over the week, assumption check against evidence |
-| `high` | on demand (monthly, or when mid finds cracks) | weekly review + extra sections | assumption excavation, break scenarios, falsifiable forecasts |
+| `light` | 毎日（アンカーとなる実行） | デイリーブリーフ | その日の動き、懸念事項への反応、新規イベント |
+| `mid` | 毎週 | ウィークリーレビュー | 1週間のトレンド、根拠に照らした前提の点検 |
+| `high` | オンデマンド（毎月、または mid が綻びを見つけたとき） | ウィークリーレビュー＋追加セクション | 前提の発掘、崩壊シナリオ、反証可能な予想 |
 
-## The loop state: three kinds of notes
+## ループ状態：3種類のノート
 
-| Note | Cadence | Tags | Role |
+| ノート | ケイデンス | タグ | 役割 |
 | --- | --- | --- | --- |
-| watch note | standing, one per topic | `watch` + topic tag | accumulator: stance, open concerns, assumptions register, live chart |
-| daily brief | daily | `daily` + topic tag | the day's delta — short |
-| weekly review | weekly | `weekly` + topic tag | trend, assumption audit, forecasts |
+| watch ノート | 常設、トピックごとに1つ | `watch` ＋トピックタグ | 累積器：見立て、懸念事項、前提レジスタ、ライブチャート |
+| デイリーブリーフ | 毎日 | `daily` ＋トピックタグ | その日の差分 — 短い |
+| ウィークリーレビュー | 毎週 | `weekly` ＋トピックタグ | トレンド、前提の監査、予想 |
 
-Pick one kebab-case **topic tag** per watch (e.g. `jp-market`) and stamp it on every note of the
-loop: `track search --query "#<topic> #daily"` then replays the history in one call.
+watch ごとに kebab-case の **トピックタグ**を1つ選び（例: `jp-market`）、ループの全ノートにそれを
+刻印する。`track search --query "#<topic> #daily"` で、履歴全体を1回の呼び出しで再現できる。
 
-### The watch note (created on first run)
+### watch ノート（初回実行時に作成）
 
-`track new --title "<topic> 定点観測" --tag watch --tag <topic>` with:
+`track new --title "<topic> 定点観測" --tag watch --tag <topic>` を作成し、以下を記す:
 
-- `## 概況` — the current stance, one paragraph, revised in place by weekly runs (history lives in
-  the dated notes, not here). For market topics add a `viewspec` fence with
-  `data.source: "<topic>.jsonl"` — the chart re-renders whenever the fetcher refreshes that file, so
-  the dashboard stays current at **zero token cost** (`track-fetch-jquants` is cron-safe).
-- `## 懸念` — open concerns as task lines, priority-tagged (`[#A]` = tomorrow's run checks first).
-  This is what "事前に懸念していた事項" means mechanically: daily runs answer to this list, resolve
-  items via `track task set ... --state DONE`, and append new ones.
-- `## 前提` — the assumptions register: what the current stance silently depends on, made explicit,
-  one list item each with inline props:
+- `## 概況` — 現在の見立て。1段落で、毎週の実行によってその場で改訂する（履歴は日付入りノートに
+  あり、ここではない）。マーケット系トピックでは、`data.source: "<topic>.jsonl"` を持つ `viewspec`
+  フェンスを追加する — フェッチャーがそのファイルを更新するたびにチャートが再描画されるため、
+  ダッシュボードは**トークンコストゼロ**で最新に保たれる（`track-fetch-jquants` は cron 安全）。
+- `## 懸念` — 未解決の懸念をタスク行として、優先度タグ付きで記す（`[#A]` = 翌日の実行が最初に確認
+  する）。これが「事前に懸念していた事項」の機械的な意味である。デイリー実行はこのリストに応答し、
+  `track task set ... --state DONE` で項目を解決し、新規項目を追加する。
+- `## 前提` — 前提レジスタ。現在の見立てが暗黙に依存しているものを明示し、各項目をインライン
+  プロパティ付きのリスト項目として記す:
 
   ```markdown
   - 中東情勢は現状の低烈度衝突が続く [checked:: 2026-07-28] [trigger:: ホルムズ海峡の完全封鎖、または停戦合意]
   ```
 
-  Slow-moving context (a geopolitical situation, a policy regime) lives here and is **not**
-  re-researched on a cadence: a daily run only flags when a `trigger` fires; a weekly `high` run
-  re-checks items that are stale or triggered. This is where token efficiency comes from.
+  動きの遅い文脈（地政学的状況、政策レジーム）はここに置き、ケイデンスでは再調査**しない**。
+  デイリー実行は `trigger` が発火したときだけフラグを立てる。ウィークリーの `high` 実行は、古く
+  なった項目や発火した項目を再点検する。トークン効率はここから生まれる。
 
-## light — the daily brief, kept lean
+## light — デイリーブリーフ（最小限に保つ）
 
-Budget discipline: **no Workflow, no verification fleet.** One research pass — direct WebSearch in
-the main loop, or at most one agent — with a handful of queries. The loop state does the heavy
-lifting:
+予算の規律: **Workflow なし、検証の艦隊もなし。** 調査は1パス — メインループでの直接 WebSearch、
+または多くとも1エージェント — 少数のクエリで済ませる。重労働はループ状態が担う:
 
-1. Read the state: the watch note (`track export`), its open concerns (`track tasks`), and the
-   previous brief (`track search --query "#<topic> #daily"`, newest hit).
-2. If the topic has a data feed, refresh it first:
-   `track-fetch-jquants --code <code> --out <vault>/data/<topic>.jsonl` — numbers from the feed are
-   already validated; never spend searches on what the feed answers.
-3. Research exactly three questions, nothing else:
-   - (a) did anything today respond to an open concern? — at most one query per open concern;
-   - (b) what genuinely new events appeared?
-   - (c) what were the day's moves/numbers (only where no feed covers them)?
-4. Write the brief — `track new --title "<YYYYMMDD> <topic> daily" --tag daily --tag <topic>`:
+1. 状態を読む: watch ノート（`track export`）、その未解決の懸念（`track tasks`）、前回のブリーフ
+   （`track search --query "#<topic> #daily"` の最新ヒット）。
+2. トピックにデータフィードがあれば先に更新する:
+   `track-fetch-jquants --code <code> --out <vault>/data/<topic>.jsonl` — フィードからの数値は検証
+   済み。フィードが答えてくれることを検索で消費してはならない。
+3. 以下の3つの問いだけを調査し、他は何もしない:
+   - (a) 今日、未解決の懸念に応答するものはあったか？ — 未解決の懸念ごとに最大1クエリ;
+   - (b) 真に新しいイベントは現れたか？
+   - (c) その日の動き・数値は？（フィードがカバーしていない場合のみ）
+4. ブリーフを書く — `track new --title "<YYYYMMDD> <topic> daily" --tag daily --tag <topic>`:
 
    ```markdown
    from [[<topic> 定点観測]]
@@ -82,21 +80,21 @@ lifting:
    ## 引き継ぎ          ← what this run changed in the watch note (resolved/added concerns, fired triggers)
    ```
 
-   Keep it around 40 lines. No charts — the watch note's `data.source` chart carries the series.
-5. Update the watch note: concern task transitions, new concerns appended, fired triggers noted on
-   the register item.
-6. If the day produced an event that deserves real analysis, do **not** deep-dive inside the brief:
-   hand off to `track-news-analysis`, then link the analysis note from the watch note and the brief.
+   40行程度に保つ。チャートは描かない — watch ノートの `data.source` チャートが時系列を担う。
+5. watch ノートを更新する: 懸念タスクの遷移、新規懸念の追加、発火したトリガーをレジスタ項目に
+   記す。
+6. その日、本格的な分析に値するイベントが生じた場合、ブリーフ内で深掘りしては**ならない**。
+   `track-news-analysis` に引き渡し、分析ノートを watch ノートとブリーフの両方からリンクする。
 
-Verification is proportional: arithmetic against yesterday's numbers, plus one primary source for
-any load-bearing number the brief asserts. Nothing more.
+検証は比例的に行う: 昨日の数値との算術比較、そしてブリーフが主張する重要な数値それぞれについて
+一次ソース1つ。それ以上はしない。
 
-## mid — the weekly review
+## mid — ウィークリーレビュー
 
-Main-loop work over material the dailies already gathered — no research fan-out:
+デイリーがすでに集めた材料に対するメインループでの作業 — 調査のファンアウトなし:
 
-1. Collect the week: `track search --query "#<topic> #daily"` → export the week's briefs.
-2. Write `<YYYYMMDD> <topic> weekly` (tags `weekly` + topic):
+1. 1週間分を集める: `track search --query "#<topic> #daily"` → その週のブリーフをエクスポートする。
+2. `<YYYYMMDD> <topic> weekly` を書く（タグは `weekly` ＋トピック）:
 
    ```markdown
    from [[<topic> 定点観測]]
@@ -107,12 +105,12 @@ Main-loop work over material the dailies already gathered — no research fan-ou
    ## 来週の注視点    ← feeds back into the watch note's concern list
    ```
 
-3. Update the watch note: stance paragraph, concern list, `[checked::]` dates on the register.
+3. watch ノートを更新する: 見立ての段落、懸念リスト、レジスタの `[checked::]` 日付。
 
-## high — the deep review (on demand)
+## high — 深掘りレビュー（オンデマンド）
 
-Runs monthly, or when mid keeps finding cracks in the register. Everything in mid, plus the bundled
-workflow (in this skill's base directory):
+毎月、または mid がレジスタの綻びを繰り返し見つけたときに実行する。mid の内容すべてに加えて、
+（本スキルのベースディレクトリにある）バンドルされたワークフローを使う:
 
 ```
 Workflow({
@@ -127,29 +125,30 @@ Workflow({
 })
 ```
 
-The workflow runs harvest-first: **excavate → stress → forecast → critic**.
+ワークフローは収穫優先で実行する: **excavate → stress → forecast → critic**。
 
-- *Excavate*: an adversarial agent names assumptions the stance depends on that the register does
-  not yet list — the 暗黙の前提.
-- *Stress*: each due/triggered/newly-excavated assumption (capped) gets an independent web check:
-  current evidence, what would break it, the consequence if it breaks, and the recommended response.
-- *Forecast*: expectations for the coming period inferred from past patterns — **every forecast
-  carries a falsification marker** (何が起きたらこの予想を捨てるか); one without it is not written.
-- *Critic*: a completeness pass over the whole review.
+- *Excavate*: 敵対的なエージェントが、見立てが依存しながらレジスタにまだ挙がっていない前提を
+  列挙する — 暗黙の前提。
+- *Stress*: 各 due / 発火済み / 新規発掘の前提（上限あり）それぞれに独立した Web 照合を行う:
+  現在の根拠、何がそれを崩すか、崩れた場合の帰結、推奨される対応。
+- *Forecast*: 過去のパターンから推論した今後期間の予想 — **すべての予想は反証マーカーを伴う**
+  （何が起きたらこの予想を捨てるか）。それがない予想は書かない。
+- *Critic*: レビュー全体に対する完全性パス。
 
-Results land in extra sections of the weekly note — `## 暗黙の前提の洗い出し`,
-`## シナリオ(前提が壊れたら)`, `## 予想(反証条件つき)` — and new assumptions join the register with
-today's `[checked::]` date.
+結果はウィークリーノートの追加セクションに置かれる — `## 暗黙の前提の洗い出し`、
+`## シナリオ(前提が壊れたら)`、`## 予想(反証条件つき)` — そして新規の前提は本日の `[checked::]`
+日付付きでレジスタに加わる。
 
-## Cadence and loop execution
+## ケイデンスとループ実行
 
-light (daily) is the anchor; mid closes each week; high runs when scheduled or triggered. A caveat
-for looped execution: an OneDrive-backed vault is not writable from background sessions — run the
-loop in an interactive session (`/loop`, or a scheduled interactive run); only the fetcher belongs
-in cron.
+light（毎日）がアンカーであり、mid が各週を締め、high はスケジュールまたはトリガーに応じて
+実行される。ループ実行に関する注意: OneDrive バックアップの vault はバックグラウンドセッション
+から書き込めない — ループはインタラクティブセッションで実行すること（`/loop`、またはスケジュール
+されたインタラクティブ実行）。cron に入れてよいのはフェッチャーだけである。
 
-## Verify
+## 検証
 
-- `track backlinks` on the watch note shows the dated briefs/reviews accumulating.
-- Open-concern task states match the latest 引き継ぎ section.
-- Report the delta to the user (what moved, what got resolved, what fired) — not the whole brief.
+- watch ノートに対する `track backlinks` は、日付入りブリーフ／レビューが蓄積していく様子を示す。
+- 未解決懸念のタスク状態が最新の引き継ぎセクションと一致する。
+- ユーザーにはデルタを報告する（何が動いたか、何が解決したか、何が発火したか）— ブリーフ全体では
+  ない。

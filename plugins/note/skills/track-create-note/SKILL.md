@@ -1,36 +1,36 @@
 ---
 name: track-create-note
-description: Create or open linked Markdown notes, journals, and template-backed notes in a track vault with the track CLI. The vault is the shared knowledge source between the developer and the agent, so record durable findings, decisions, and outstanding work there as they emerge, on your own initiative and without waiting for an explicit "take a note". Also use when the user asks to take a note, create/open a note by title, create today's/yesterday's/tomorrow's journal, create a note from a template, or manage note templates.
+description: track CLI を使って、track ボールトにリンク付き Markdown ノート・ジャーナル・テンプレート由来のノートを作成または開く。ボールトは開発者とエージェントの共有知識源なので、永続的な発見・決定・残作業は、明示的な「ノートを取って」を待たず、発生し次第自発的にそこへ記録する。ユーザーがノートを取るよう頼んだとき、タイトルでノートを作成/開くとき、今日/昨日/明日のジャーナルを作成するとき、テンプレートからノートを作成するとき、ノートテンプレートを管理するときにも使う。
 ---
 
 # Track Create Note
 
-Use the `track` CLI as the source of truth for note creation, IDs, sidecar metadata, indexing, and link resolution. In the track source repo, `go run ./cmd/track` is an acceptable substitute for `track`.
+ノート作成・ID・サイドカーメタデータ・インデックス・リンク解決の真実の情報源として `track` CLI を使う。track のソースリポジトリでは、`go run ./cmd/track` を `track` の代わりとして使ってよい。
 
-A track vault is the **shared record between the developer and the agent** — decisions, findings, and outstanding work. Write every note so the other party, human or agent, can act on it later without re-asking: state the conclusion, not just the trail, and link the notes it depends on.
+track ボールトは**開発者とエージェントの共有記録**である。決定・発見・残作業。相手（人間でもエージェントでも）が後で問い直さずに行動できるように各ノートを書くこと。経緯だけでなく結論を述べ、依存するノートをリンクする。
 
-## Preconditions
+## 前提条件
 
-- Prefer the user's normal track config. `TRACK_VAULT` is for tests and one-off overrides.
-- Commands print single-line JSON. Parse stdout as JSON and treat `{"error":...}` with exit code 1 as failure.
-- Titles are link keywords. Use `[[Title]]` in bodies to link related notes.
-- Body text may start with a Markdown heading; the note title is stored in sidecar metadata.
+- ユーザーの通常の track 設定を優先する。`TRACK_VAULT` はテストや一回限りの上書き用である。
+- コマンドは単一行の JSON を出力する。stdout を JSON としてパースし、exit code 1 の `{"error":...}` は失敗として扱う。
+- タイトルはリンク語である。本文で `[[Title]]` を使って関連ノートをリンクする。
+- 本文テキストは Markdown の見出しで始まってよい。ノートタイトルはサイドカーメタデータに保存される。
 
-## Create or Open Notes
+## ノートの作成とオープン
 
-Create a new note and fail if the title already exists:
+新しいノートを作成し、タイトルが既に存在する場合は失敗する:
 
 ```sh
 track new --title "Title" --body "Markdown body" --tag project
 ```
 
-Create or open idempotently by title:
+タイトルで冪等に作成または開く:
 
 ```sh
 track open --title "Title" --body "Initial body used only when created"
 ```
 
-Open or create journals:
+ジャーナルを開くか作成する:
 
 ```sh
 track journal              # today
@@ -38,34 +38,34 @@ track journal --offset -1  # yesterday
 track journal --offset 1   # tomorrow
 ```
 
-Append to an existing note:
+既存のノートに追記する:
 
 ```sh
 track append --title "Title" --body "Additional Markdown"
 track append --id 123 --tag project
 ```
 
-## Rich Content in Bodies
+## 本文のリッチコンテンツ
 
-Note bodies are more than prose. When the content is structural, prefer the matching construct over a paragraph or an ASCII sketch:
+ノート本文は散文だけではない。内容が構造的な場合は、段落や ASCII の図よりも、対応する構文を使うこと:
 
-| Construct | Fence / syntax | Use for |
+| 構文 | フェンス / 構文 | 用途 |
 | --- | --- | --- |
-| Diagrams | ` ```mermaid `, ` ```dot `, ` ```d2 ` | flows, sequences, ER, state machines — no colors, see below |
-| Mindmaps | ` ```mindmap ` | indented outline rendered as a mindmap |
-| Charts | ` ```viewspec ` | plots over JSONL data in the vault |
-| Query | ` ```track-query ` | live table/board/gallery/calendar over notes |
-| Dashboard | ` ```dashboard ` | recent/pinned widgets |
-| Babel | ` ```lua :name hello :results output ` | runnable code blocks; results kept in the sidecar, composable via noweb, tangled to files |
-| Embeds | `![alt](url)` alone on a line | YouTube, Google Maps, tweets, PDFs, `assets/` media |
+| ダイアグラム | ` ```mermaid `, ` ```dot `, ` ```d2 ` | フロー、シーケンス、ER、状態機械 — 色は使わない（下記参照） |
+| マインドマップ | ` ```mindmap ` | インデント付きアウトラインをマインドマップとして描画 |
+| チャート | ` ```viewspec ` | ボールト内の JSONL データをプロット |
+| クエリ | ` ```track-query ` | ノート上のライブなテーブル/ボード/ギャラリー/カレンダー |
+| ダッシュボード | ` ```dashboard ` | 最近/ピン留めのウィジェット |
+| Babel | ` ```lua :name hello :results output ` | 実行可能なコードブロック。結果はサイドカーに保持され、noweb で合成、ファイルへタングル可能 |
+| 埋め込み | 単独行の `![alt](url)` | YouTube、Google マップ、ツイート、PDF、`assets/` メディア |
 
-Full syntax lives in `docs/help/{diagrams,mindmaps,charts,query,dashboard,babel,embeds}.md`, also published on the help site.
+完全な構文は `docs/help/{diagrams,mindmaps,charts,query,dashboard,babel,embeds}.md` にあり、ヘルプサイトにも公開されている。
 
-Diagrams take their colors from the reader's theme and re-draw when it changes, so leave color out of the source: no `style`/`classDef` fill, no `%%{init: …}%%` `themeVariables`, no `fillcolor`/`bgcolor`. A color written into a diagram holds in *both* themes, so one of them ends up showing a diagram drawn for the other — dark text on a dark node. Carry distinctions with shape, label, and layout instead. The **track-markdown** skill has the rule in full, including the one case where colors are the content.
+ダイアグラムは読者のテーマから色を取り、テーマが変わると再描画する。よってソースから色を除くこと。`style`/`classDef` の fill なし、`%%{init: …}%%` の `themeVariables` なし、`fillcolor`/`bgcolor` なし。ダイアグラムに書き込んだ色は*両方の*テーマで保持されるため、一方は他方向けに描かれたダイアグラム、つまり暗いノード上の暗いテキストを表示することになる。代わりに形・ラベル・レイアウトで区別を持たせる。**track-markdown** スキルにその規則の完全版があり、色が内容そのものになる唯一のケースも含まれている。
 
-## Template-Backed Creation
+## テンプレートによる作成
 
-Create or open templates before using them:
+使う前にテンプレートを作成または開く:
 
 ```sh
 track template new --name meeting
@@ -73,7 +73,7 @@ track template open --name meeting
 track template list
 ```
 
-Template files live under `template/` and start with a directive:
+テンプレートファイルは `template/` の下にあり、ディレクティブで始まる:
 
 ```markdown
 <!-- track-template
@@ -86,9 +86,9 @@ kind: {{ kind }}
 id: {{ id }}
 ```
 
-Supported substitutions are safe built-ins only: `{{ title }}`, `{{ id }}`, `{{ date }}`, and `{{ kind }}`. The directive is removed from generated notes.
+サポートされる置換は安全な組み込みのみである。`{{ title }}`、`{{ id }}`、`{{ date }}`、`{{ kind }}`。ディレクティブは生成されたノートから除去される。
 
-Use a template when creating notes or journals:
+ノートやジャーナルを作成するときにテンプレートを使う:
 
 ```sh
 track new --title "Project meeting" --template meeting
@@ -96,11 +96,11 @@ track open --title "Project meeting" --template meeting
 track journal --offset 0 --template daily
 ```
 
-`--body` and `--template` are mutually exclusive. `track open --template` and `track journal --template` use the template only when they create a new file; existing notes/journals are returned unchanged.
+`--body` と `--template` は相互に排他的である。`track open --template` と `track journal --template` は、新しいファイルを作成するときだけテンプレートを使う。既存のノート/ジャーナルは変更されずに返される。
 
-## Verify
+## 検証
 
-After creation, confirm the note when needed:
+作成後、必要に応じてノートを確認する:
 
 ```sh
 track resolve --term "Title"

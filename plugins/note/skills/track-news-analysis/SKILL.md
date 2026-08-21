@@ -1,42 +1,41 @@
 ---
 name: track-news-analysis
-description: Research a current-events topic (a market move, a policy decision, an incident) from multiple independent lenses and file a visualized, source-cited analysis note in the track vault. Use when the user asks for a multi-angle analysis note, a 多角分析/時事分析 of an event, or to "analyze what happened around <date>". Pairs with track-report for single-question investigations and with track-watch for the recurring daily/weekly loop; this skill is the one-shot deep dive for events that need several perspectives and charts.
+description: 時事トピック（相場の動き、政策判断、事件）を複数の独立したレンズで調査し、可視化・出典付きの分析 note を track vault に書き出す。複数視点の分析 note、ある事象の 多角分析/時事分析 を求められたとき、あるいは「analyze what happened around <date>」と頼まれたときに使う。単一の問いの調査は track-report と、日次/週次の反復ループは track-watch と組み合わせる。この skill は、複数の視点と chart を要する事象を対象とした一回きりの深掘りである。
 ---
 
 # Track News Analysis
 
-Turn one news event into two vault artifacts: a **multi-lens analysis note** (charts, timeline,
-causal graph, cited sources) and a short **work memo** recording how it was made. The research runs
-as a Workflow of parallel web-searching agents; the note is written with track's rich constructs and
-every figure is validated before it is embedded.
+一つのニュース事象を、vault に二つの成果物として落とす。**多レンズの分析 note**（chart、タイムライン、
+因果グラフ、出典付き）と、それがどう作られたかを記録する短い**作業メモ**である。調査は並列に Web 検索する
+agent 群の Workflow として走り、note は track のリッチな構文で書かれ、図は埋め込む前にすべて検証される。
 
-Use the `track` CLI as the source of truth. Mind an ambient `TRACK_VAULT` in the shell — strip it
-(`env -u TRACK_VAULT`) unless the user asked for a specific vault.
+`track` CLI を真実の源として使う。シェルの環境変数 `TRACK_VAULT` に注意し、ユーザーが特定の vault を
+指定していない限りは除去する（`env -u TRACK_VAULT`）。
 
-## Preconditions
+## 前提条件
 
-- The Workflow tool (agents need WebSearch/WebFetch via ToolSearch).
-- A vault `analysis` template (`track template list`); create one from the skill's structure below if
-  absent.
-- For market events: `track-fetch-jquants` (J-Quants; `TRACK_JQUANTS_REFRESH_TOKEN`) can supply real
-  OHLCV bars for a `data.source` candlestick. Without credentials, chart researched values inline.
+- Workflow ツール（agent は ToolSearch 経由で WebSearch/WebFetch を要する）。
+- vault の `analysis` テンプレート（`track template list`）。無ければ、この skill の下記の構造から
+  作成する。
+- 相場系の事象では、`track-fetch-jquants`（J-Quants; `TRACK_JQUANTS_REFRESH_TOKEN`）が `data.source` の
+  ローソク足に実 OHLCV を供給できる。認証情報が無ければ、調査した値をそのまま chart に埋め込む。
 
 ## Workflow
 
-### 1. Frame the event and its lenses
+### 1. 事象とレンズを定める
 
-Write down the event as one sentence **including the user's premise verbatim** — premises are
-claims to verify, not facts to inherit. Pick 4–6 lenses; the default set generalizes well:
+事象を一文で書き出す。**ユーザーの前提をそのまま含める**こと — 前提は検証すべき主張であって、
+引き継ぐ事実ではない。レンズを 4〜6 個選ぶ。デフォルトの組み合わせが多くの場合に通用する:
 
-1. 事実関係・定量データ (the numbers: what exactly happened, how big, compared to what)
-2. 国内要因 (domestic context and preconditions)
-3. 海外要因 (international context)
-4. キーパーソンの発言・政策 (statements with exact quotes, timeline, and what was NOT said)
-5. 前後の推移とその後 (the days before/after, daily series if numeric, expert views)
+1. 事実関係・定量データ (数字: 何がどの規模で起きたか、何と比べてどうか)
+2. 国内要因 (国内の文脈と伏線)
+3. 海外要因 (国際的な文脈)
+4. キーパーソンの発言・政策 (正確な引用・タイムライン・言及されなかったことを伴う発言)
+5. 前後の推移とその後 (前後の日々、数値があれば日次系列、専門家の見方)
 
-### 2. Run the research workflow
+### 2. 調査ワークフローを走らせる
 
-Invoke the Workflow tool with the bundled script (in this skill's base directory):
+同梱のスクリプト（この skill の base directory 内）で Workflow ツールを呼び出す:
 
 ```
 Workflow({
@@ -49,51 +48,48 @@ Workflow({
 })
 ```
 
-The script runs sweep → adversarial verify → completeness critic, **harvest-first**: sweeps complete
-before verifiers spend budget, so hitting a session limit loses verification, never the research.
-If verify agents die (session limits), fall back to: (a) cross-agent number agreement, (b) arithmetic
-consistency (deltas, percentages, week sums), (c) WebFetch the 2–3 load-bearing primary articles
-yourself. Record which method backed each key claim.
+スクリプトは sweep → 敵対的 verify → 完全性 critic の順に走り、**harvest-first**（収穫優先）である。
+sweep が完了してから verifier が予算を消費するため、セッション上限に当たっても失われるのは検証であって
+調査ではない。verify agent が（セッション上限で）死んだ場合は、次の方法で代替する: (a) agent 間での
+数値の一致、(b) 計算の整合性（差分・パーセンテージ・週次合計）、(c) 重要な一次記事 2〜3 本を自分で
+WebFetch する。どの方法が各重要主張を裏付けたかを記録すること。
 
-### 3. Write the analysis note
+### 3. 分析 note を書く
 
-Create from the template: `track new --title "<YYYYMMDD> <event question>" --template analysis --tag report`.
-Fill it with the researched material, and treat these as hard rules:
+テンプレートから作成する: `track new --title "<YYYYMMDD> <event question>" --template analysis --tag report`。
+調査した素材で埋め、以下を絶対のルールとして扱う:
 
-- **Premise check first**: if the user's premise turned out wrong or imprecise, say so in an
-  `[!IMPORTANT]` alert in the conclusion, with the primary sources. Anchor the verdict paragraph
-  (`^premise`) for transclusion.
-- **Validate every figure before embedding**: `viewspec` JSON via `track render --spec` on a scratch
-  copy; `d2` blocks via the `d2` CLI (reserved words like `link` are not node names); keep mermaid
-  syntax conservative. A broken fence ships as an error box.
-- Chart with sources attached: event-marker overlays with `display: "box"` carry a `url` per event,
-  so the chart doubles as an index of evidence. Bands for periods, threshold lines for historical
-  baselines.
-- Researched daily series (the sweep's `daily_closes`) become inline records with one jq line — no
-  generator program needed:
+- **前提の検証が先**: ユーザーの前提が誤りまたは不正確と判明したら、結論部の `[!IMPORTANT]` alert で
+  一次ソースとともにそう述べる。判定の段落（`^premise`）を transclusion 用にアンカーする。
+- **埋め込む前に図をすべて検証する**: `viewspec` の JSON は使い捨てコピーに対して `track render --spec` で、
+  `d2` ブロックは `d2` CLI で検証する（`link` などの予約語はノード名にしない）。mermaid の構文は保守的に
+  保つ。壊れた fence はエラーボックスとして出力されてしまう。
+- 出典を添えた chart: `display: "box"` のイベントマーカーのオーバーレイは事象ごとに `url` を持ち、chart が
+  そのまま証拠の索引を兼ねる。期間は帯で、過去の基準値は閾値線で示す。
+- 調査した日次系列（sweep の `daily_closes`）は、jq 一行で inline record になる。生成プログラムは不要:
 
   ```sh
   jq -c '.[] | {name: "<series>", time: .date, value: .close, change: .change}' closes.json
   ```
 
-  Paste the lines into a `metric`-kind viewspec: `y[0]` the value as a line, `change` as bars on
-  `axis: "y2"`. Real OHLCV from `track-fetch-jquants` skips this entirely — `data.source` it.
-- Cite with GFM footnotes, split into "primary-verified" and "agent-collected". Flag anything
-  unverified in a `[!WARNING]` alert and list it under 未解決の問い as checkboxes.
-- Set sidecar metadata: `track meta --description ... --set subject-date=... --set verify-status=...`
-  (ASCII property keys only).
+  その行を `metric` 種の viewspec に貼り付ける。`y[0]` を値の線として、`change` を `axis: "y2"` 上の
+  棒として置く。`track-fetch-jquants` による実 OHLCV はこれを完全に省略し、`data.source` で扱う。
+- GFM 脚注で引用し、「primary-verified」（一次検証済み）と「agent-collected」（agent 収集）に分ける。
+  未検証のものは `[!WARNING]` alert で示し、未解決の問い の下に checkbox として列挙する。
+- sidecar メタデータを設定する: `track meta --description ... --set subject-date=... --set verify-status=...`
+  （property のキーは ASCII のみ）。
 
-### 4. Record the work memo and wire the graph
+### 4. 作業メモを記録しグラフを配線する
 
-- A short memo note (`from [[<project>]]`, tag `memo`): what ran, what failed, what was learned,
-  candidates worth mechanizing — as task lines with priorities.
-- Transclude the analysis note's `^premise` block into the memo instead of restating it.
-- Link both from the project/task note, `track fmt` the touched notes, `track reindex`, then verify
-  with `track backlinks`.
+- 短いメモ note（`from [[<project>]]`、tag `memo`）: 何を走らせ、何が失敗し、何が分かり、機械化に値する
+  候補は何か — 優先度付きの task line として書く。
+- 分析 note の `^premise` ブロックを、書き直さずにメモへ transclusion する。
+- 両方をプロジェクト/task note からリンクし、触れた note を `track fmt` し、`track reindex` し、
+  `track backlinks` で検証する。
 
 ## Verify
 
-- `track export --title "<analysis note>"` renders; every fence was validated pre-embed.
-- `track backlinks` shows the memo and project note pointing at the analysis note.
-- Tell the user the note titles, the premise verdict, and what remains unverified — in one short
-  paragraph, not a re-paste of the note.
+- `track export --title "<analysis note>"` がレンダリングできる。すべての fence は埋め込み前に検証済みである。
+- `track backlinks` が、メモと project note が分析 note を指していることを示す。
+- note のタイトル、前提の判定、未検証のまま残ったものをユーザーに伝える。note の再貼り付けではなく、
+  短い一段落で。

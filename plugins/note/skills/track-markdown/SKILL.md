@@ -1,20 +1,20 @@
 ---
 name: track-markdown
-description: Write and edit note bodies in track's Markdown dialect - wikilinks with level-based heading anchors, block anchors, transclusion, rich embeds, GitHub alerts, task lines with states and date tokens, sidecar metadata, inline properties, and the canonical track fmt style. Use when writing or editing note bodies in a track vault, or when wikilink/transclusion/alert/task/property syntax questions come up. For creating, searching, or renaming notes use the track skills; this skill covers body syntax only.
+description: track の Markdown 方言でノート本文を書いたり編集したりする。レベルベースの見出しアンカーを持つ wikilink、ブロックアンカー、トランスクルージョン、リッチ埋め込み、GitHub アラート、状態と日付トークンを持つタスク行、サイドカーメタデータ、インライン・プロパティ、そして track fmt の標準スタイルを扱う。track ボールトでノート本文を書いたり編集したりするとき、または wikilink／トランスクルージョン／アラート／タスク／プロパティの構文についての疑問が生じたときに使う。ノートの作成・検索・リネームには track 系スキルを使う。このスキルが扱うのは本文の構文のみ。
 ---
 
 # track Markdown
 
-track note bodies are CommonMark plus GFM (tables, task lists, strikethrough, footnotes with back-links) with a small set of track-specific constructs. Standard Markdown is assumed knowledge; this skill covers only the deltas: no frontmatter, level-based heading anchors, block-level-only transclusion, and exactly five alert types.
+track のノート本文は、CommonMark に GFM（表、タスクリスト、取り消し線、戻りリンク付き脚注）を加え、さらに track 固有の小さな構成要素を載せたものです。標準的な Markdown は既知とみなし、このスキルが扱うのは差分のみです。すなわち、frontmatter なし、レベルベースの見出しアンカー、ブロックレベルのみのトランスクルージョン、そしてちょうど5種類のアラート型です。
 
-## Preconditions
+## 前提条件
 
-- Use the `track` CLI as the source of truth. In the track source repo, `go run ./cmd/track` is an acceptable substitute.
-- Prefer the user's normal track config. `TRACK_VAULT` is for tests and one-off overrides.
-- Commands print single-line JSON (`export` prints Markdown). Treat `{"error":...}` with exit code 1 as failure.
-- This skill is about syntax inside note bodies. Creating, reading, and renaming notes belongs to the track-create-note / track-search-notes / track skills.
+- 真実の源として `track` CLI を使うこと。track のソースリポジトリでは `go run ./cmd/track` で代用してもかまいません。
+- ユーザーの通常の track 設定を優先すること。`TRACK_VAULT` はテストや一時的な上書き用です。
+- コマンドは1行の JSON を出力します（`export` は Markdown を出力します）。終了コード1の `{"error":...}` は失敗として扱います。
+- このスキルはノート本文の中の構文についてのものです。ノートの作成・閲覧・リネームは track-create-note / track-search-notes / track スキルの担当です。
 
-## Internal Links (Wikilinks)
+## 内部リンク（Wikilink）
 
 ```markdown
 [[Title]]                Link to the note titled exactly "Title"
@@ -24,18 +24,18 @@ track note bodies are CommonMark plus GFM (tables, task lists, strikethrough, fo
 [[Note#^block-id]]       Link to the block marked "^block-id" in Note
 ```
 
-- Resolution is **exact title match** only. No paths, no `.md` extension, no aliases — the title is the one link keyword, and titles are unique vault-wide.
-- **Heading anchors are level-based**: the number of `#` selects the heading **level**. `[[Note#foo]]` targets `# foo` (h1), `[[Note##bar]]` targets `## bar` (h2), up to h6. The first heading matching both level and text by document order wins.
-- `[[#Heading]]` (same-note anchor with no title) is **not** a link. Write the full title or drop it.
-- Never rename a note by editing its body H1 — retitle with `track rename` so backlinks are rewritten:
+- 解決は**タイトルの完全一致**のみです。パスも `.md` 拡張子もエイリアスも使えません。タイトルが唯一のリンクキーワードであり、タイトルはボールト全体で一意です。
+- **見出しアンカーはレベルベース**です。`#` の数が見出しの**レベル**を選びます。`[[Note#foo]]` は `# foo` (h1) を指し、`[[Note##bar]]` は `## bar` (h2) を指し、h6 まで続きます。レベルとテキストの両方が文書順で最初に一致する見出しが選ばれます。
+- `[[#Heading]]`（タイトルのない同一ノート内アンカー）はリンクでは**ありません**。完全なタイトルを書くか、省いてください。
+- 本文の H1 を編集してノートをリネームしてはいけません。`track rename` でタイトルを変更し、バックリンクを書き換えてもらいます。
 
 ```sh
 track rename --title "<old title>" --to "<new title>"
 ```
 
-## Block Anchors
+## ブロックアンカー
 
-A trailing `^id` on a paragraph or list item marks that block as a link target:
+段落やリスト項目の末尾の `^id` は、そのブロックをリンク先としてマークします。
 
 ```markdown
 The paragraph worth pointing at. ^explicit-links
@@ -43,13 +43,13 @@ The paragraph worth pointing at. ^explicit-links
 - a list item worth citing ^li-1
 ```
 
-- The id is `^`, then an alphanumeric, then letters, digits, `-`, `_`. It must be whitespace-separated from the text, so `foo^2` stays prose.
-- **Ids are manual only** — track never generates one, and the renderer hides the marker. Keep ids unique within a note; the first occurrence wins.
-- Target them with `[[Note#^id]]`, or transclude just that block with `![[Note#^id]]` (the marker is stripped on the way in).
+- id は `^` の後に英数字、その後に文字・数字・`-`・`_` が続きます。テキストとは空白で区切られている必要があるため、`foo^2` は散文のままです。
+- **id は手動のみ**です。track が自動生成することはなく、レンダラーはマーカーを隠します。ノート内で id を一意に保ってください。最初に現れたものが優先されます。
+- `[[Note#^id]]` でそれを指すか、`![[Note#^id]]` でそのブロックだけをトランスクルードします（マーカーは取り込み時に取り除かれます）。
 
-## Transclusion and Media Embeds
+## トランスクルージョンとメディア埋め込み
 
-`![[Note]]` on its own line embeds another note's content. It is **block-level only** — inside running text it is not a directive (the `[[...]]` part is still a plain link). It counts as a real link (graph, backlinks, rename) and is never recursively expanded.
+`![[Note]]` を単独の行に置くと、別のノートの内容を埋め込みます。これは**ブロックレベルのみ**で、本文の途中ではディレクティブになりません（`[[...]]` の部分は通常のリンクのままです）。これは実在するリンク（グラフ・バックリンク・リネーム）として扱われ、再帰的に展開されることはありません。
 
 ```markdown
 ![[Note]]                          Embed the whole note body
@@ -60,7 +60,7 @@ The paragraph worth pointing at. ^explicit-links
 ![[Note]] :lines 4-5,8             Embed only these 1-based lines
 ```
 
-`![[image.png]]` is **not** image syntax in track. Media uses standard Markdown pointing at the vault's single top-level `assets/` directory:
+track では `![[image.png]]` は画像構文では**ありません**。メディアには、ボールトの唯一のトップレベル `assets/` ディレクトリを指す標準 Markdown を使います。
 
 ```sh
 track asset import "<file>"    # copies into assets/ and prints the assets/<file> reference
@@ -70,30 +70,30 @@ track asset import "<file>"    # copies into assets/ and prints the assets/<file
 ![alt](assets/file.png)
 ```
 
-A standalone `![alt](url)` line is a rich embed — image, YouTube player, Google Maps, tweet, PDF viewer, or Open Graph card. Inline images inside a paragraph stay plain images. See [EMBEDS.md](references/EMBEDS.md) for the full transclusion grammar and embed catalog.
+単独の `![alt](url)` 行はリッチ埋め込みです。画像・YouTube プレイヤー・Google マップ・ツイート・PDF ビューア・Open Graph カードになります。段落内のインライン画像は通常の画像のままです。トランスクルージョンの完全な文法と埋め込みカタログは [EMBEDS.md](references/EMBEDS.md) を参照してください。
 
-## Alerts
+## アラート
 
-track callouts are GitHub alerts. Exactly five types, nothing else:
+track のコールアウトは GitHub アラートです。ちょうど5種類だけで、それ以外はありません。
 
 ```markdown
 > [!NOTE]
 > Useful context the reader should notice.
 ```
 
-| Type | Use for |
+| 種類 | 用途 |
 | --- | --- |
-| `[!NOTE]` | Useful context |
-| `[!TIP]` | Helpful suggestion |
-| `[!IMPORTANT]` | Must-not-miss information |
-| `[!WARNING]` | Something that needs care |
-| `[!CAUTION]` | Risky action |
+| `[!NOTE]` | 役立つ文脈 |
+| `[!TIP]` | 役立つ提案 |
+| `[!IMPORTANT]` | 見逃してはいけない情報 |
+| `[!WARNING]` | 注意が必要な事柄 |
+| `[!CAUTION]` | 危険を伴う操作 |
 
-Nothing beyond those five exists: no other types, no custom titles after the marker, no foldable `-`/`+` modifiers. A blockquote without a `[!TYPE]` marker is an ordinary quote.
+この5種類以外は存在しません。他の型も、マーカーの後の独自タイトルも、折りたたみ用の `-`/`+` 修飾子もありません。`[!TYPE]` マーカーのない引用ブロックは通常の引用です。
 
-## Task Lines
+## タスク行
 
-A GFM checkbox item is a task, and the character inside the brackets names its state, from a **fixed** five-state set:
+GFM のチェックボックス項目はタスクであり、括弧内の文字がその状態を表します。状態は**固定**の5種類から選びます。
 
 ```markdown
 - [ ] TODO — not started
@@ -103,16 +103,16 @@ A GFM checkbox item is a task, and the character inside the brackets names its s
 - [-] CANCELLED — will not happen
 ```
 
-Any other marker character is not a task; the line stays an ordinary list item. Bracket tokens anywhere on the line add metadata:
+それ以外のマーカー文字はタスクではありません。行は通常のリスト項目のままです。行のどこかに置いた括弧トークンはメタデータを追加します。
 
-| Token | Meaning |
+| トークン | 意味 |
 | --- | --- |
-| `[#A]` | Priority, `A` highest (any single letter) |
-| `[sched:2026-07-18]` | The day you plan to work on it |
-| `[due:2026-07-24]` | Deadline |
-| `[done:2026-07-09]` | Completion date — **written by the CLI**, never by hand |
+| `[#A]` | 優先度。`A` が最高（任意の1文字） |
+| `[sched:2026-07-18]` | 作業を予定している日 |
+| `[due:2026-07-24]` | 期限 |
+| `[done:2026-07-09]` | 完了日。**CLI が書き込む**もので、手では書きません |
 
-Dates are always `YYYY-MM-DD`, independent of the vault's display format. A `[n/m]` or `[p%]` cookie on a heading or parent list item counts the tasks beneath it (a heading counts to the next heading of the same or shallower level; a list item counts its deeper-indented children).
+日付は常に `YYYY-MM-DD` で、ボールトの表示形式には依存しません。見出しや親リスト項目にある `[n/m]` や `[p%]` のクッキーは、その下のタスク数を数えます（見出しは同じか浅いレベルの次の見出しまで数え、リスト項目はより深くインデントされた子を数えます）。
 
 ```markdown
 ### Release checklist [1/3]
@@ -122,7 +122,7 @@ Dates are always `YYYY-MM-DD`, independent of the vault's display format. A `[n/
 - [x] Tag the release candidate [done:2026-07-09]
 ```
 
-**Do not hand-edit a state marker.** Use the CLI so the `[done:]` stamp, the parent cookies, the sidecar transition log, and the index all stay consistent:
+**状態マーカーを手で編集してはいけません。** `[done:]` のスタンプ、親のクッキー、サイドカーの遷移ログ、インデックスがすべて整合を保つよう、CLI を使います。
 
 ```sh
 track task set --title "<note>" --line <n> --state DOING   # --line is 1-based, as reported by track search/export
@@ -130,43 +130,43 @@ track task cycle --title "<note>" --line <n>               # advance to the next
 track tasks --overdue --sort priority                      # query across the vault (JSON)
 ```
 
-An empty ` ```taskboard ` fence renders the note's tasks as a kanban board; it reads the task lines, not the fence body.
+空の ` ```taskboard ` フェンスは、ノートのタスクをかんばんボードとして描画します。フェンスの本文ではなくタスク行を読み取ります。
 
-## Metadata and Properties
+## メタデータとプロパティ
 
-**Never write YAML frontmatter.** All note metadata (title, tags, created, description, image, icon, typed props) lives in a per-note sidecar under `.track/`, set via the CLI only — `--tag` flags on `new`/`open`/`append`/`update`, and `track meta` for the rest. The body H1 is ordinary content, not the title.
+**YAML frontmatter は絶対に書かないでください。** ノートのメタデータ（title, tags, created, description, image, icon, 型付き props）はすべて、`.track/` の下のノートごとのサイドカーに置き、CLI でのみ設定します。`new`/`open`/`append`/`update` の `--tag` フラグと、それ以外は `track meta` です。本文の H1 はタイトルではなく通常のコンテンツです。
 
 ```sh
 track meta --title "<note>" --set status=draft --set rating=8
 track new --title "<title>" --tag <tag> --body "<body>"
 ```
 
-Inline typed properties in bodies are supported for data that belongs in prose: `key:: value` as a whole line or list item, or `[key:: value]` mid-sentence. Note-level facts (title, tags, icon) go in the sidecar instead. One inline field is structural: `up:: [[Parent]]` declares the note's parent for hierarchy navigation. See [PROPERTIES.md](references/PROPERTIES.md) for the sidecar shape, `track meta` usage, typing rules, and the `up` relation.
+散文に属するデータについては、本文中のインライン型付きプロパティがサポートされています。行全体またはリスト項目としての `key:: value`、文の途中での `[key:: value]` です。ノートレベルの事実（title, tags, icon）は代わりにサイドカーへ置きます。構造的役割を持つインライン項目が1つあります。`up:: [[Parent]]` は階層ナビゲーションのためにノートの親を宣言します。サイドカーの形、`track meta` の使い方、型付けルール、`up` リレーションについては [PROPERTIES.md](references/PROPERTIES.md) を参照してください。
 
-## Math and Rendering Fences
+## 数式と描画フェンス
 
-Math is LaTeX by KaTeX: inline `$...$`, block `$$...$$`.
+数式は KaTeX による LaTeX です。インラインは `$...$`、ブロックは `$$...$$`。
 
-Fenced blocks that render instead of showing code — ` ```mermaid `, ` ```dot `/` ```graphviz `, ` ```d2 `, ` ```mindmap `, ` ```viewspec `, ` ```track-query `, ` ```dashboard `, ` ```taskboard `, and babel-annotated language fences — are catalogued in the **track-create-note** skill, with full syntax in the track repo's `docs/help/`. Two non-obvious ones: an **empty** ` ```mindmap ` fence renders the note's own heading tree, and a ` ```viewspec ` block's `data.source` resolves under the vault's `data/` directory.
+コードを表示するのではなく描画するフェンス — ` ```mermaid `, ` ```dot `/` ```graphviz `, ` ```d2 `, ` ```mindmap `, ` ```viewspec `, ` ```track-query `, ` ```dashboard `, ` ```taskboard `, および babel 注釈付き言語フェンス — は **track-create-note** スキルにカタログされており、完全な構文は track リポジトリの `docs/help/` にあります。自明でない2つを挙げます。**空の** ` ```mindmap ` フェンスはノート自身の見出しツリーを描画し、` ```viewspec ` ブロックの `data.source` はボールトの `data/` ディレクトリの下で解決されます。
 
-**A diagram names no colors.** Diagram fences are handed to the renderer as written, initialized with the reader's current theme and re-drawn when the theme changes — so a diagram that specifies no colors is legible in light and dark alike. Colors written into the source pass through untouched and hold in *both* themes, which means one of the two shows a diagram drawn for the other: dark text on a dark node, a pale line on a pale page. Write no `style` or `classDef` fill, no `%%{init: …}%%` block setting `themeVariables`, and no `fillcolor`/`bgcolor` in `dot`. Where a distinction matters, carry it with shape, label, or layout, which read the same either way. The exception is a diagram whose colors *are* the content (a palette, a traffic-light legend); there, set both foreground and background explicitly so the pair is self-contained.
+**ダイアグラムには色を書かない。** ダイアグラムフェンスは書かれたとおりにレンダラーへ渡され、読者の現在のテーマで初期化され、テーマが変わると再描画されます。そのため、色を指定しないダイアグラムはライトでもダークでも同様に判読できます。ソースに書き込まれた色はそのまま素通りし、*両方*のテーマで維持されます。つまり、どちらか一方のテーマでは、もう一方のために描かれたダイアグラムが見えることになります。暗いノードの上の暗い文字、薄いページの上の薄い線、といった具合です。`style` や `classDef` の塗り、`themeVariables` を設定する `%%{init: …}%%` ブロック、`dot` の `fillcolor`/`bgcolor` は書かないでください。区別が重要な場合は、形・ラベル・レイアウトで表現します。これらはどちらのテーマでも同じように読めます。例外は、色そのものが内容であるダイアグラム（パレット、信号機の凡例など）です。その場合は前景と背景の両方を明示的に設定し、その組だけで自己完結させます。
 
-## House Style (track fmt)
+## ハウススタイル（track fmt）
 
-`track fmt` rewrites notes into a canonical style. Generate Markdown that already conforms so `fmt` is a no-op:
+`track fmt` はノートを標準スタイルに書き換えます。`fmt` が何もしなくて済むよう、すでに準拠した Markdown を生成してください。
 
-- `-` bullets only, never `*` or `+`.
-- Exactly two blank lines before and one after each heading (none before a heading that starts the document — leading blank lines are dropped).
-- Collapse other blank-line runs to a single blank line.
-- No trailing whitespace; file ends with exactly one newline.
-- Always fence code blocks — indented code blocks are not protected by `fmt`.
+- 箇条書きは `-` のみ。`*` や `+` は使わない。
+- 各見出しの前にはちょうど2行の空行、後には1行の空行を置く（文書の先頭にある見出しの前には置かない。先頭の空行は削除される）。
+- その他の連続する空行は1行の空行にまとめる。
+- 末尾の空白は置かない。ファイルはちょうど1つの改行で終わる。
+- コードブロックは常にフェンスで囲む。インデントされたコードブロックは `fmt` の保護対象外です。
 
 ```sh
 track fmt --check --all    # CI check; track fmt <path> formats in place
 ```
 
-## Unsupported Syntax
+## 非対応の構文
 
-These render as literal text — never emit them: `%%comments%%` (use `<!-- HTML comments -->`), `==highlight==`, inline `#tags` in bodies (tags are sidecar-only; `#tag` works only in search queries), inline footnotes `^[text]` (use GFM `[^label]` + definition), sized images `![alt|300](url)`, and cross-note ` ```tasks ` or ` ```query ` blocks (use ` ```taskboard ` for the note's own tasks, `track tasks` / `track search` from the CLI for the vault).
+これらはリテラルテキストとして表示されます。生成してはいけません。`%%comments%%`（代わりに `<!-- HTML comments -->` を使う）、`==highlight==`、本文中のインライン `#tags`（タグはサイドカーのみ。`#tag` は検索クエリでのみ機能する）、インライン脚注 `^[text]`（GFM の `[^label]`＋定義を使う）、サイズ付き画像 `![alt|300](url)`、そしてノートをまたぐ ` ```tasks ` や ` ```query ` ブロック（ノート自身のタスクには ` ```taskboard ` を、ボールト全体には CLI の `track tasks` / `track search` を使う）です。
 
-Audio and video have no player: link the asset instead — `[label](assets/file.mp3)`.
+音声と動画にはプレイヤーがありません。代わりにアセットへリンクします — `[label](assets/file.mp3)`。

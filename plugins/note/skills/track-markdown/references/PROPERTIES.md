@@ -1,17 +1,17 @@
-# Properties Reference
+# プロパティリファレンス
 
-Note metadata never lives in the body: there is **no YAML frontmatter** in track. Each note has a sidecar file (`.track/notes/<id>.yaml`) holding its title, tags, created timestamp, description, cover image, icon, and typed properties under `props`. The body stays plain Markdown, and its H1 is ordinary content — the sidecar title is the authoritative name and the link keyword. Edit metadata through the CLI, not by hand-editing the sidecar.
+ノートのメタデータは本文には置かれません。track には **YAML frontmatter はありません**。各ノートにはサイドカーファイル（`.track/notes/<id>.yaml`）があり、title、tags、作成タイムスタンプ、description、カバー画像、icon、`props` の下の型付きプロパティを保持します。本文はプレーンな Markdown のままで、その H1 は通常のコンテンツです。サイドカーの title が正式な名前であり、リンクキーワードになります。メタデータはサイドカーを手で編集するのではなく、CLI を通して編集します。
 
-## Sidecar Metadata via the CLI
+## CLI によるサイドカーメタデータ
 
-Tags are set with `--tag` flags on the authoring commands (repeat the flag for multiple tags); `track update --clear-tags` removes them:
+タグは、作成系コマンドの `--tag` フラグで設定します（複数タグはフラグを繰り返します）。`track update --clear-tags` はそれらを削除します。
 
 ```sh
 track new --title "<title>" --tag <tag> --tag <tag2> --body "<body>"
 track append --title "<title>" --tag <extra-tag> --body "<more>"
 ```
 
-Everything else goes through `track meta`:
+それ以外はすべて `track meta` を通します。
 
 ```sh
 track meta --title "<note>"                                        # print metadata incl. props (JSON)
@@ -22,19 +22,19 @@ track meta --title "<note>" --set "authors=[[Ada Lovelace]], [[Alan Turing]]"
 track meta --title "<note>" --unset rating
 ```
 
-`--set` accepts repeated `key=value` pairs; `--unset` removes a key. Values are typed from their text (see Typing Rules); a comma-separated value becomes a list.
+`--set` は `key=value` の組を繰り返し受け取ります。`--unset` はキーを削除します。値はそのテキストから型付けされます（型付けルール参照）。カンマ区切りの値はリストになります。
 
-### `--edit` applies whole state
+### `--edit` は状態全体を適用する
 
-`track meta --edit -` reads a **complete metadata document** from stdin and applies it atomically — it replaces the whole editable state (title, tags, description, image, icon, props), not a patch. A changed title is a rename. To use it safely: print the current document with a plain `track meta` call, modify it, and pipe the full result back. For point edits prefer `--set`/`--unset`.
+`track meta --edit -` は stdin から**完全なメタデータドキュメント**を読み取り、アトミックに適用します。パッチではなく、編集可能な状態全体（title, tags, description, image, icon, props）を置き換えます。title を変更するとリネームになります。安全に使うには、素の `track meta` 呼び出しで現在のドキュメントを出力し、それを変更して、完全な結果をパイプで戻します。一点だけの編集には `--set`/`--unset` を優先してください。
 
 ```sh
 track meta --title "<note>" --edit -    # full metadata document on stdin
 ```
 
-## Inline Fields (`key:: value`)
+## インラインフィールド（`key:: value`）
 
-The sidecar is the home for note-level facts. When a data point belongs **in the prose** — a `weight:: 68.2` line in a journal is a line of the journal — write it directly in the body. Three placements:
+サイドカーはノートレベルの事実の置き場です。データが**散文の中に**属する場合 — 日誌の `weight:: 68.2` の行は日誌の一行である — は、本文に直接書きます。配置は3通りです。
 
 ```markdown
 status:: draft
@@ -42,17 +42,17 @@ status:: draft
 Met with [owner:: [[Ada Lovelace]]] about the plan.
 ```
 
-- **Whole line** — `key:: value` on its own line.
-- **List item** — `- key:: value` (numbered items included).
-- **Bracketed, mid-sentence** — `[key:: value]` inside a paragraph.
+- **行全体** — 単独の行に `key:: value`。
+- **リスト項目** — `- key:: value`（番号付き項目も含む）。
+- **括弧付き・文中** — 段落内の `[key:: value]`。
 
-Inline fields are indexed into the same property index as sidecar values, each with the body line it came from, and keep rendering as the text you wrote — they are data and prose at once. Code is never scanned: `std::vector` in a fence stays code, and a `[key:: value]` inside inline code never becomes data.
+インラインフィールドは、サイドカーの値と同じプロパティインデックスに、それぞれ出所の本文行とともにインデックスされ、書いたテキストのまま描画され続けます。データであると同時に散文です。コードはスキャンされません。フェンス内の `std::vector` はコードのままですし、インラインコード内の `[key:: value]` がデータになることはありません。
 
-Choosing a home: a fact that is not prose (a title, a tag, an icon, a status that describes the note itself) belongs in the sidecar via `track meta`; a fact that reads as part of the text belongs inline.
+置き場所の選び方。散文ではない事実（title、tag、icon、ノート自身を表す status）は `track meta` でサイドカーに置きます。テキストの一部として読める事実はインラインに置きます。
 
-## `up`: The One Structural Property
+## `up`: 唯一の構造プロパティ
 
-`up` is an ordinary property with one conventional meaning: it names the note's parent, and track derives hierarchy navigation from it — breadcrumbs, a children list, and `track nav`. There is no outline file to maintain.
+`up` は、1つの慣習的な意味を持つ通常のプロパティです。ノートの親を指し、track はそこから階層ナビゲーション（パンくず、子リスト、`track nav`）を導出します。保守すべきアウトラインファイルはありません。
 
 ```markdown
 up:: [[Projects]]
@@ -63,29 +63,29 @@ track meta --title "<note>" --set "up=[[Projects]]"
 track nav --id <id>    # ancestor trail + children, as JSON (--id or --path only, not --title)
 ```
 
-- **Only a link-typed value counts.** `up:: draft` is just a string property and creates no parent.
-- Several parents are allowed: the breadcrumb trail follows the first, every parent still lists the note among its children.
-- A cycle (`A → B → A`) is harmless — the trail stops where it would repeat.
-- The note view does not show `up` in the property strip: the breadcrumbs *are* its display.
+- **リンク型の値だけが対象です。** `up:: draft` はただの文字列プロパティであり、親を作りません。
+- 親は複数許されます。パンくずトレイルは最初の親をたどり、どの親もノートを自分の子の一覧に載せます。
+- 循環（`A → B → A`）は無害です。トレイルは繰り返しになるところで止まります。
+- ノートビューは `up` をプロパティストリップに表示しません。パンくず*そのもの*がその表示だからです。
 
-## Typing Rules
+## 型付けルール
 
-The same detection applies everywhere — sidecar `props`, inline fields, and `--set` values:
+同じ判定がどこでも適用されます — サイドカーの `props`、インラインフィールド、`--set` の値です。
 
-| Value text | Type |
+| 値のテキスト | 型 |
 | --- | --- |
 | `true`, `false` | boolean |
 | `8`, `-3.5` | number |
-| `2026-07-11` (a real calendar date) | date |
+| `2026-07-11`（実在する暦日） | date |
 | `[[Title]]` | link |
-| `go, lua` (top-level commas) | list — each item typed on its own |
-| anything else | string |
+| `go, lua`（トップレベルのカンマ） | list — 各項目が個別に型付けされる |
+| それ以外 | string |
 
-A link value keeps its resolution key (`[[Ada Lovelace|Ada]]` stores `Ada Lovelace`) and resolves like any wikilink. Commas inside `[[...]]` do not split a list.
+リンク値はその解決キーを保持し（`[[Ada Lovelace|Ada]]` は `Ada Lovelace` を保存）、他の wikilink と同様に解決されます。`[[...]]` 内のカンマはリストを分割しません。
 
-## Schema and Diagnostics
+## スキーマと診断
 
-Optionally declare a schema in the track config file (`config.yml` under the track config directory, e.g. `~/.config/track/config.yml`; `TRACK_CONFIG` overrides — not a vault file) to constrain keys:
+キーを制約するため、track 設定ファイル（track 設定ディレクトリの `config.yml`。例: `~/.config/track/config.yml`。`TRACK_CONFIG` で上書きされる — ボールトのファイルではない）にスキーマを宣言することもできます。
 
 ```yaml
 properties:
@@ -96,10 +96,10 @@ properties:
     type: number
 ```
 
-`type` is one of `string`, `number`, `boolean`, `date`, `link`; `values` is an optional enum. Undeclared keys stay unconstrained. `track doctor` reports every value that breaks the schema, with the note and body line it came from, and the editor LSP completes declared keys and values.
+`type` は `string`, `number`, `boolean`, `date`, `link` のいずれかです。`values` は任意の列挙です。宣言されていないキーは制約を受けません。`track doctor` はスキーマに違反するすべての値を、その値の出所のノートと本文行とともに報告し、エディタの LSP は宣言されたキーと値を補完します。
 
-## Where Properties Show Up
+## プロパティが表示される場所
 
-- The web workspace and published site show a property strip above the body: sidecar values first, then inline fields in body order.
-- `track meta` prints them as JSON for scripts.
-- The index stores every value typed and with line provenance for filtering and search.
+- Web ワークスペースと公開サイトは、本文の上にプロパティストリップを表示します。サイドカーの値が先、その後に本文順のインラインフィールドです。
+- `track meta` はスクリプト向けにこれらを JSON で出力します。
+- インデックスはすべての値を型付きで、かつ行の出所付きで保存し、フィルタリングと検索に供します。

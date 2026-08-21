@@ -1,156 +1,155 @@
 ---
 name: track-task-runner
 description: >-
-  Work through the TODO and Bug checklists recorded in a track note: locate the
-  task note via the track CLI, then autonomously implement its unchecked items in
-  the current project, easiest first, committing each and moving it out of the
-  note into a dated worklog note that links back to the source. Follows a linked
-  plan note when the item has one. Use when the user asks to process/work through
-  a TODO or Bug list, "handle the task note", or address items tracked in a track
-  note. Pairs with track-project-intake, which records and plans those items.
+  track ノートに記録された TODO と Bug のチェックリストを消化する。track CLI で
+  タスクノートを特定し、その未チェック項目を現在のプロジェクトで自律的に実装する。
+  易しいものから着手し、それぞれをコミットしたうえでノートから外し、出典へリンクする
+  日付つき worklog ノートへ移す。項目にプランノートがある場合はそれに従う。
+  ユーザーが TODO や Bug リストの処理・消化を依頼したとき、つまり「タスクノートを
+  処理して」（handle the task note）や track ノートで管理された項目への対処を求められた
+  ときに使う。項目の記録と計画を担う track-project-intake と対になる。
 ---
 
 # Track Task Runner
 
-Drive implementation work from a track note's `## TODO` and `## Bug` checklists. The note (in the
-user's track vault) is the task source; the code changes happen in the current project's working
-directory — the two may be different places. This skill pairs the track CLI (read the note, move done
-items into a worklog note) with ordinary code work (implement, verify, commit).
+track ノートの `## TODO` と `## Bug` チェックリストから実装作業を進める。ノート（ユーザーの
+track ボールト内）がタスクの源泉であり、コード変更は現在のプロジェクトの作業ディレクトリで
+行われる。両者は別の場所であってよい。このスキルは、track CLI（ノートを読み、完了項目を
+worklog ノートへ移す）と通常のコード作業（実装・検証・コミット）を組み合わせる。
 
-When an item is finished it is **moved out** of the task note into a dated worklog note (one per
-day per task note), so the task note's checklist only ever holds outstanding work and the worklog
-note becomes the running log of what shipped, linked back to the source. Both notes are the
-**shared record between the developer and the agent**: the checklist says what is outstanding, the
-worklog says what was done and with which commit — write them so the developer does not have to ask.
+項目が完了したら、タスクノートから**外へ移す**。日付つき worklog ノート（タスクノートごとに
+1日1つ）へ移すことで、タスクノートのチェックリストには未処理の作業だけが残り、worklog ノートは
+出荷済みのものの実行ログとなって出典へリンクされる。どちらのノートも**開発者とエージェントの
+共有記録**である。チェックリストは未処理のものを示し、worklog は何をどのコミットで行ったかを
+示す。開発者が尋ねずに済むように書くこと。
 
-It runs **autonomously and continuously**: pick the next tractable item, finish it end to end, then
-move on, until nothing tractable remains.
+これは**自律的かつ継続的に**実行される。次の手がつけられる項目を選び、端から端まで完了させて
+次へ進む。手がつけられる項目がなくなるまで続ける。
 
-## Prerequisites
+## 前提条件
 
-- `track` CLI on `PATH`, resolving against the user's normal vault. (Inside the track source repo,
-  `go run ./cmd/track` substitutes.) All track commands print single-line JSON; parse stdout and treat
-  `{"error":...}` with exit code 1 as failure.
-- A git working tree for the project whose tasks the note describes.
+- `track` CLI が `PATH` 上にあり、ユーザーの通常のボールトに対して解決できること。（track の
+  ソースリポジトリ内では `go run ./cmd/track` で代用する。）track の全コマンドは1行の JSON を
+  出力する。stdout をパースし、exit code 1 の `{"error":...}` は失敗として扱うこと。
+- ノートが記述するタスクの対象プロジェクトの git ワーキングツリー。
 
-## 1. Locate the task note
+## 1. タスクノートを特定する
 
-- **Explicit**: if the user names the note (title / id / path), resolve it:
+- **明示指定**: ユーザーがノートを名指しした場合（タイトル / id / パス）、それを解決する。
   ```sh
   track resolve --term "<title>"          # {"found":true,"note_id":N,"path":"…/note/<id>.md"}
   ```
-- **Auto-discover**: otherwise find notes carrying the checklists. Search the body for the headings and
-  keep candidates whose match is an actual `## TODO` / `## Bug` heading (inspect the `snippet`):
+- **自動検出**: それ以外は、チェックリストを持つノートを探す。本文を見出しで検索し、一致部分が
+  実際の `## TODO` / `## Bug` 見出しである候補を残す（`snippet` を確認する）。
   ```sh
   track search --scope body --query "Bug" --limit 10
   track search --scope body --query "TODO" --limit 10
   ```
-  Use the single note that has the sections. If several plausibly match, list them and ask which one
-  before doing any work.
+  そのセクションを持つ単一のノートを使う。複数がもっともらしく一致する場合は、作業を始める前に
+  それらを列挙してどれかを尋ねる。
 
-Read the full note to get the current checklist state:
+現在のチェックリスト状態を得るためにノート全体を読む。
 
 ```sh
 track export --id <note_id>     # full Markdown body to stdout
 ```
 
-Also capture the note's **title** — you need it to name the worklog note and to write the backlink.
-`resolve` does not return it; read it from the frontmatter (or from the `search` result that found the
-note):
+ノートの**タイトル**も控えること。worklog ノートの命名とバックリンク記述に必要になる。
+`resolve` はタイトルを返さない。frontmatter（またはノートを見つけた `search` の結果）から読む。
 
 ```sh
 track export --id <note_id> --frontmatter | sed -n 's/^title: //p'
 ```
 
-## 2. Parse the checklist
+## 2. チェックリストを解析する
 
-- Unchecked items are `- [ ] <text>` lines under the `## TODO` or `## Bug` heading.
-- `- [x] …` items are already done — skip them. Finished items are normally moved out into the
-  worklog note (section 5), so the task note's checklist should hold mostly unchecked work; any
-  stray `[x]` left behind is still skipped.
-- Treat `## Bug` and `## TODO` items as one combined backlog of candidate work.
+- 未チェック項目は `## TODO` または `## Bug` 見出しの下にある `- [ ] <text>` の行である。
+- `- [x] …` は既に完了しているのでスキップする。完了項目は通常 worklog ノートへ移される
+  （セクション5）ため、タスクノートのチェックリストにはほとんど未チェックの作業だけが残る。
+  取り残された `[x]` も同様にスキップする。
+- `## Bug` と `## TODO` の項目は、候補作業の1つのバックログとしてまとめて扱う。
 
-## 3. Choose order — easiest first, defer the hard
+## 3. 順序を選ぶ — 易しいものから、難しいものは保留
 
-- Rank unchecked items by how tractable they look (small, localized, well-specified changes first).
-- Start with the easiest. **If an item turns out difficult, ambiguous, or blocked, stop working it,
-  leave it unchecked, and move to another item.** Never sink the whole run into one hard item.
-- Re-evaluate after each item; a skipped item may be retried at the end if time allows.
+- 未チェック項目を、手がつけやすそうな順（小さく、局所的で、仕様が明確な変更が先）にランク付けする。
+- 最も易しいものから始める。**項目が難しい・曖昧・ブロックされていると分かったら、その作業を止め、
+  未チェックのまま残して別の項目へ移る。** 1つの難しい項目に実行全体を沈めてはならない。
+- 各項目の後に再評価する。スキップした項目は、時間があれば最後に再挑戦してよい。
 
 ## 4. Per-item loop (autonomous)
 
-For each chosen item:
+選んだ各項目について:
 
-1. **Understand** the item. If its checklist line links a plan note (`→ [[…]]`), read it first —
-   `track export --title "<plan note title>"`. Its **Approach** is a decision already settled with the
-   developer, not a suggestion to re-open; implement the **Steps** in order and honor the **Risks**
-   section's verification. Then read the relevant code.
-2. **Implement** the change, matching the surrounding code's conventions.
-3. **Verify** using the project's own rules — read `CLAUDE.md` / `AGENTS.md` / README for the canonical
-   test and build commands, and run them (e.g. the project's test suite, a type-check, or a build).
-   Do not mark an item done if verification fails.
-4. **Commit** the change as one coherent unit, following the project's git conventions (branch policy,
-   message style, required trailers). Stay on the user's chosen branch; if on the default branch,
-   create a feature branch first. Do not push unless the user asked.
-5. **Move the item to the worklog note** (next section): append it there, then delete it from the
-   task note. Continue to the next item.
+1. **理解**する。チェックリストの行がプランノート（`→ [[…]]`）にリンクしているなら、先にそれを
+   読む（`track export --title "<plan note title>"`）。その **Approach** は開発者と既に合意済みの
+   決定であり、再検討の提案ではない。**Steps** を順に実装し、**Risks** セクションの検証を守る。
+   そのうえで関連コードを読む。
+2. **実装**する。周囲のコードの規約に合わせる。
+3. **検証**する。プロジェクト自身のルールに従う。標準のテスト・ビルドコマンドを得るため
+   `CLAUDE.md` / `AGENTS.md` / README を読み、実行する（例: テストスイート、型チェック、ビルド）。
+   検証が失敗したら項目を完了扱いにしてはならない。
+4. **コミット**する。1つのまとまりとして、プロジェクトの git 規約（ブランチ方針、メッセージの
+   流儀、必須トレーラー）に従う。ユーザーが選んだブランチに留まる。デフォルトブランチなら、
+   先にフィーチャーブランチを作る。ユーザーが求めない限り push しない。
+5. **項目を worklog ノートへ移す**（次セクション）。そこへ追記し、タスクノートから削除する。
+   次の項目へ進む。
 
-Keep going without pausing for confirmation between items — the point is an unattended sweep.
+項目の合間に確認のために立ち止まらず、進み続けること。無人での一括処理が目的である。
 
-## 5. Move a completed item to the worklog note
+## 5. 完了項目を worklog ノートへ移す
 
-A finished item is **moved**, not marked in place: it is appended to a dated worklog note and then
-removed from the task note's checklist. The worklog note's title is today's date `YYYYMMDD` prefixed
-to the task note's title, so each day gets its own log per task note. Example: task note `タスク` →
-worklog note `20260617 タスク`.
+完了項目は、その場でマークするのではなく**移される**。日付つき worklog ノートへ追記され、その後
+タスクノートのチェックリストから除去される。worklog ノートのタイトルは、今日の日付 `YYYYMMDD` を
+タスクノートのタイトルの前に付けたものなので、タスクノートごとに1日1つのログが得られる。
+例: タスクノート `タスク` → worklog ノート `20260617 タスク`。
 
-1. **Ensure the worklog note exists.** Use `open` (idempotent — creates on first completion of the
-   day, reuses it afterward), seeding a header that links back to the source note:
+1. **worklog ノートが存在することを確認する。** `open` を使う（冪等。その日の最初の完了時に
+   作成し、以後は再利用する）。出典ノートへリンクするヘッダーを仕込む。
    ```sh
    printf 'from [[<task note title>]]\n\n## DONE\n' \
      | track open --title "<YYYYMMDD> <task note title>" --tag worklog
    ```
-   Run this once per item; `open` is a no-op when the note already exists, so the header is written only
-   on creation.
+   項目ごとに1回実行する。`open` はノートが既に存在するとき no-op なので、ヘッダーは作成時のみ
+   書き込まれる。
 
-2. **Append the completed item** to the worklog note, carrying the original text, a dated reference
-   to the commit that resolved it, and a `[[…]]` backlink to the source note:
+2. **完了項目を worklog ノートへ追記する。** 元のテキスト、それを解決したコミットへの日付つき
+   参照、出典ノートへの `[[…]]` バックリンクを添える。
    ```sh
    printf -- '- [x] <original text> (2026-06-17: `0216f6e` 概要を一行で)\n' \
      | track append --title "<YYYYMMDD> <task note title>"
    ```
-   - Date is today; the hash is the short hash of the commit from step 4.
-   - Write the summary in the note's existing language (match the surrounding entries).
-   - `append` adds to the end, so items accumulate in worklog order under `## DONE`.
+   - 日付は今日。ハッシュはステップ4のコミットの短いハッシュ。
+   - 概要はノートの既存の言語で書く（周囲のエントリに合わせる）。
+   - `append` は末尾に追加するので、項目は `## DONE` の下に worklog 順で蓄積される。
 
-3. **Remove the item from the task note.** Delete the original `- [ ]` line in place from the task note
-   file (path from step 1). This is the "move": the item leaves the source checklist entirely. Edit the
-   body directly — track has no line-edit command, and `append` only adds to the end.
+3. **項目をタスクノートから除去する。** 元の `- [ ]` 行をタスクノートのファイル（ステップ1の
+   パス）からその場で削除する。これが「移動」であり、項目は出典のチェックリストから完全に
+   去る。本文を直接編集する。track には行編集コマンドがなく、`append` は末尾に追加するだけだから
+   である。
 
-4. **Refresh the index** so search, links, and backlinks stay consistent across both notes:
+4. **インデックスを更新する。** 検索・リンク・バックリンクが両ノートで一貫するようにする。
    ```sh
    track reindex
    ```
 
-## 6. Deferring difficult items
+## 6. 難しい項目の保留
 
-When you skip an item, leave its `- [ ]` unchecked. Optionally append a short
-`(YYYY-MM-DD: 保留 — <reason>)` so the reason is recorded, but never mark it `[x]`. Move on.
+項目をスキップするときは、その `- [ ]` を未チェックのまま残す。理由を記録するために短い
+`(YYYY-MM-DD: 保留 — <reason>)` を追記してよいが、決して `[x]` にはしない。先へ進む。
 
-## 7. Stop and report
+## 7. 停止して報告する
 
-Stop when no tractable unchecked items remain. Report a concise summary:
+手がつけられる未チェック項目がなくなったら停止する。簡潔なサマリーを報告する。
 
-- **Done**: each finished item with its commit hash, now moved into the worklog note.
-- **Deferred**: each skipped item with the reason it was hard or blocked (left in the task note).
-- The branch the commits landed on, and the worklog note's title (`YYYYMMDD <task note title>`).
+- **Done**: 完了した各項目とそのコミットハッシュ。現在は worklog ノートへ移されている。
+- **Deferred**: スキップした各項目と、難しい・ブロックされていた理由（タスクノートに残っている）。
+- コミットが載ったブランチと、worklog ノートのタイトル（`YYYYMMDD <task note title>`）。
 
-## Safety
+## 安全性
 
-- Autonomous within the working tree only: implement, test, and commit freely; treat anything
-  outward-facing (push, PR, releases, deletions of work you did not create) as needing explicit
-  approval.
-- If verification fails and you cannot fix it quickly, revert or leave the change uncommitted, defer
-  the item, and report it — never move a failing item to the worklog note.
-- Only move an item out of the task note **after** its commit landed and it was appended to the
-  worklog note, so a failed run never drops work on the floor.
+- 自律的に行ってよいのはワーキングツリー内のみ。実装・テスト・コミットは自由に行う。外向きの
+  もの（push、PR、リリース、自分が作ったものでないものの削除）は明示的な承認が必要として扱う。
+- 検証が失敗し、すぐに直せないなら、リバートするか変更を未コミットのまま残して、その項目を
+  保留にして報告する。失敗した項目を worklog ノートへ移してはならない。
+- 項目をタスクノートから移すのは、そのコミットが確定し worklog ノートへ追記された**後**に
+  限る。失敗した実行で作業を失わないためである。
