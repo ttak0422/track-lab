@@ -73,7 +73,7 @@ track search --query "#report <topic keywords>"
 | 同じ問いで、答えが変わらない | 触らない。会話の中で答えればよい |
 | 同じ主題の別の問い | 新しいノートを作り、相互にリンクする |
 
-改訂するときは `japanese-report-readability` の改訂パスを通す。冒頭の結論を先に直し、主張が変わった
+改訂するときは `track-japanese-report-readability` の改訂パスを通す。冒頭の結論を先に直し、主張が変わった
 節を置換し、陳腐化した事実と脚注の取得日を揃える。読者に新旧の取捨選択をさせてはならない。
 
 ### 3. レポートノートを作成する
@@ -131,9 +131,9 @@ track export --title "<主題>"
 
 本文は同じディレクトリの規範に従って書く。
 
-- `../japanese-tech-writing/SKILL.md` —— 文と段落のレベル。整形、論証の厳密さ、冗長の排除。
-- `../japanese-report-readability/SKILL.md` —— 層構造、密度の傾斜、削除パス。冒頭の結論が L0+L1、
+- `../track-japanese-tech-writing/SKILL.md` —— 文と段落のレベル。整形、論証の厳密さ、冗長の排除。
+- `../track-japanese-report-readability/SKILL.md` —— 層構造、密度の傾斜、削除パス。冒頭の結論が L0+L1、
   自由な節が L2、脚注と `## 未決` が L3 に対応する。
 
-explainer を書くときは、さらに `../cognitive-rhythm-writing/SKILL.md` の緩急を適用する
+explainer を書くときは、さらに `../track-cognitive-rhythm-writing/SKILL.md` の緩急を適用する
 （`track-explainer` を参照）。レポートには適用しない。

@@ -14,11 +14,11 @@ report が「調べた結果の記録」なら、explainer は「そのテーマ
 
 ## 併用する規範
 
-同じディレクトリの `../japanese-report-readability/SKILL.md` を先に読む。
+同じディレクトリの `../track-japanese-report-readability/SKILL.md` を先に読む。
 あちらは一本のレポートの構造と総量を扱う。この skill は、複数の report を一枚に畳む変換だけを扱う。
 
 explainer は人間が最初から最後まで読まれることを想定するページなので、文と段落の緩急は
-`../cognitive-rhythm-writing/SKILL.md` に従う（基礎の文規範として `../japanese-tech-writing/SKILL.md`）。
+`../track-cognitive-rhythm-writing/SKILL.md` に従う（基礎の文規範として `../track-japanese-tech-writing/SKILL.md`）。
 report とは逆に、こちらは読み物である。
 
 ## 原則
@@ -87,7 +87,7 @@ report ごとに節を作らない。読者が理解する順に主題を並べ�
 
 ### 5. 削る
 
-`japanese-report-readability` の削除パスをかける。explainer で特に落ちやすいのは次の三つ。
+`track-japanese-report-readability` の削除パスをかける。explainer で特に落ちやすいのは次の三つ。
 
 - **各 report の要約** — リンク先で読める。ここに置くと量が戻り、explainer である理由が消える。
 - **調査の経緯と判断の変遷** — report にも要らないものが、面に残る道理はない。
