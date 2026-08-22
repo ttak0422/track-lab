@@ -14,8 +14,12 @@ report が「調べた結果の記録」なら、explainer は「そのテーマ
 
 ## 併用する規範
 
-同じディレクトリの `../japanese-report-readability/SKILL.md` を先に読む。
+同じディレクトリの `../track-japanese-report-readability/SKILL.md` を先に読む。
 あちらは一本のレポートの構造と総量を扱う。この skill は、複数の report を一枚に畳む変換だけを扱う。
+
+explainer は人間が最初から最後まで読むことを想定するページなので、文と段落の緩急は
+`../track-cognitive-rhythm-writing/SKILL.md` に従う（基礎の文規範として `../track-japanese-tech-writing/SKILL.md`）。
+report とは逆に、こちらは読み物である。
 
 ## 原則
 
@@ -83,7 +87,7 @@ report ごとに節を作らない。読者が理解する順に主題を並べ�
 
 ### 5. 削る
 
-`japanese-report-readability` の削除パスをかける。explainer で特に落ちやすいのは次の三つ。
+`track-japanese-report-readability` の削除パスをかける。explainer で特に落ちやすいのは次の三つ。
 
 - **各 report の要約** — リンク先で読める。ここに置くと量が戻り、explainer である理由が消える。
 - **調査の経緯と判断の変遷** — report にも要らないものが、面に残る道理はない。
@@ -102,7 +106,7 @@ printf '## 全体像\n\n## いま未解決なもの\n\n## ソース\n' \
 | --- | --- |
 | 全体像 | 図一つと、その下に三〜五行。ここだけ読んで話が通じる状態にする |
 | 主題ごとの節 | 一節一主題。導線を本文に埋める。report 単位で切らない |
-| いま未解決なもの | report を横断して残っている問い。各 report の `Open questions` の再掲ではなく、横断して残ったものだけ |
+| いま未解決なもの | report を横断して残っている問い。各 report の `## 未決` の再掲ではなく、横断して残ったものだけ |
 | ソース | report の一覧。ここだけは網羅的でよい |
 
 `up:: [[<parent>]]` を置くと親テーマからたどれる。テーマが階層を持つなら使う。

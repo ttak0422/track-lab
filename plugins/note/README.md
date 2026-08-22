@@ -23,7 +23,9 @@ the `track` plugin. track itself now carries only the CLI and its tool-neutral c
 | [track](skills/track/SKILL.md) | Vault maintenance: rename with backlink rewrite, doctor, reindex, generations, task toggles. |
 | [track-markdown](skills/track-markdown/SKILL.md) | The body syntax itself: wikilinks and level-based heading anchors, block anchors, transclusion, GitHub alerts, task lines, inline properties, and the `track fmt` house style. |
 | [track-clip](skills/track-clip/SKILL.md) | Read a web page as clean Markdown with `track-fetch-web` instead of WebFetch, and save it as a `clip`-tagged note with provenance. |
-| [japanese-report-readability](skills/japanese-report-readability/SKILL.md) | Keep a Japanese report readable while it stays detailed: conclusion-first layers, a density gradient, and a deletion pass over the writing an agent produced. |
+| [track-japanese-report-readability](skills/track-japanese-report-readability/SKILL.md) | Keep a Japanese report readable while it stays detailed: conclusion-first layers, a density gradient, and a deletion pass over the writing an agent produced. |
+| [track-japanese-tech-writing](skills/track-japanese-tech-writing/SKILL.md) | Sentence-and-paragraph craft for Japanese technical prose: formatting, argument rigor, reader load, and a ban on LLM filler. The base layer under every writing skill here. |
+| [track-cognitive-rhythm-writing](skills/track-cognitive-rhythm-writing/SKILL.md) | Pacing for pages humans read start to finish: cognitive-mode switches, open tension, sentence beats, and the topic test for pruning filler. Applied to explainers. |
 
 ## The record
 
@@ -50,7 +52,7 @@ only one of the four written to be read rather than to be found. Reports optimis
 the explainer optimises for how fast someone understands the topic, which means it is mostly a
 subtraction from what the reports hold.
 
-`japanese-report-readability` is the odd one out: it touches no vault and runs no CLI. It governs the
+`track-japanese-report-readability` is the odd one out: it touches no vault and runs no CLI. It governs the
 prose an agent puts *into* those notes. A report nobody rereads is as lost as one nobody can find, and
 the failure mode of an agent-written Japanese report is not missing detail — it is uniform detail with
 no gradient, which costs the reader the same effort on the conclusion as on a footnote.
@@ -75,6 +77,19 @@ syntax used to be, so that context lives here in the README instead.
 | `json-canvas` | Not imported — track has no `.canvas` surface (nearest: mermaid/dot/mindmap fences). |
 | `obsidian-bases` | Not imported — track has no `.base` surface (nearest: `track-query` blocks and viewspec charts). |
 
+## Referenced skills
+
+Both start from gists by [k16shikano](https://gist.github.com/k16shikano) (Unlicense); provenance
+lives here instead of inside the skills.
+
+| Skill | Source | Relationship to upstream |
+| ----- | ------ | ------------------------ |
+| `track-japanese-tech-writing` | <https://gist.github.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d> | Body byte-identical to upstream; `name:` prefixed |
+| `track-cognitive-rhythm-writing` | <https://gist.github.com/k16shikano/eb2929f13ed19c97188393d297be8432> | Forked and re-aimed at explainer notes — track surfaces, figures, and wikilink routes replace the book-chapter vocabulary; the machinery (topic test, tension ledger, leak test) is preserved |
+
+Division of labor: reports follow `track-japanese-tech-writing` + `track-japanese-report-readability`; explainers add
+`track-cognitive-rhythm-writing` on top. Watch and project notes are history-first and are out of scope for all three.
+
 ## Requirements
 
 - `track` CLI on `PATH`, resolving against the user's normal vault.
@@ -87,18 +102,22 @@ plugins/note/
 ├── .claude-plugin/plugin.json
 ├── .codex-plugin/plugin.json
 └── skills/
-    ├── japanese-report-readability/SKILL.md
-    ├── track/SKILL.md
     ├── track-clip/SKILL.md
+    ├── track-cognitive-rhythm-writing/SKILL.md
     ├── track-create-note/SKILL.md
+    ├── track-explainer/SKILL.md
+    ├── track-japanese-report-readability/SKILL.md
+    ├── track-japanese-tech-writing/SKILL.md
     ├── track-markdown/
     │   ├── SKILL.md
     │   └── references/{EMBEDS,PROPERTIES}.md
-    ├── track-explainer/SKILL.md
+    ├── track-news-analysis/SKILL.md
     ├── track-project-intake/SKILL.md
     ├── track-report/SKILL.md
     ├── track-search-notes/SKILL.md
-    └── track-task-runner/SKILL.md
+    ├── track-task-runner/SKILL.md
+    ├── track-watch/SKILL.md
+    └── track/SKILL.md
 ```
 
 ## Install
