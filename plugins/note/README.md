@@ -24,7 +24,7 @@ the `track` plugin. track itself now carries only the CLI and its tool-neutral c
 | [track-markdown](skills/track-markdown/SKILL.md) | The body syntax itself: wikilinks and level-based heading anchors, block anchors, transclusion, GitHub alerts, task lines, inline properties, and the `track fmt` house style. |
 | [track-clip](skills/track-clip/SKILL.md) | Read a web page as clean Markdown with `track-fetch-web` instead of WebFetch, and save it as a `clip`-tagged note with provenance. |
 | [track-japanese-report-readability](skills/track-japanese-report-readability/SKILL.md) | Keep a Japanese report readable while it stays detailed: conclusion-first layers, a density gradient, and a deletion pass over the writing an agent produced. |
-| [track-track-japanese-tech-writing](skills/track-track-japanese-tech-writing/SKILL.md) | Sentence-and-paragraph craft for Japanese technical prose: formatting, argument rigor, reader load, and a ban on LLM filler. The base layer under every writing skill here. |
+| [track-japanese-tech-writing](skills/track-japanese-tech-writing/SKILL.md) | Sentence-and-paragraph craft for Japanese technical prose: formatting, argument rigor, reader load, and a ban on LLM filler. The base layer under every writing skill here. |
 | [track-cognitive-rhythm-writing](skills/track-cognitive-rhythm-writing/SKILL.md) | Pacing for pages humans read start to finish: cognitive-mode switches, open tension, sentence beats, and the topic test for pruning filler. Applied to explainers. |
 
 ## The record
@@ -84,10 +84,10 @@ lives here instead of inside the skills.
 
 | Skill | Source | Relationship to upstream |
 | ----- | ------ | ------------------------ |
-| `track-track-japanese-tech-writing` | <https://gist.github.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d> | Vendored byte-identical |
+| `track-japanese-tech-writing` | <https://gist.github.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d> | Vendored byte-identical |
 | `track-cognitive-rhythm-writing` | <https://gist.github.com/k16shikano/eb2929f13ed19c97188393d297be8432> | Forked and re-aimed at explainer notes — track surfaces, figures, and wikilink routes replace the book-chapter vocabulary; the machinery (topic test, tension ledger, leak test) is preserved |
 
-Division of labor: reports follow `track-track-japanese-tech-writing` + `track-japanese-report-readability`; explainers add
+Division of labor: reports follow `track-japanese-tech-writing` + `track-japanese-report-readability`; explainers add
 `track-cognitive-rhythm-writing` on top. Watch and project notes are history-first and are out of scope for all three.
 
 ## Requirements
@@ -104,7 +104,7 @@ plugins/note/
 └── skills/
     ├── track-cognitive-rhythm-writing/SKILL.md
     ├── track-japanese-report-readability/SKILL.md
-    ├── track-track-japanese-tech-writing/SKILL.md
+    ├── track-japanese-tech-writing/SKILL.md
     ├── track/SKILL.md
     ├── track-clip/SKILL.md
     ├── track-create-note/SKILL.md
