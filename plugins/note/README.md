@@ -84,7 +84,7 @@ lives here instead of inside the skills.
 
 | Skill | Source | Relationship to upstream |
 | ----- | ------ | ------------------------ |
-| `track-japanese-tech-writing` | <https://gist.github.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d> | Vendored byte-identical |
+| `track-japanese-tech-writing` | <https://gist.github.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d> | Body byte-identical to upstream; `name:` prefixed |
 | `track-cognitive-rhythm-writing` | <https://gist.github.com/k16shikano/eb2929f13ed19c97188393d297be8432> | Forked and re-aimed at explainer notes — track surfaces, figures, and wikilink routes replace the book-chapter vocabulary; the machinery (topic test, tension ledger, leak test) is preserved |
 
 Division of labor: reports follow `track-japanese-tech-writing` + `track-japanese-report-readability`; explainers add
@@ -102,20 +102,22 @@ plugins/note/
 ├── .claude-plugin/plugin.json
 ├── .codex-plugin/plugin.json
 └── skills/
+    ├── track-clip/SKILL.md
     ├── track-cognitive-rhythm-writing/SKILL.md
+    ├── track-create-note/SKILL.md
+    ├── track-explainer/SKILL.md
     ├── track-japanese-report-readability/SKILL.md
     ├── track-japanese-tech-writing/SKILL.md
-    ├── track/SKILL.md
-    ├── track-clip/SKILL.md
-    ├── track-create-note/SKILL.md
     ├── track-markdown/
     │   ├── SKILL.md
     │   └── references/{EMBEDS,PROPERTIES}.md
-    ├── track-explainer/SKILL.md
+    ├── track-news-analysis/SKILL.md
     ├── track-project-intake/SKILL.md
     ├── track-report/SKILL.md
     ├── track-search-notes/SKILL.md
-    └── track-task-runner/SKILL.md
+    ├── track-task-runner/SKILL.md
+    ├── track-watch/SKILL.md
+    └── track/SKILL.md
 ```
 
 ## Install

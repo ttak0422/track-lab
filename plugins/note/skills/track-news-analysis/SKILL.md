@@ -56,7 +56,8 @@ WebFetch する。どの方法が各重要主張を裏付けたかを記録す�
 
 ### 3. 分析 note を書く
 
-テンプレートから作成する: `track new --title "<YYYYMMDD> <event question>" --template analysis --tag report`。
+テンプレートから作成する: `track new --title "<YYYYMMDD> <event question>" --template analysis --tag analysis`。
+分析 note は事象時点のスナップショットであり、日付付きタイトルと履歴が本体である。`report` タグは付けない — report の契約（無日期タイトル、時系列を積まない）はこの note 種には適用されない。
 調査した素材で埋め、以下を絶対のルールとして扱う:
 
 - **前提の検証が先**: ユーザーの前提が誤りまたは不正確と判明したら、結論部の `[!IMPORTANT]` alert で

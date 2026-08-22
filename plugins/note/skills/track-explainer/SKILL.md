@@ -17,7 +17,7 @@ report が「調べた結果の記録」なら、explainer は「そのテーマ
 同じディレクトリの `../track-japanese-report-readability/SKILL.md` を先に読む。
 あちらは一本のレポートの構造と総量を扱う。この skill は、複数の report を一枚に畳む変換だけを扱う。
 
-explainer は人間が最初から最後まで読まれることを想定するページなので、文と段落の緩急は
+explainer は人間が最初から最後まで読むことを想定するページなので、文と段落の緩急は
 `../track-cognitive-rhythm-writing/SKILL.md` に従う（基礎の文規範として `../track-japanese-tech-writing/SKILL.md`）。
 report とは逆に、こちらは読み物である。
 
