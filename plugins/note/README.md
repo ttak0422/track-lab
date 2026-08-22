@@ -24,6 +24,8 @@ the `track` plugin. track itself now carries only the CLI and its tool-neutral c
 | [track-markdown](skills/track-markdown/SKILL.md) | The body syntax itself: wikilinks and level-based heading anchors, block anchors, transclusion, GitHub alerts, task lines, inline properties, and the `track fmt` house style. |
 | [track-clip](skills/track-clip/SKILL.md) | Read a web page as clean Markdown with `track-fetch-web` instead of WebFetch, and save it as a `clip`-tagged note with provenance. |
 | [japanese-report-readability](skills/japanese-report-readability/SKILL.md) | Keep a Japanese report readable while it stays detailed: conclusion-first layers, a density gradient, and a deletion pass over the writing an agent produced. |
+| [japanese-tech-writing](skills/japanese-tech-writing/SKILL.md) | Sentence-and-paragraph craft for Japanese technical prose: formatting, argument rigor, reader load, and a ban on LLM filler. The base layer under every writing skill here. |
+| [cognitive-rhythm-writing](skills/cognitive-rhythm-writing/SKILL.md) | Pacing for pages humans read start to finish: cognitive-mode switches, open tension, sentence beats, and the topic test for pruning filler. Applied to explainers. |
 
 ## The record
 
@@ -75,6 +77,20 @@ syntax used to be, so that context lives here in the README instead.
 | `json-canvas` | Not imported — track has no `.canvas` surface (nearest: mermaid/dot/mindmap fences). |
 | `obsidian-bases` | Not imported — track has no `.base` surface (nearest: `track-query` blocks and viewspec charts). |
 
+## Referenced skills
+
+`japanese-tech-writing` and `cognitive-rhythm-writing` are vendored from gists by
+[k16shikano](https://gist.github.com/k16shikano) (Unlicense). Bodies are kept byte-identical to
+upstream; provenance lives here instead of inside the skills.
+
+| Skill | Source | Role in this plugin |
+| ----- | ------ | ------------------- |
+| `japanese-tech-writing` | <https://gist.github.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d> | Base prose norms; applies to every note this plugin writes |
+| `cognitive-rhythm-writing` | <https://gist.github.com/k16shikano/eb2929f13ed19c97188393d297be8432> | Pacing for pages humans read start to finish — explainers |
+
+Division of labor: reports follow `japanese-tech-writing` + `japanese-report-readability`; explainers add
+`cognitive-rhythm-writing` on top. Watch and project notes are history-first and are out of scope for all three.
+
 ## Requirements
 
 - `track` CLI on `PATH`, resolving against the user's normal vault.
@@ -87,7 +103,9 @@ plugins/note/
 ├── .claude-plugin/plugin.json
 ├── .codex-plugin/plugin.json
 └── skills/
+    ├── cognitive-rhythm-writing/SKILL.md
     ├── japanese-report-readability/SKILL.md
+    ├── japanese-tech-writing/SKILL.md
     ├── track/SKILL.md
     ├── track-clip/SKILL.md
     ├── track-create-note/SKILL.md
