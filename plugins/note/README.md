@@ -79,14 +79,13 @@ syntax used to be, so that context lives here in the README instead.
 
 ## Referenced skills
 
-`japanese-tech-writing` and `cognitive-rhythm-writing` are vendored from gists by
-[k16shikano](https://gist.github.com/k16shikano) (Unlicense). Bodies are kept byte-identical to
-upstream; provenance lives here instead of inside the skills.
+Both start from gists by [k16shikano](https://gist.github.com/k16shikano) (Unlicense); provenance
+lives here instead of inside the skills.
 
-| Skill | Source | Role in this plugin |
-| ----- | ------ | ------------------- |
-| `japanese-tech-writing` | <https://gist.github.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d> | Base prose norms; applies to every note this plugin writes |
-| `cognitive-rhythm-writing` | <https://gist.github.com/k16shikano/eb2929f13ed19c97188393d297be8432> | Pacing for pages humans read start to finish — explainers |
+| Skill | Source | Relationship to upstream |
+| ----- | ------ | ------------------------ |
+| `japanese-tech-writing` | <https://gist.github.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d> | Vendored byte-identical |
+| `cognitive-rhythm-writing` | <https://gist.github.com/k16shikano/eb2929f13ed19c97188393d297be8432> | Forked and re-aimed at explainer notes — track surfaces, figures, and wikilink routes replace the book-chapter vocabulary; the machinery (topic test, tension ledger, leak test) is preserved |
 
 Division of labor: reports follow `japanese-tech-writing` + `japanese-report-readability`; explainers add
 `cognitive-rhythm-writing` on top. Watch and project notes are history-first and are out of scope for all three.
