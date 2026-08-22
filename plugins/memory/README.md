@@ -48,8 +48,16 @@ codex plugin marketplace add ttak0422/track-lab
 codex plugin add memory@track-lab
 ```
 
-OpenCode: run `scripts/sync-opencode-skills.sh` from the repo root — the plugin's skills are
-then discoverable in `.opencode/skills/` from any opencode session in this repository.
+OpenCode:
+
+```sh
+scripts/sync-opencode-skills.sh memory
+```
+
+Links this plugin's skills into `~/.config/opencode/skills/`, where opencode discovers them
+natively; add `--project` to link into the current project's `.opencode/skills/` instead.
+Run it from the repository root and re-run after adding, renaming, or removing a skill —
+only links owned by the synced plugins are touched.
 
 Standalone: copy or symlink `plugins/memory/skills/<name>` into `.claude/skills/<name>` or
 `.opencode/skills/<name>`.
