@@ -69,6 +69,31 @@ fi
 
 mkdir -p "$target"
 
+# Print $1 (absolute path) as a path relative to directory $2 (absolute).
+# Project-level links are committed to git, so they must survive other
+# machines and other checkout locations; global links stay absolute.
+relpath() {
+  local target="$1" from="$2"
+  local -a t d
+  local IFS='/'
+  read -ra t <<< "${target#/}"
+  read -ra d <<< "${from#/}"
+  local i=0
+  while [ "$i" -lt "${#d[@]}" ] && [ "$i" -lt "${#t[@]}" ] && [ "${d[$i]}" = "${t[$i]}" ]; do
+    i=$((i + 1))
+  done
+  local out=""
+  local j
+  for ((j = i; j < ${#d[@]}; j++)); do
+    out="../$out"
+  done
+  for ((j = i; j < ${#t[@]}; j++)); do
+    out+="${t[$j]}"
+    [ "$j" -lt $((${#t[@]} - 1)) ] && out+="/"
+  done
+  printf '%s' "${out:-.}"
+}
+
 linked=0
 for plugin in ${selected[@]+"${selected[@]}"}; do
   skills_dir="$plugins_root/$plugin/skills"
@@ -99,7 +124,11 @@ for plugin in ${selected[@]+"${selected[@]}"}; do
       echo "skip $plugin/$name: $entry already exists and is not ours" >&2
       continue
     fi
-    ln -s "$skill_dir" "$entry"
+    if $scope_global; then
+      ln -s "$skill_dir" "$entry"
+    else
+      ln -s "$(relpath "$skill_dir" "$target")" "$entry"
+    fi
     linked=$((linked + 1))
   done
 done
