@@ -23,6 +23,7 @@ the `track` plugin. track itself now carries only the CLI and its tool-neutral c
 | [track](skills/track/SKILL.md) | Vault maintenance: rename with backlink rewrite, doctor, reindex, generations, task toggles. |
 | [track-markdown](skills/track-markdown/SKILL.md) | The body syntax itself: wikilinks and level-based heading anchors, block anchors, transclusion, GitHub alerts, task lines, inline properties, and the `track fmt` house style. |
 | [track-clip](skills/track-clip/SKILL.md) | Read a web page as clean Markdown with `track-fetch-web` instead of WebFetch, and save it as a `clip`-tagged note with provenance. |
+| [track-tool](skills/track-tool/SKILL.md) | Write a small single-file HTML tool for a note to embed: what survives the sandboxed iframe, and the one stylesheet that keeps a vault's tools looking like one set. |
 | [track-japanese-report-readability](skills/track-japanese-report-readability/SKILL.md) | Keep a Japanese report readable while it stays detailed: conclusion-first layers, a density gradient, and a deletion pass over the writing an agent produced. |
 | [track-japanese-tech-writing](skills/track-japanese-tech-writing/SKILL.md) | Sentence-and-paragraph craft for Japanese technical prose: formatting, argument rigor, reader load, and a ban on LLM filler. The base layer under every writing skill here. |
 | [track-cognitive-rhythm-writing](skills/track-cognitive-rhythm-writing/SKILL.md) | Pacing for pages humans read start to finish: cognitive-mode switches, open tension, sentence beats, and the topic test for pruning filler. Applied to explainers. |
@@ -116,6 +117,7 @@ plugins/note/
     ├── track-report/SKILL.md
     ├── track-search-notes/SKILL.md
     ├── track-task-runner/SKILL.md
+    ├── track-tool/SKILL.md
     ├── track-watch/SKILL.md
     └── track/SKILL.md
 ```
