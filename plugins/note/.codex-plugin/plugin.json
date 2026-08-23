@@ -1,6 +1,6 @@
 {
   "name": "note",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Notes as the shared record between developer and agent, backed by the track CLI.",
   "author": {
     "name": "track-lab"
@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "Note",
     "shortDescription": "Keep the developer and the agent on the same page in a track vault.",
-    "longDescription": "A track vault is where the developer and the agent record what they both need to know: decisions, findings, and outstanding work. These skills create and search notes, write bodies in track's Markdown dialect, clip web pages into the vault, record incoming project work as checklist items, file research reports, keep those reports readable when they are written in Japanese, and keep a plan and worklog for the work an agent carries out.",
+    "longDescription": "A track vault is where the developer and the agent record what they both need to know: decisions, findings, and outstanding work. These skills create and search notes, write bodies in track's Markdown dialect, clip web pages into the vault, record incoming project work as checklist items, file research reports, keep those reports readable when they are written in Japanese, build single-file HTML tools a note can embed, and keep a plan and worklog for the work an agent carries out.",
     "developerName": "track-lab",
     "category": "Productivity",
     "capabilities": [
@@ -27,6 +27,7 @@
       "Use $track-task-runner to work through my project note's checklist.",
       "Use $track-markdown to write this note body in track's Markdown dialect.",
       "Use $track-clip to read this URL and save it as a note.",
+      "Use $track-tool to build a small HTML tool this note can embed.",
       "Use $track to rename a note and update backlinks."
     ]
   }
