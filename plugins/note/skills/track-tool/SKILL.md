@@ -14,7 +14,7 @@ description: track ノートに埋め込む、HTML 1枚で完結する小さな�
 
 - 真実の情報源として `track` CLI を使う。track のソースリポジトリでは `go run ./cmd/track` を代わりに使ってよい。
 - 成果物は HTML ファイル1枚である。ビルド、npm、React は使わない。
-- 埋め込まれたページは `sandbox="allow-scripts allow-popups"` で動く。`allow-same-origin` は付かない。
+- 埋め込まれたページは `sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"` と `allow="clipboard-write"` で動く。`allow-same-origin` は付かない。
 
 ## 動くものと動かないもの
 
@@ -25,24 +25,23 @@ sandbox に `allow-same-origin` がないため、フレームは一意の不透
 | --- | --- |
 | JavaScript の実行 | 動く |
 | CDN からの読み込み | 動く（sandbox が切るのはオリジンであって通信ではない） |
-| `window.open` と `target="_blank"` | 窓は開く。ただし開いた先も同じ sandbox を引き継ぐ（`allow-popups-to-escape-sandbox` がない） |
+| `window.open` と `target="_blank"` | 窓は開き、開いた先は通常の閲覧文脈になる（`allow-popups-to-escape-sandbox` がある） |
 | 親タブの遷移 | 動かない（`allow-top-navigation` がない） |
 | localStorage, sessionStorage, IndexedDB, Cookie | 動かない（SecurityError） |
 | 同一オリジンへの fetch | 動かない |
 | フォーム送信 | 動かない（`allow-forms` がない）。検証も走らず、無言で何も起きない |
 | `alert`, `confirm`, `prompt` | 動かない（`allow-modals` がない） |
 | `<a download>` によるダウンロード | 動かない（`allow-downloads` がない） |
-| `navigator.clipboard` | 当てにしない（Permissions Policy の既定は `self`） |
+| `navigator.clipboard` | `allow="clipboard-write"` で許可される。ただし不透明オリジンへの委譲は未検証なので、確実なのは `document.execCommand("copy")` |
 | 親ノートへの結果の返却 | 動かない（受け手がない） |
 
 保存先がないので、ツールは入力から出力までを一度で閉じる形になる。
 計算機、変換器、ジェネレータ、可視化は成立する。
 下書きが残るエディタと、API キーを保持する種類のツールは成立しない。
 
-外部サイトへ送り出すツールも成立しない。
-検索フォームは submit が無言で落ちる。
-`<form>` を使わずに JS で窓を開いても、その窓が同じ sandbox を引き継ぐため、Cookie もストレージもない状態で相手のサイトが開く。
-URL を組み立てて画面に出し、読者にコピーさせるところまでが、この面でできることである。
+外部サイトへ送り出すツールは成立する。
+`<form>` の submit は `allow-forms` がないため無言で落ちるが、URL を組み立てて `window.open` かリンクで開けば、開いた先は通常の閲覧文脈になる（`allow-popups-to-escape-sandbox`）。
+Cookie もセッションもある状態で相手のサイトが開くので、検索フォームは「URL を組み立てて窓を開く」形にする。
 
 ## 骨組み
 
@@ -138,7 +137,7 @@ track asset import ./<tool>.html     # assets/<tool>.html を返す
 同じ sandbox 属性を持つラッパーを1枚作って、その中で確かめる。
 
 ```html
-<iframe src="./<tool>.html" sandbox="allow-scripts allow-popups" style="width:100%;height:480px"></iframe>
+<iframe src="./<tool>.html" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox" allow="clipboard-write" style="width:100%;height:480px"></iframe>
 ```
 
 埋め込みに書く `:height` と同じ高さで開き、storage とダウンロードと `alert` に触れていないこと、そして縦スクロールが出ないことを確認する。
