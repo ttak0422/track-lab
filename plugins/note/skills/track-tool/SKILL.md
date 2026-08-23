@@ -23,11 +23,13 @@ sandbox に `allow-same-origin` がないため、フレームは一意の不透
 
 | 機能 | 可否 |
 | --- | --- |
-| JavaScript の実行、`window.open` | 動く |
+| JavaScript の実行 | 動く |
 | CDN からの読み込み | 動く（sandbox が切るのはオリジンであって通信ではない） |
+| `window.open` と `target="_blank"` | 窓は開く。ただし開いた先も同じ sandbox を引き継ぐ（`allow-popups-to-escape-sandbox` がない） |
+| 親タブの遷移 | 動かない（`allow-top-navigation` がない） |
 | localStorage, sessionStorage, IndexedDB, Cookie | 動かない（SecurityError） |
 | 同一オリジンへの fetch | 動かない |
-| フォーム送信 | 動かない（`allow-forms` がない） |
+| フォーム送信 | 動かない（`allow-forms` がない）。検証も走らず、無言で何も起きない |
 | `alert`, `confirm`, `prompt` | 動かない（`allow-modals` がない） |
 | `<a download>` によるダウンロード | 動かない（`allow-downloads` がない） |
 | `navigator.clipboard` | 当てにしない（Permissions Policy の既定は `self`） |
@@ -36,6 +38,11 @@ sandbox に `allow-same-origin` がないため、フレームは一意の不透
 保存先がないので、ツールは入力から出力までを一度で閉じる形になる。
 計算機、変換器、ジェネレータ、可視化は成立する。
 下書きが残るエディタと、API キーを保持する種類のツールは成立しない。
+
+外部サイトへ送り出すツールも成立しない。
+検索フォームは submit が無言で落ちる。
+`<form>` を使わずに JS で窓を開いても、その窓が同じ sandbox を引き継ぐため、Cookie もストレージもない状態で相手のサイトが開く。
+URL を組み立てて画面に出し、読者にコピーさせるところまでが、この面でできることである。
 
 ## 骨組み
 
