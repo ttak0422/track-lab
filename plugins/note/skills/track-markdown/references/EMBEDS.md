@@ -59,13 +59,13 @@ track asset import "<file>"    # copies the file into assets/ and prints the ref
 | テキストアセット（`.txt`, `.json`, `.yaml`, `.csv`, `.sh`, ...） | シンタックスハイライト付きコードブロック |
 | Mermaid ソースアセット（`.mmd` / `.mermaid`） | 描画されたダイアグラム |
 | `.viewspec.json` アセット | インタラクティブチャート |
-| HTML アセット、または `.html` で終わる `http(s)` ページ URL | サンドボックス化された iframe |
-| その他の `http(s)` ページ | Open Graph カード（タイトル、説明、プレビュー画像） |
+| HTML アセット（`.html` / `.htm`） | サンドボックス化された iframe |
+| その他の `http(s)` ページ（`.html` を含む） | Open Graph カード（タイトル、説明、プレビュー画像） |
 
 HTML 埋め込みは、埋め込みの後に `:height` オプションをとる（素の数値 = ピクセル。`%` または `vh` = ビューポート高の割合）:
 
 ```markdown
-![Widget](assets/widget.html) :height 480
+![Demo](assets/demo.html) :height 480
 ![Map](assets/map.html) :height 90%
 ```
 
