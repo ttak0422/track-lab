@@ -60,13 +60,28 @@ sandbox に `allow-same-origin` がないため、フレームは一意の不透
       :root {
         --pico-font-family-sans-serif: "IBM Plex Sans JP", system-ui, sans-serif;
       }
+      html,
       body {
+        height: 100%;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        margin: 0;
         padding: 1rem;
+      }
+      /* 伸びるのはここだけにする。操作部と出典は常に見えたままになる。 */
+      main {
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
       }
     </style>
   </head>
   <body>
-    <main><!-- 入力と出力 --></main>
+    <section><!-- 入力。常に見える位置に置く --></section>
+    <main><!-- 出力 --></main>
+    <footer><!-- from <ノート名> --></footer>
     <script>
       // 状態は持たない。入力が変わったら出力を作り直す。
     </script>
@@ -86,7 +101,9 @@ track 本体のテーマ（`:root` の `data-theme`）はフレームから読�
 4. ライブラリを読むなら版を固定し、読めなかったときの表示を DOM に持たせる。
 5. 状態を持たせない。値の保存が要る設計になったら、ツールではなくノートに書く。
 6. 出力は画面表示に寄せる。コピーが要るなら `document.execCommand("copy")` へ落とすか、選択できるテキストとして出す。
-7. フッターに生成元のノート名を1行置く。どこから来たツールかを追えるようにする。
+7. 縦に伸び続けるレイアウトにしない。伸びる領域だけを `overflow: auto` に閉じ込め、操作部は常に見えるようにする。
+8. 埋め込みでは `:height` に実寸を指定し、`:frame none` を既定にする。
+9. フッターに生成元のノート名を1行置く。どこから来たツールかを追えるようにする。
 
 ## 置いて埋め込む
 
@@ -94,14 +111,18 @@ track 本体のテーマ（`:root` の `data-theme`）はフレームから読�
 track asset import ./<tool>.html     # assets/<tool>.html を返す
 ```
 
-返ってきた参照を、ノート本文に埋め込む。
+返ってきた参照を、ノート本文に埋め込む。オプションは並べて書ける。
 
 ```markdown
-![<ツール名>](assets/<tool>.html) :height 480
+![<ツール名>](assets/<tool>.html) :height 560 :frame none
 ```
 
-面に貼り込むなら `:frame none` を足す。
-高さの指定と枠の扱いは `../track-markdown/references/EMBEDS.md` に揃える。
+`:frame none` を既定にする。枠と角丸が消え、ツールがノートの面に直接乗る。sandbox は変わらない。
+
+高さは書き手が決める。
+フレームは自分の高さを親へ伝えられない（不透明オリジンであり、受け手もない）ので、`:height` を省くと既定の 360px のまま中身が縦にスクロールする。
+実際に使う画面幅で測った高さを指定し、スクロールが出ない状態にする。
+オプションの完全な形は `../track-markdown/references/EMBEDS.md` にある。
 
 ## 確認
 
@@ -113,4 +134,4 @@ track asset import ./<tool>.html     # assets/<tool>.html を返す
 <iframe src="./<tool>.html" sandbox="allow-scripts allow-popups" style="width:100%;height:480px"></iframe>
 ```
 
-storage、ダウンロード、`alert` に触れていないことを、この状態で確認する。
+埋め込みに書く `:height` と同じ高さで開き、storage とダウンロードと `alert` に触れていないこと、そして縦スクロールが出ないことを確認する。
