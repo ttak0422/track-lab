@@ -56,6 +56,7 @@ track new --title "<scope-prefixed topic>" --tag memory --body "<one-line summar
 
 3. Convert relative dates ("yesterday", "last week") to absolute dates before saving.
 4. Link liberally: reference related memories and project notes with `[[Title]]`. Backlinks are what make later consolidation possible.
+5. Report the change with the note's title (e.g. "Stored in `<scope-prefixed topic>`"). The vault holds many notes, so a bare "saved" or "noted" leaves the user unable to tell which one changed.
 
 ## Correct and Remove
 
