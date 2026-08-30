@@ -1,0 +1,10 @@
+{
+  "name": "track-lab-textlint",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pinned textlint runtime for linting track-lab skills and notes.",
+  "dependencies": {
+    "@textlint-ja/textlint-rule-preset-ai-writing": "1.7.0",
+    "textlint": "15.8.0"
+  }
+}
