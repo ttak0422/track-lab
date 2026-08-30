@@ -24,8 +24,8 @@ agent 群の Workflow として走り、note は track のリッチな構文で�
 
 ### 1. 事象とレンズを定める
 
-事象を一文で書き出す。**ユーザーの前提をそのまま含める**こと — 前提は検証すべき主張であって、
-引き継ぐ事実ではない。レンズを 4〜6 個選ぶ。デフォルトの組み合わせが多くの場合に通用する:
+事象を一文で書き出す。**ユーザーの前提をそのまま含める**こと。前提は検証すべき主張であって、
+引き継ぐ事実ではない。レンズを 4〜6 個選ぶ。デフォルトの組み合わせが多くの場合に通用する。
 
 1. 事実関係・定量データ (数字: 何がどの規模で起きたか、何と比べてどうか)
 2. 国内要因 (国内の文脈と伏線)
@@ -35,7 +35,7 @@ agent 群の Workflow として走り、note は track のリッチな構文で�
 
 ### 2. 調査ワークフローを走らせる
 
-同梱のスクリプト（この skill の base directory 内）で Workflow ツールを呼び出す:
+同梱のスクリプト（この skill の base directory 内）で Workflow ツールを呼び出す。
 
 ```
 Workflow({
@@ -57,12 +57,12 @@ WebFetch する。どの方法が各重要主張を裏付けたかを記録す�
 ### 3. 分析 note を書く
 
 テンプレートから作成する: `track new --title "<YYYYMMDD> <event question>" --template analysis --tag analysis`。
-分析 note は事象時点のスナップショットであり、日付付きタイトルと履歴が本体である。`report` タグは付けない — report の契約（無日期タイトル、時系列を積まない）はこの note 種には適用されない。
-調査した素材で埋め、以下を絶対のルールとして扱う:
+分析 note は事象時点のスナップショットであり、日付付きタイトルと履歴が本体である。`report` タグは付けない。report の契約（無日期タイトル、時系列を積まない）はこの note 種には適用されない。
+調査した素材で埋め、以下を絶対のルールとして扱う。
 
-- **前提の検証が先**: ユーザーの前提が誤りまたは不正確と判明したら、結論部の `[!IMPORTANT]` alert で
+- 前提の検証が先: ユーザーの前提が誤りまたは不正確と判明したら、結論部の `[!IMPORTANT]` alert で
   一次ソースとともにそう述べる。判定の段落（`^premise`）を transclusion 用にアンカーする。
-- **埋め込む前に図をすべて検証する**: `viewspec` の JSON は使い捨てコピーに対して `track render --spec` で、
+- 埋め込む前に図をすべて検証する: `viewspec` の JSON は使い捨てコピーに対して `track render --spec` で、
   `d2` ブロックは `d2` CLI で検証する（`link` などの予約語はノード名にしない）。mermaid の構文は保守的に
   保つ。壊れた fence はエラーボックスとして出力されてしまう。
 - 出典を添えた chart: `display: "box"` のイベントマーカーのオーバーレイは事象ごとに `url` を持ち、chart が
@@ -74,7 +74,7 @@ WebFetch する。どの方法が各重要主張を裏付けたかを記録す�
   ```
 
   その行を `metric` 種の viewspec に貼り付ける。`y[0]` を値の線として、`change` を `axis: "y2"` 上の
-  棒として置く。`track-fetch-jquants` による実 OHLCV はこれを完全に省略し、`data.source` で扱う。
+  棒として置く。`track-fetch-jquants` による実 OHLCV はこれを省略し、`data.source` で扱う。
 - GFM 脚注で引用し、「primary-verified」（一次検証済み）と「agent-collected」（agent 収集）に分ける。
   未検証のものは `[!WARNING]` alert で示し、未解決の問い の下に checkbox として列挙する。
 - sidecar メタデータを設定する: `track meta --description ... --set subject-date=... --set verify-status=...`
@@ -83,7 +83,7 @@ WebFetch する。どの方法が各重要主張を裏付けたかを記録す�
 ### 4. 作業メモを記録しグラフを配線する
 
 - 短いメモ note（`from [[<project>]]`、tag `memo`）: 何を走らせ、何が失敗し、何が分かり、機械化に値する
-  候補は何か — 優先度付きの task line として書く。
+  候補は何か。優先度付きの task line として書く。
 - 分析 note の `^premise` ブロックを、書き直さずにメモへ transclusion する。
 - 両方をプロジェクト/task note からリンクし、触れた note を `track fmt` し、`track reindex` し、
   `track backlinks` で検証する。

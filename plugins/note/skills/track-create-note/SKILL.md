@@ -18,19 +18,19 @@ track ボールトは**開発者とエージェントの共有記録**である�
 
 ## ノートの作成とオープン
 
-新しいノートを作成し、タイトルが既に存在する場合は失敗する:
+新しいノートを作成し、タイトルが既に存在する場合は失敗する。
 
 ```sh
 track new --title "Title" --body "Markdown body" --tag project
 ```
 
-タイトルで冪等に作成または開く:
+タイトルで冪等に作成または開く。
 
 ```sh
 track open --title "Title" --body "Initial body used only when created"
 ```
 
-ジャーナルを開くか作成する:
+ジャーナルを開くか作成する。
 
 ```sh
 track journal              # today
@@ -38,7 +38,7 @@ track journal --offset -1  # yesterday
 track journal --offset 1   # tomorrow
 ```
 
-既存のノートに追記する:
+既存のノートに追記する。
 
 ```sh
 track append --title "Title" --body "Additional Markdown"
@@ -51,7 +51,7 @@ track append --id 123 --tag project
 
 | 構文 | フェンス / 構文 | 用途 |
 | --- | --- | --- |
-| ダイアグラム | ` ```mermaid `, ` ```dot `, ` ```d2 ` | フロー、シーケンス、ER、状態機械 — 色は使わない（下記参照） |
+| ダイアグラム | ` ```mermaid `, ` ```dot `, ` ```d2 ` | フロー、シーケンス、ER、状態機械。色は使わない（下記参照） |
 | マインドマップ | ` ```mindmap ` | インデント付きアウトラインをマインドマップとして描画 |
 | チャート | ` ```viewspec ` | ボールト内の JSONL データをプロット |
 | クエリ | ` ```track-query ` | ノート上のライブなテーブル/ボード/ギャラリー/カレンダー |
@@ -92,7 +92,7 @@ track render --spec /tmp/spec.json --out /tmp/spec.html
 
 ## テンプレートによる作成
 
-使う前にテンプレートを作成または開く:
+使う前にテンプレートを作成または開く。
 
 ```sh
 track template new --name meeting
@@ -100,7 +100,7 @@ track template open --name meeting
 track template list
 ```
 
-テンプレートファイルは `template/` の下にあり、ディレクティブで始まる:
+テンプレートファイルは `template/` の下にあり、ディレクティブで始まる。
 
 ```markdown
 <!-- track-template
@@ -115,7 +115,7 @@ id: {{ id }}
 
 サポートされる置換は安全な組み込みのみである。`{{ title }}`、`{{ id }}`、`{{ date }}`、`{{ kind }}`。ディレクティブは生成されたノートから除去される。
 
-ノートやジャーナルを作成するときにテンプレートを使う:
+ノートやジャーナルを作成するときにテンプレートを使う。
 
 ```sh
 track new --title "Project meeting" --template meeting
@@ -127,7 +127,7 @@ track journal --offset 0 --template daily
 
 ## 検証
 
-作成後、必要に応じてノートを確認する:
+作成したノートを確認する。
 
 ```sh
 track resolve --term "Title"

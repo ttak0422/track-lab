@@ -37,8 +37,8 @@ track doctor
 
 `graph --orphans` reports vault-wide link-graph hygiene in one call:
 
-- **`orphans`**: notes with no inbound link (journals excluded) — a memory note here with weak title keywords is effectively undiscoverable. Plan a link to it from a related note, or fold it into one.
-- **`dangling_prefixes`**: a `foo / bar` note whose `foo` note no longer exists — the parent was renamed or deleted without cascading.
+- `orphans`: notes with no inbound link (journals excluded) — a memory note here with weak title keywords is effectively undiscoverable. Plan a link to it from a related note, or fold it into one.
+- `dangling_prefixes`: a `foo / bar` note whose `foo` note no longer exists — the parent was renamed or deleted without cascading.
 
 3. **Consolidate.** Apply the edits directly — they are reversible:
 
