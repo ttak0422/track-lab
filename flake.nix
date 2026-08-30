@@ -39,12 +39,24 @@
 
         lint = pkgs.writeShellApplication {
           name = "track-lab-lint";
-          runtimeInputs = [ textlint ];
+          runtimeInputs = [
+            textlint
+            pkgs.git
+          ];
           text = ''
             if [ "$#" -gt 0 ]; then
               exec textlint "$@"
             fi
+            # The file list is relative, so resolve it against the repo root
+            # rather than wherever the caller happens to stand.
+            cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
             mapfile -d "" files < <(find plugins README.md -name '*.md' -print0)
+            if [ "''${#files[@]}" -eq 0 ]; then
+              # textlint exits 0 on an empty argument list, which would read as
+              # a clean run.
+              echo "track-lab-lint: no Markdown files found under $PWD" >&2
+              exit 1
+            fi
             exec textlint "''${files[@]}"
           '';
         };
