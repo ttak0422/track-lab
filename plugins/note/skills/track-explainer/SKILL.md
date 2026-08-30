@@ -89,9 +89,9 @@ report ごとに節を作らない。読者が理解する順に主題を並べ�
 
 `track-japanese-report-readability` の削除パスをかける。explainer で特に落ちやすいのは次の三つ。
 
-- 各 report の要約：リンク先で読める。ここに置くと量が戻り、explainer である理由が消える。
-- 調査の経緯と判断の変遷：report にも要らないものが、面に残る道理はない。
-- transclusion：`![[...]]` は本文を引き込むので、量の制御を失う。explainer では使わない。
+- 各 report の要約: リンク先で読める。ここに置くと量が戻り、explainer である理由が消える。
+- 調査の経緯と判断の変遷: report にも要らないものが、面に残る道理はない。
+- transclusion:`![[...]]` は本文を引き込むので、量の制御を失う。explainer では使わない。
 
 ## 形
 
