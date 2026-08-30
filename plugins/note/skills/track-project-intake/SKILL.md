@@ -35,15 +35,15 @@ description: プロジェクトに紐づく作業（バグ修正、機能追加�
 track resolve --term "<project>"      # {"found":true,"note_id":N,"path":"…"} when it exists
 ```
 
-`resolve` が `found:false` を返したら、存在しないと結論づける前にタイトル検索で範囲を広げる:
+`resolve` が `found:false` を返したら、存在しないと結論づける前にタイトル検索で範囲を広げる。
 
 ```sh
 track search --scope title --query "<project>"
 ```
 
-### 3a. ノートが存在する場合 — 確認してから記録する
+### 3a. ノートが存在する場合: 確認してから記録する
 
-重複を登録しないよう、ノートを読み、既存のチェックリストを確認する:
+重複を登録しないよう、ノートを読み、既存のチェックリストを確認する。
 
 ```sh
 track export --id <note_id>
@@ -51,9 +51,9 @@ track export --id <note_id>
 
 `## TODO` と `## Bug` セクションに、既に依頼内容をカバーする項目がないか確認する。あれば、ユーザーに伝えて停止する（新規に追加するのではなく、任意で既存項目を明確化/補強する）。なければステップ 4 へ進む。
 
-### 3b. ノートが存在しない場合 — 作成する
+### 3b. ノートが存在しない場合: 作成する
 
-ランナーが期待する2つのチェックリスト見出しを仕込みつつ、冪等にノートを作成する:
+ランナーが期待する2つのチェックリスト見出しを仕込みつつ、冪等にノートを作成する。
 
 ```sh
 printf '## TODO\n\n## Bug\n' | track open --title "<project>"
@@ -67,7 +67,7 @@ printf '## TODO\n\n## Bug\n' | track open --title "<project>"
 
 ### 5. 適切な見出しの下に項目を記録する
 
-依頼を分類する。欠陥は `## Bug` の下、新規作業や改良は `## TODO` の下に置く。ノートの既存の言語で、1つの未チェックのチェックリスト行として書く:
+依頼を分類する。欠陥は `## Bug` の下、新規作業や改良は `## TODO` の下に置く。ノートの既存の言語で、1つの未チェックのチェックリスト行として書く。
 
 ```text
 - [ ] <concise, actionable description of the request>
@@ -86,14 +86,14 @@ printf 'from [[<project>]]\n\n## Goal\n\n## Approach\n\n## Steps\n\n## Risks\n' 
   | track new --title "<YYYYMMDD> <item summary>" --tag plan
 ```
 
-各セクションを埋め、物語的ではなく決定志向に保つ:
+各セクションを埋め、物語的ではなく決定志向に保つ。
 
-- **Goal** —— 「完了」が何を意味するか。1〜2行で。
-- **Approach** —— 選んだアプローチと、棄却した代替案とその理由。実装時に決定が蒸し返されるのを防ぐ部分である。
-- **Steps** —— 着地する順の `- [ ]` 項目。
-- **Risks** —— 何が壊れ得るか、どう検証されるか。
+- Goal: 「完了」が何を意味するか。1〜2行で。
+- Approach: 選んだアプローチと、棄却した代替案とその理由。実装時に決定が蒸し返されるのを防ぐ部分である。
+- Steps: 着地する順の `- [ ]` 項目。
+- Risks: 何が壊れ得るか、どう検証されるか。
 
-チェックリスト項目からプランをリンクし、両者がつながったまま、バックリンクが解決されるようにする:
+チェックリスト項目からプランをリンクし、両者がつながったまま、バックリンクが解決されるようにする。
 
 ```text
 - [ ] <concise description> → [[<YYYYMMDD> <item summary>]]
@@ -103,7 +103,7 @@ printf 'from [[<project>]]\n\n## Goal\n\n## Approach\n\n## Steps\n\n## Risks\n' 
 
 ### 7. 再インデックス
 
-検索・リンク・バックリンクを一貫させる:
+検索・リンク・バックリンクを一貫させる。
 
 ```sh
 track reindex
@@ -111,7 +111,7 @@ track reindex
 
 ## 検証
 
-項目が意図した見出しの下に入ったことを確認する:
+項目が意図した見出しの下に入ったことを確認する。
 
 ```sh
 track export --id <note_id>     # the new - [ ] line appears under ## Bug or ## TODO

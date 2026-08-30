@@ -15,20 +15,20 @@ description: track CLI で track ボールト内のリンク付き Markdown ノ�
 
 ## 検索
 
-ノートのタイトルとインデックス済みフィールドを横断して検索する:
+ノートのタイトルとインデックス済みフィールドを横断して検索する。
 
 ```sh
 track search --query "distributed systems" --limit 20
 ```
 
-範囲を絞り込む:
+範囲を絞り込む。
 
 ```sh
 track search --scope title --query "roadmap"
 track search --scope body --query "TODO"
 ```
 
-`#tag` の語でタグ絞り込みができる。複数のタグは残りのテキストと組み合わされる:
+`#tag` の語でタグ絞り込みができる。複数のタグは残りのテキストと組み合わされる。
 
 ```sh
 track search --query "#project"
@@ -43,13 +43,13 @@ track search --query "#graph #web Workspace"
 
 ## 解決と閲覧
 
-完全一致のタイトル/リンク語をノートに解決する:
+完全一致のタイトル/リンク語をノートに解決する。
 
 ```sh
 track resolve --term "Title"
 ```
 
-既知ノートの完全な Markdown を読む:
+既知ノートの完全な Markdown を読む。
 
 ```sh
 track export --title "Title"
@@ -61,14 +61,14 @@ track export --path /path/to/note.md
 
 ## リンクとグラフ
 
-内向きリンクを調べる:
+内向きリンクを調べる。
 
 ```sh
 track backlinks --id 123
 track backlinks --path /path/to/note.md
 ```
 
-ノート周辺のローカルノートグラフを調べる:
+ノート周辺のローカルノートグラフを調べる。
 
 ```sh
 track graph --id 123

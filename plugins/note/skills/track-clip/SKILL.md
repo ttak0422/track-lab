@@ -21,7 +21,7 @@ track-fetch-web --note "<url>"                 # Markdown note body on stdout
 track-fetch-web --note --timeout 60s "<url>"   # the fetch timeout defaults to 30s
 ```
 
-本文は出典行とリード画像で始まり、その後に内容が続く:
+本文は出典行とリード画像で始まり、その後に内容が続く。
 
 ```markdown
 [Source](https://example.com/essays/growing-tomatoes) — clipped 2026-07-26
@@ -37,7 +37,7 @@ Container gardening rewards small, steady adjustments…
 
 ## ボールトにクリップする
 
-本文を一度保存し、その後で読み取った内容からタイトルを選ぶ:
+本文を一度保存し、その後で読み取った内容からタイトルを選ぶ。
 
 ```sh
 track-fetch-web --note "<url>" > /tmp/clip.md
@@ -52,16 +52,16 @@ track search --query "<title>" --scope title
 track search --query "<domain>"           # matches the Source line in already-clipped bodies
 ```
 
-それから、`clip` タグを付けて作成する（`--body` を省略すると stdin が本文になる）:
+それから、`clip` タグを付けて作成する（`--body` を省略すると stdin が本文になる）。
 
 ```sh
 track new --title "<title>" --tag clip < /tmp/clip.md
 track meta --title "<title>" --description "<one line on what the page says>"
 ```
 
-すでに持っているページを再クリップする場合: 接尾辞付きタイトルを新たに作らず、そのノートの本文を置き換える — `track update --id <id> < /tmp/clip.md`。
+すでに持っているページを再クリップする場合: 接尾辞付きタイトルを新たに作らず、そのノートの本文を置き換える。`track update --id <id> < /tmp/clip.md`。
 
-必要に応じて今日のジャーナルにも記録し、日付からもクリップに到達できるようにする。`track journal` には `--body` を渡すこと。これがないとコマンドは stdin を読み込み、エージェントがハングする。
+今日のジャーナルにも記録しておくと、日付からもクリップに到達できる。`track journal` には `--body` を渡すこと。これがないとコマンドは stdin を読み込み、エージェントがハングする。
 
 ```sh
 track journal --body ""                                        # ensure today's journal exists
@@ -76,7 +76,7 @@ track append --id "$(date +%Y%m%d)" --body "- [[<title>]]"     # journal ids are
 
 ## データとしてのクリップ
 
-`--note` を付けないと、このツールは Canonical Data Model レコードを1件 JSONL として出力する。これはすべての `track-fetch-*` ツールが従う契約であり、読書ログをグラフに供給できる:
+`--note` を付けないと、このツールは Canonical Data Model レコードを1件 JSONL として出力する。これはすべての `track-fetch-*` ツールが従う契約であり、読書ログをグラフに供給できる。
 
 ```sh
 track-fetch-web --out "$TRACK_VAULT/data/clips.jsonl" "<url>"   # prints a JSON summary including the title
