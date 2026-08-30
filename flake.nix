@@ -44,7 +44,8 @@
             if [ "$#" -gt 0 ]; then
               exec textlint "$@"
             fi
-            exec textlint plugins/*/skills/*/SKILL.md
+            mapfile -d "" files < <(find plugins README.md -name '*.md' -print0)
+            exec textlint "''${files[@]}"
           '';
         };
 
@@ -64,7 +65,7 @@
         lint = pkgs.runCommand "track-lab-lint-check" { } ''
           export HOME="$TMPDIR"
           cd ${self}
-          ${self.packages.${pkgs.stdenv.hostPlatform.system}.textlint}/bin/textlint plugins/*/skills/*/SKILL.md
+          ${self.packages.${pkgs.stdenv.hostPlatform.system}.lint}/bin/track-lab-lint
           touch "$out"
         '';
       });
