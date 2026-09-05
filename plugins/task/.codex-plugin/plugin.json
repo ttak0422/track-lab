@@ -1,0 +1,25 @@
+{
+  "name": "task",
+  "version": "0.1.0",
+  "description": "Size-aware task handling backed by the track CLI.",
+  "author": {
+    "name": "track-lab"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Task",
+    "shortDescription": "Triage, record, and work through track checklist tasks by size.",
+    "longDescription": "Incoming work is triaged by size before anything is written: small items go straight onto the project's checklist, mid-size items get a linked plan note first, and large epics are split into phased child items. The same checklist is later worked through autonomously, with each finished item moved into a dated worklog note. All state lives in track notes through the track CLI.",
+    "developerName": "track-lab",
+    "category": "Productivity",
+    "capabilities": [
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use $track-task-triage to triage this TODO by size and route it.",
+      "Use $track-project-intake to record this bug/TODO in my project's note.",
+      "Use $track-task-runner to work through my project note's checklist.",
+      "Use $track-task-review to tidy up my task note after the work is done."
+    ]
+  }
+}
