@@ -1,20 +1,21 @@
 ---
 name: track-news-analysis
-description: 時事トピック（相場の動き、政策判断、事件）を複数の独立したレンズで調査し、可視化・出典付きの分析 note を track vault に書き出す。複数視点の分析 note、ある事象の 多角分析/時事分析 を求められたとき、あるいは「analyze what happened around <date>」と頼まれたときに使う。単一の問いの調査は track-report と、日次/週次の反復ループは track-watch と組み合わせる。この skill は、複数の視点と chart を要する事象を対象とした一回きりの深掘りである。
+description: 時事トピック（相場の動き、政策判断、事件）を複数の独立したレンズで調査し、可視化・出典付きの分析 note を track vault に書き出す。複数視点の分析 note、ある事象の 多角分析/時事分析 を求められたとき、あるいは「analyze what happened around a date」と頼まれたときに使う。単一の問いの調査は track-report と、日次/週次の反復ループは track-watch と組み合わせる。この skill は、複数の視点と chart を要する事象を対象とした一回きりの深掘りである。
 ---
 
 # Track News Analysis
 
+CLI を使う前に[実行環境](../track/references/runtime.md)を読む。
+
 一つのニュース事象を、vault に二つの成果物として落とす。**多レンズの分析 note**（chart、タイムライン、
-因果グラフ、出典付き）と、それがどう作られたかを記録する短い**作業メモ**である。調査は並列に Web 検索する
-agent 群の Workflow として走り、note は track のリッチな構文で書かれ、図は埋め込む前にすべて検証される。
+因果グラフ、出典付き）と、それがどう作られたかを記録する短い**作業メモ**である。調査はレンズごとに Web 検索し、重要な主張を照合する。note は track のリッチな構文で書き、図は埋め込む前に検証する。
 
 `track` CLI を真実の源として使う。シェルの環境変数 `TRACK_VAULT` に注意し、ユーザーが特定の vault を
 指定していない限りは除去する（`env -u TRACK_VAULT`）。
 
 ## 前提条件
 
-- Workflow ツール（agent は ToolSearch 経由で WebSearch/WebFetch を要する）。
+- 利用可能な Web 検索・ページ取得ツール。Codex ではその環境の検索とページ閲覧を使う。
 - vault の `analysis` テンプレート（`track template list`）。無ければ、この skill の下記の構造から
   作成する。
 - 相場系の事象では、`track-fetch-jquants`（J-Quants; `TRACK_JQUANTS_REFRESH_TOKEN`）が `data.source` の
@@ -35,24 +36,19 @@ agent 群の Workflow として走り、note は track のリッチな構文で�
 
 ### 2. 調査ワークフローを走らせる
 
-同梱のスクリプト（この skill の base directory 内）で Workflow ツールを呼び出す。
+次の順で進める。Workflow ツールやサブエージェントは必須ではない。
 
-```
-Workflow({
-  scriptPath: "<skill base dir>/workflow.js",
-  args: {
-    event: "<one-sentence event description, premise included>",
-    today: "<YYYY-MM-DD>",
-    lenses: [{ key: "facts", focus: "<lens instruction>" }, ...]   // optional; defaults built in
-  }
-})
-```
+1. Sweep: 各レンズを日本語・英語で調べ、主張、日付、出典 URL、確信度を記録する。引用には話者・発言日時・媒体を、数値系列には日付・値・単位を添える。
+2. Verify: 収集済みの重要な主張を元の出典とは独立したソースで照合する。判定は confirmed / corrected / unverified / refuted とし、訂正内容と根拠 URL を残す。調査者同士の一致だけで検証済みとはしない。
+3. Gaps: レンズ全体の矛盾、時系列の穴、主因の説明不足を点検し、重要な欠落を最大3件補う。
 
-スクリプトは sweep → 敵対的 verify → 完全性 critic の順に走り、**harvest-first**（収穫優先）である。
-sweep が完了してから verifier が予算を消費するため、セッション上限に当たっても失われるのは検証であって
-調査ではない。verify agent が（セッション上限で）死んだ場合は、次の方法で代替する: (a) agent 間での
-数値の一致、(b) 計算の整合性（差分・パーセンテージ・週次合計）、(c) 重要な一次記事 2〜3 本を自分で
-WebFetch する。どの方法が各重要主張を裏付けたかを記録すること。
+並列化が利用可能かつ許可されていれば、独立したレンズの調査や照合をサブエージェントへ分担してよい。
+そうでなければメインエージェントが順に行う。vault への書き込みはメインエージェントがまとめて行う。
+途中で上限に達したら、収集済みの結果を保持し、未検証の主張と未調査のレンズを明示する。
+
+既存の Workflow ツールが提供される環境では、同梱の `workflow.js` に `event`、`today`（YYYY-MM-DD）、
+任意の `lenses: [{key, focus}]` を渡して実行できる。このスクリプトは Workflow ランタイム専用であり、
+Node.js や Codex の JavaScript 実行ツールでは直接実行しない。
 
 ### 3. 分析 note を書く
 
