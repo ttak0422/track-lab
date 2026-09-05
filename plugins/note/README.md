@@ -163,13 +163,17 @@ Copying the complete `plugins/note/skills/` contents preserves those references.
 If you previously installed the `track` plugin from the track repository, uninstall it first — the
 skill names are the same and would otherwise collide.
 
-## Codex execution
+## Agent execution
 
-The same `SKILL.md` files serve Codex and Claude Code. See the shared
+The same `SKILL.md` files serve Codex, Claude Code, and OpenCode. See the shared
 [runtime guidance](skills/track/references/runtime.md) for shell input, vault selection, and permissions.
 Relative references resolve from the skill directory, including in an installed plugin cache.
 The existing `agents/openai.yaml` files provide optional UI metadata; the remaining skills are
-also discoverable through their `name` and `description` ([official skill documentation](https://learn.chatgpt.com/docs/build-skills)).
+also discoverable in Codex through their `name` and `description` ([official skill documentation](https://learn.chatgpt.com/docs/build-skills)).
+
+OpenCode uses the same skill bodies through the sync command above; directory symlinks preserve
+the shared runtime reference and sibling writing-skill references. Codex UI metadata is optional
+and is not required to follow the skill instructions.
 
 News analysis and high-depth watch reviews work with the session's web search and page retrieval.
 They can run sequentially, or delegate independent research when the session permits it.
