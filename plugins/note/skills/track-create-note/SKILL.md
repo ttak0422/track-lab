@@ -5,6 +5,8 @@ description: track CLI を使って、track ボールトにリンク付き Markd
 
 # Track Create Note
 
+CLI を使う前に[実行環境](../track/references/runtime.md)を読む。
+
 ノート作成・ID・サイドカーメタデータ・インデックス・リンク解決の真実の情報源として `track` CLI を使う。track のソースリポジトリでは、`go run ./cmd/track` を `track` の代わりとして使ってよい。
 
 track ボールトは**開発者とエージェントの共有記録**である。決定・発見・残作業。相手（人間でもエージェントでも）が後で問い直さずに行動できるように各ノートを書くこと。経緯だけでなく結論を述べ、依存するノートをリンクする。
@@ -12,7 +14,7 @@ track ボールトは**開発者とエージェントの共有記録**である�
 ## 前提条件
 
 - ユーザーの通常の track 設定を優先する。`TRACK_VAULT` はテストや一回限りの上書き用である。
-- コマンドは単一行の JSON を出力する。stdout を JSON としてパースし、exit code 1 の `{"error":...}` は失敗として扱う。
+- コマンドは通常、単一行の JSON を出力する（`export` は Markdown）。stdout を JSON としてパースし、exit code 1 の `{"error":...}` は失敗として扱う。
 - タイトルはリンク語である。本文で `[[Title]]` を使って関連ノートをリンクする。
 - 本文テキストは Markdown の見出しで始まってよい。ノートタイトルはサイドカーメタデータに保存される。
 
@@ -33,9 +35,9 @@ track open --title "Title" --body "Initial body used only when created"
 ジャーナルを開くか作成する。
 
 ```sh
-track journal              # today
-track journal --offset -1  # yesterday
-track journal --offset 1   # tomorrow
+track journal --body ""              # today
+track journal --offset -1 --body ""  # yesterday
+track journal --offset 1 --body ""   # tomorrow
 ```
 
 既存のノートに追記する。

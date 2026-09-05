@@ -5,6 +5,8 @@ description: あるテーマの report note 群を一枚の explainer note に�
 
 # track explainer
 
+CLI を使う前に[実行環境](../track/references/runtime.md)を読む。
+
 report note は情報量に最適化されている。人間が日常的に開くのはそれではない。
 **explainer note は、あるテーマについて人間が既定で見る唯一の面**であり、report 群はその裏側のソースになる。
 疑問が出たときにだけ、explainer から report へ、report から一次ソースへ、二段降りる。

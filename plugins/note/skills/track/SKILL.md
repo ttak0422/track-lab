@@ -9,6 +9,8 @@ description: >-
 
 # track CLI
 
+CLI を使う前に[実行環境](references/runtime.md)を読む。
+
 track CLI はノート、インデックス、検索、リンク解決の信頼できる唯一の情報源である。Go エンジンがノートをパースし、SQLite インデックスを保守し、`[[links]]` を解決する。
 
 ## 使う場面
@@ -77,7 +79,7 @@ track toggle --title "Tasks" --line 3 --state check  # idempotent: force checked
 
 ## 出力の契約
 
-すべてのコマンドは単一行の JSON を出力する。エラーは終了コード 1 で `{"error":...}`。標準出力を JSON としてパースすること。
+すべてのコマンドは通常、単一行の JSON を出力する（`export` は Markdown）。エラーは終了コード 1 で `{"error":...}`。標準出力を JSON としてパースすること。
 
 ## 規約
 

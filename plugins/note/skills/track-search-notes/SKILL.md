@@ -5,12 +5,14 @@ description: track CLI で track ボールト内のリンク付き Markdown ノ�
 
 # Track Search Notes
 
+CLI を使う前に[実行環境](../track/references/runtime.md)を読む。
+
 ノート検索・インデックス・リンク解決・バックリンク・グラフクエリの真実の情報源として `track` CLI を使う。track のソースリポジトリでは、`go run ./cmd/track` を `track` の代わりとして使ってよい。
 
 ## 前提条件
 
 - ユーザーの通常の track 設定を優先する。`TRACK_VAULT` はテストや一回限りの上書き用である。
-- コマンドは単一行の JSON を出力する。stdout を JSON としてパースし、exit code 1 の `{"error":...}` は失敗として扱う。
+- コマンドは通常、単一行の JSON を出力する（`export` は Markdown）。stdout を JSON としてパースし、exit code 1 の `{"error":...}` は失敗として扱う。
 - このスキルは読み取り専用の調査に使う。ノートの作成・追記が必要なタスクでは `track-create-note` を使う。
 
 ## 検索
