@@ -11,6 +11,7 @@
 | [track-task-triage](skills/track-task-triage/SKILL.md) | 依頼や既存チェックリストを S/M/L に振り分け、曖昧なものは書く前に明確化し、サイズ別の経路（直接・プランノート付き・分割）へ回す。 |
 | [track-project-intake](skills/track-project-intake/SKILL.md) | 入ってきたバグ/TODO をプロジェクトノートの `## Bug` / `## TODO` に記録し、合意が必要な場合だけリンクするプランノートを下書きする。 |
 | [track-task-runner](skills/track-task-runner/SKILL.md) | プロジェクトノートのチェックリストを自律的に消化し、完了項目をコミットとともに日付つき worklog ノートへ移す。 |
+| [track-task-review](skills/track-task-review/SKILL.md) | 対応完了後を整理する。取り残された完了項目を worklog へ移し、期限切れと WAITING を見直し、終わった議論を archive へ畳み、優先度を付け直す。 |
 
 ## The loop
 
@@ -25,6 +26,8 @@ flowchart LR
   split --> checklist
   checklist --> runner[track-task-runner]
   runner --> worklog["worklog note<br/>#worklog"]
+  runner --> review[track-task-review]
+  review --> checklist
 ```
 
 ## Requirements
@@ -41,7 +44,8 @@ plugins/task/
 └── skills/
     ├── track-task-triage/SKILL.md
     ├── track-project-intake/SKILL.md
-    └── track-task-runner/SKILL.md
+    ├── track-task-runner/SKILL.md
+    └── track-task-review/SKILL.md
 ```
 
 個々の skill は `../../references/runtime.md` を実行環境として読む。プラグインレベルに置くのは、`skills/` 直下の全ディレクトリが配布上の skill と見なされるためである。

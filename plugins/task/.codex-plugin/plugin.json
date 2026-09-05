@@ -18,7 +18,8 @@
     "defaultPrompt": [
       "Use $track-task-triage to triage this TODO by size and route it.",
       "Use $track-project-intake to record this bug/TODO in my project's note.",
-      "Use $track-task-runner to work through my project note's checklist."
+      "Use $track-task-runner to work through my project note's checklist.",
+      "Use $track-task-review to tidy up my task note after the work is done."
     ]
   }
 }
