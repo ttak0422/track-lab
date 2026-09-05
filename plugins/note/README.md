@@ -14,8 +14,6 @@ the `track` plugin. track itself now carries only the CLI and its tool-neutral c
 | ----- | ------- |
 | [track-create-note](skills/track-create-note/SKILL.md) | Create or open notes, journals, and template-backed notes — including the rich body constructs (diagrams, mindmaps, charts, queries, babel, embeds) that plain prose leaves on the table. |
 | [track-search-notes](skills/track-search-notes/SKILL.md) | Read-only discovery: search by title/body/tag, resolve links, export bodies, inspect backlinks and the local graph. |
-| [track-project-intake](skills/track-project-intake/SKILL.md) | Record an incoming bug/TODO against the project's note, and draft a linked **plan note** when the work needs agreement before code. |
-| [track-task-runner](skills/track-task-runner/SKILL.md) | Work through a project note's checklist autonomously, following any linked plan, and move each finished item into a dated **worklog note** with its commit. |
 | [track-report](skills/track-report/SKILL.md) | File the findings of an investigation as a **report note**, so the answer survives the session. |
 | [track-explainer](skills/track-explainer/SKILL.md) | Fold a topic's reports into one **explainer note** — the page a human actually opens, with a diagram and routes down into the reports and their sources. |
 | [track-news-analysis](skills/track-news-analysis/SKILL.md) | Research a current-events topic from multiple lenses (sweep, verify, and gap-fill; an optional Workflow script is bundled) and file a visualized, source-cited **analysis note**. |
@@ -33,16 +31,19 @@ the `track` plugin. track itself now carries only the CLI and its tool-neutral c
 ```mermaid
 flowchart LR
   ask[Developer asks] --> kind{change or question?}
-  kind -->|change| intake[track-project-intake]
+  kind -->|change| intake["task plugin<br/>track-task-triage / intake"]
   kind -->|question| report[track-report]
   intake --> checklist["project note<br/>## TODO / ## Bug"]
   intake -.needs agreement.-> plan["plan note<br/>#plan"]
-  checklist --> runner[track-task-runner]
+  checklist --> runner["task plugin<br/>track-task-runner"]
   plan --> runner
   runner --> worklog["worklog note<br/>#worklog"]
   report --> reportnote["report note<br/>#report"]
   reportnote --> explainer["explainer note<br/>#explainer"]
 ```
+
+Task handling (`track-task-triage`, `track-project-intake`, `track-task-runner`) lives in the
+`task` plugin and runs against the same project note. Install both plugins for the full loop.
 
 Four note kinds carry a tag so they stay findable: `plan`, `worklog`, `report`, `explainer`. Each links
 back to the project note, so `track backlinks --title "<project>"` shows the whole trail.
@@ -113,10 +114,8 @@ plugins/note/
     │   ├── SKILL.md
     │   └── references/{EMBEDS,PROPERTIES}.md
     ├── track-news-analysis/SKILL.md
-    ├── track-project-intake/SKILL.md
     ├── track-report/SKILL.md
     ├── track-search-notes/SKILL.md
-    ├── track-task-runner/SKILL.md
     ├── track-tool/SKILL.md
     ├── track-watch/SKILL.md
     └── track/SKILL.md
