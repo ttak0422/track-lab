@@ -1,10 +1,10 @@
-# 実行環境
+# Runtime
 
-このプラグインの手順は Codex / Claude Code / OpenCode で共通に使う。ツールは現在のセッションで利用可能なものを使う。
+The procedures in this plugin are shared across Codex / Claude Code / OpenCode. Use whatever tools the current session provides.
 
-- 相対パスは、読んでいる `SKILL.md` のディレクトリを基準に解決する。関連 skill は必要な場面でその `SKILL.md` を読む。全 skill を先に読み込む必要はない。
-- `track` はシェルで実行する。通常は JSON を返すが、`track export` は Markdown を返す。終了コードと出力を確認する。
-- 本文を stdin から受け取るコマンドでは、入力をパイプまたはファイルで渡す。本文なしの作成・オープンには `--body ""` を渡す（`--template` 指定時を除く）。
-- ユーザーが指定した vault を使い、それ以外は通常の track 設定に従う。検索結果の `vault` を引き継ぎ、別 vault の ID を扱うときは `--vault NAME` を付ける。
-- vault がワークスペース外にあることがある。権限エラーは vault の不在を意味しない。保存先を勝手に変えず、必要な操作に限って環境の承認手続きを使う。許可を得られない場合は書き込み以外の作業を進め、本文を作業領域に保存して未反映と報告する。
-- ユーザーの依頼と既に得た承認を優先する。skill の利用自体は、依頼外の公開・送信・削除の承認にはならない。記録だけの依頼では実装を始めず、実装も依頼されている場合は記録後も作業を続ける。
+- Resolve relative paths against the directory of the `SKILL.md` being read. Read a related skill's `SKILL.md` when needed; loading every skill up front is unnecessary.
+- Run `track` in the shell. Commands usually return single-line JSON (`export` returns Markdown). Parse stdout, and treat exit code 1 with `{"error":...}` as a failure.
+- For commands taking the body from stdin, pipe the input or pass a file. Pass `--body ""` for creation/open without a body (except with `--template`).
+- Use the vault the user specified, and otherwise follow the normal track configuration. Carry over the `vault` from search results, and add `--vault NAME` when handling IDs from another vault.
+- The vault may live outside the workspace. A permission error does not mean the vault is absent. Do not change the destination on your own; use the environment's approval flow only for the operations that need it. When permission cannot be obtained, press on with non-write work, save the body in the work area, and report it as unapplied.
+- Prioritize the user's request and already-granted approvals. Using a skill never authorizes unrequested publishing, sending, or deletion. For record-only requests, do not start implementing; when implementation is also requested, keep working after recording.
