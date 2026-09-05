@@ -30,6 +30,13 @@ flowchart LR
   review --> checklist
 ```
 
+## Conventions
+
+A flat TODO note holds nothing but task lines under one list. It is mechanically managed:
+change states and dates only through the CLI write path (`task set` / `cycle` / `date`,
+`triage` / `intake` for adds and moves), and do not hand-edit task lines. Mark the note
+with an HTML comment to that effect so the policy travels with the body without rendering.
+
 ## Requirements
 
 - `track` CLI が `PATH` 上にあり、ユーザーの通常のボールトに対して解決できること。
