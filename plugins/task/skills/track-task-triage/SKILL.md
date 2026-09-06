@@ -1,6 +1,6 @@
 ---
 name: track-task-triage
-description: 入ってきた依頼や既存のチェックリストをサイズで振り分ける。S/M/L を判定し、曖昧なものは書く前に明確化し、小はそのまま記録、中はリンクするプランノート付き、大は段階化した子項目へ分けて SDL に回す。タスクの山を整理してほしいとき、どこから手をつけるべきか決めたいときに使う。記録だけなら track-project-intake、消化だけなら track-task-runner を直接使う。
+description: 入ってきた依頼や既存のチェックリストをサイズで振り分ける。S/M/L を判定し、曖昧なものは書く前に明確化し、小はそのまま記録、中はリンクするプランノート付き、大は段階化した子項目へ分けて実行へ回す。タスクの山を整理してほしいとき、どこから手をつけるべきか決めたいときに使う。記録だけなら track-project-intake、消化だけなら track-task-runner を直接使う。
 ---
 
 # Track Task Triage
@@ -28,6 +28,8 @@ CLI を使う前に[実行環境](../../references/runtime.md)を読む。記録
 track resolve --term "<project>"
 track search --scope title --query "<project>"
 ```
+
+見つからなければ intake の新規ノート作成手順へ進む。既存項目の振り分けでは元の行を更新し、intake を通して同じ項目を追加し直さない。
 
 既存チェックリストの全体像は `export` で読む。未処理の分布はフィルタで掴む。
 
@@ -57,17 +59,16 @@ track tasks --id <note_id> --overdue
 
 - S は [track-project-intake](../track-project-intake/SKILL.md) の手順で `## TODO` または `## Bug` の下に 1行で記録する。依頼者がすぐ作業も望む場合は、記録してから [track-task-runner](../track-task-runner/SKILL.md) へ引き渡す。
 - M は intake のプランノート手順で `#plan` ノートを下書きする。Goal、Approach、Steps、Risks を埋め、チェックリスト行から `→ [[<YYYYMMDD> <item summary>]]` でリンクする。
-- L は親の `- [ ]` 行の下に段階化した子 `- [ ]` 行を置くか、独立性が高い場合は別ノートへ `track refile` で移す。終わった段階は親行へ `(YYYY-MM-DD: <段階> まで完了、残は <何>)` と追記し、全体の進み具合が親だけ読めば分かるようにする。
+- L は親の `- [ ]` 行の下に段階化した子 `- [ ]` 行を置くか、独立性が高い場合は別ノートへ `track refile` で移す。子項目ごとに着手条件・先行項目・検証方法を記録する。移動先にも `## TODO` / `## Bug` を用意し、親行からリンクして、どのプロジェクトで実行するかを残す。終わった段階は親行へ `(YYYY-MM-DD: <段階> まで完了、残は <何>)` と追記し、全体の進み具合が親だけ読めば分かるようにする。
 
 着手条件が外にある項目は `WAITING` へ置き、待ち先を `(YYYY-MM-DD: <待ち先> 待ち)` と追記する。もうやらないと決めた項目は `CANCELLED` へ置き、理由を一行添える。決して黙って消さない。
 
 ## 5. 状態・優先度・期限を付ける
 
-状態遷移は `task set` か `task cycle` を使い、単純な開閉だけ `toggle` を使う。`--expect` は競合が疑われるときに付ける。
+状態の一覧と更新規則は[共通規約](../../references/runtime.md#task-conventions)に従う。振り分けだけで DOING にはしない。状態変更の直前に対象行を読み直し、既知の状態を `--expect` で指定する。
 
 ```sh
-track task set --id <note_id> --line <N> --state DOING
-track task cycle --id <note_id> --line <N>
+track task set --id <note_id> --line <N> --state WAITING --expect TODO
 track task date --id <note_id> --line <N> --sched 2026-09-10 --due 2026-09-12
 ```
 

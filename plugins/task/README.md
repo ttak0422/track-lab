@@ -32,10 +32,11 @@ flowchart LR
 
 ## Conventions
 
-A flat TODO note holds nothing but task lines under one list. It is mechanically managed:
-change states and dates only through the CLI write path (`task set` / `cycle` / `date`,
-`triage` / `intake` for adds and moves), and do not hand-edit task lines. Mark the note
-with an HTML comment to that effect so the policy travels with the body without rendering.
+Project backlogs use `## TODO` and `## Bug`; an explicitly selected flat TODO note can
+keep its single list. The [shared task conventions](references/runtime.md#task-conventions)
+define state changes, permitted body edits, and phased work for all four skills.
+Existing state markers and dates must be changed through the CLI. A note may carry a
+stricter policy in an HTML comment; preserve and follow it.
 
 ## Requirements
 
@@ -82,14 +83,15 @@ codex plugin add task@track-lab
 OpenCode:
 
 ```sh
-scripts/sync-opencode-skills.sh task
+scripts/sync-opencode-skills.sh note task
 ```
 
-Links this plugin's skills into `~/.config/opencode/skills/`, where opencode discovers them
+Sync `note` first to remove the old intake/runner links, then install their `task` replacements.
+Links these plugins' skills into `~/.config/opencode/skills/`, where opencode discovers them
 natively; add `--project` to link into the current project's `.opencode/skills/` instead.
 Run it from the repository root and re-run after adding, renaming, or removing a skill —
 only links owned by the synced plugins are touched.
 
-Standalone: copy or symlink `plugins/task/skills/<name>` into `.claude/skills/<name>` or
-`.opencode/skills/<name>`, plus `plugins/task/references/runtime.md` so the
-`../../references/runtime.md` link stays resolvable.
+Standalone: copy the complete `plugins/task/` directory, preserving `skills/` and
+`references/`, then expose its skill directories through your runtime's skill discovery.
+The four skills link to each other; copying one skill alone leaves those links broken.
