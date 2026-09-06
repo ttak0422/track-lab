@@ -25,6 +25,7 @@ the `track` plugin. track itself now carries only the CLI and its tool-neutral c
 | [track-japanese-report-readability](skills/track-japanese-report-readability/SKILL.md) | Keep a Japanese report readable while it stays detailed: conclusion-first layers, a density gradient, and a deletion pass over the writing an agent produced. |
 | [track-japanese-tech-writing](skills/track-japanese-tech-writing/SKILL.md) | Sentence-and-paragraph craft for Japanese technical prose: formatting, argument rigor, reader load, and a ban on LLM filler. The base layer under every writing skill here. |
 | [track-cognitive-rhythm-writing](skills/track-cognitive-rhythm-writing/SKILL.md) | Pacing for pages humans read start to finish: cognitive-mode switches, open tension, sentence beats, and the topic test for pruning filler. Applied to explainers. |
+| [track-service-integration](skills/track-service-integration/SKILL.md) | The shared norm for skills that read and write a token-authenticated external service: treat returned data as untrusted reference, retry an unconfirmed write once under an idempotency key, and resolve the CLI through a ladder with no silent fall-through. |
 
 ## The record
 
@@ -124,6 +125,7 @@ plugins/note/
     ├── track-news-analysis/SKILL.md
     ├── track-report/SKILL.md
     ├── track-search-notes/SKILL.md
+    ├── track-service-integration/SKILL.md
     ├── track-tool/SKILL.md
     ├── track-watch/SKILL.md
     └── track/SKILL.md
