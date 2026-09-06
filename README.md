@@ -5,6 +5,11 @@
 
 Agent plugins and skills for track-related workflows.
 
+Skill work lives here, not in the track repository: anything shaped like a skill
+(SKILL.md plus scripts) belongs to one of the plugins below, even when it drives
+track features. Mobile-app-style remote operation is out of scope; remote access
+stops at tailnet (`track web` behind Tailscale) with no companion app.
+
 ## Plugins
 
 | Plugin | Description |
