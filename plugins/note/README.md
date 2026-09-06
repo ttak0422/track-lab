@@ -25,6 +25,8 @@ the `track` plugin. track itself now carries only the CLI and its tool-neutral c
 | [track-japanese-report-readability](skills/track-japanese-report-readability/SKILL.md) | Keep a Japanese report readable while it stays detailed: conclusion-first layers, a density gradient, and a deletion pass over the writing an agent produced. |
 | [track-japanese-tech-writing](skills/track-japanese-tech-writing/SKILL.md) | Sentence-and-paragraph craft for Japanese technical prose: formatting, argument rigor, reader load, and a ban on LLM filler. The base layer under every writing skill here. |
 | [track-cognitive-rhythm-writing](skills/track-cognitive-rhythm-writing/SKILL.md) | Pacing for pages humans read start to finish: cognitive-mode switches, open tension, sentence beats, and the topic test for pruning filler. Applied to explainers. |
+| [track-plaud](skills/track-plaud/SKILL.md) | (experimental) Import PLAUD NOTE recordings via the plaud CLI, transcribe (Plaud native / yap), and file them as notes with `plaud-id::` dedupe. |
+| [track-news](skills/track-news/SKILL.md) | (experimental) Present auto-generated articles as a news-style digest into the journal. |
 
 ## The record
 
