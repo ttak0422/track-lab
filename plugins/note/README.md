@@ -97,6 +97,14 @@ Division of labor: reports follow `track-japanese-tech-writing` + `track-japanes
 - `track` CLI on `PATH`, resolving against the user's normal vault.
 - `track-fetch-web` on `PATH` for `track-clip`. It ships with track as a separate binary.
 
+## CLI resolution
+
+Skills here lean on the `track` CLI — and occasionally a sidecar binary such as `track-fetch-web` or a third-party CLI like `plaud`. The CLI is the source of truth, not the skill prose. A skill that embeds a command surface the binary may not have is a skill that has already drifted. Two rules keep that boundary honest.
+
+**Keep the skill thin at the CLI boundary.** The version-matched CLI contract lives with the binary, in the track repository's `docs/spec/agent-workflows.md`, not in these skills. A skill that needs the full command surface either points at that contract or lists only what it actually uses. For an external CLI the skill does not control — `plaud`, `yap` — stay a discovery stub: name the tool and how to check it, and defer the flag surface to the tool's own `--help`. Do not enumerate flags that can drift.
+
+**Resolve once, prefer JSON, fail closed.** Before touching the vault, settle the executable and keep it for the whole session. Resolve the CLI once — `track` on `PATH` on a normal setup, `go run ./cmd/track` in the track source repo — and reuse that choice; the two can target different builds, so do not switch between them mid-session. Prefer machine-readable output: `track` prints one compact JSON object per command, and where a CLI offers a human/JSON split pass `--json` (`plaud files --json`). Parse that, never human prose. Fail closed: if the resolved executable fails, report its exact error and stop. Do not fall through to another build or binary — that can silently target a different vault or build — and do not guess subcommands or flags from memory.
+
 ## Layout
 
 ```text
