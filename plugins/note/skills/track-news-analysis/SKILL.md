@@ -18,7 +18,7 @@ CLI を使う前に[実行環境](../track/references/runtime.md)を読む。
 - 利用可能な Web 検索・ページ取得ツール。Codex ではその環境の検索とページ閲覧を使う。
 - vault の `analysis` テンプレート（`track template list`）。無ければ、この skill の下記の構造から
   作成する。
-- 相場系の事象では、`track-fetch-jquants`（J-Quants; `TRACK_JQUANTS_REFRESH_TOKEN`）が `data.source` の
+- 相場系の事象では、`track-fetch-jquants`（experimental）（J-Quants; `TRACK_JQUANTS_REFRESH_TOKEN`）が `data.source` の
   ローソク足に実 OHLCV を供給できる。認証情報が無ければ、調査した値をそのまま chart に埋め込む。
 
 ## Workflow
@@ -70,7 +70,7 @@ Node.js や Codex の JavaScript 実行ツールでは直接実行しない。
   ```
 
   その行を `metric` 種の viewspec に貼り付ける。`y[0]` を値の線として、`change` を `axis: "y2"` 上の
-  棒として置く。`track-fetch-jquants` による実 OHLCV はこれを省略し、`data.source` で扱う。
+  棒として置く。`track-fetch-jquants`（experimental）による実 OHLCV はこれを省略し、`data.source` で扱う。
 - GFM 脚注で引用し、「primary-verified」（一次検証済み）と「agent-collected」（agent 収集）に分ける。
   未検証のものは `[!WARNING]` alert で示し、未解決の問い の下に checkbox として列挙する。
 - sidecar メタデータを設定する: `track meta --description ... --set subject-date=... --set verify-status=...`

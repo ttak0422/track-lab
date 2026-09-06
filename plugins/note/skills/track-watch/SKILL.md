@@ -43,7 +43,7 @@ watch ごとに kebab-case の **トピックタグ**を1つ選び（例: `jp-ma
 - `## 概況`: 現在の見立て。1段落で、毎週の実行によってその場で改訂する（履歴は日付入りノートに
   あり、ここではない）。マーケット系トピックでは、`data.source: "<topic>.jsonl"` を持つ `viewspec`
   フェンスを追加する。フェッチャーがそのファイルを更新するたびにチャートが再描画されるため、
-  ダッシュボードは**トークンコストゼロ**で最新に保たれる（`track-fetch-jquants` は cron 安全）。
+  ダッシュボードは**トークンコストゼロ**で最新に保たれる（`track-fetch-jquants`（experimental）は cron 安全）。
 - `## 懸念`: 未解決の懸念をタスク行として、優先度タグ付きで記す（`[#A]` = 翌日の実行が最初に確認
   する）。これが「事前に懸念していた事項」の機械的な意味である。デイリー実行はこのリストに応答し、
   `track task set ... --state DONE` で項目を解決し、新規項目を追加する。
@@ -65,7 +65,7 @@ watch ごとに kebab-case の **トピックタグ**を1つ選び（例: `jp-ma
 1. 状態を読む: watch ノート（`track export`）、その未解決の懸念（`track tasks`）、前回のブリーフ
    （`track search --query "#<topic> #daily"` の最新ヒット）。
 2. トピックにデータフィードがあれば先に更新する:
-   `track-fetch-jquants --code <code> --out <vault>/data/<topic>.jsonl`: フィードからの数値は検証
+   `track-fetch-jquants --code <code> --out <vault>/data/<topic>.jsonl`（experimental）: フィードからの数値は検証
    済み。フィードが答えてくれることを検索で消費してはならない。
 3. 以下の3つの問いだけを調査し、他は何もしない:
    - (a) 今日、未解決の懸念に応答するものはあったか？ (未解決の懸念ごとに最大1クエリ);
