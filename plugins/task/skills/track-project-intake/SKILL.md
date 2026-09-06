@@ -5,9 +5,9 @@ description: プロジェクトに紐づく作業（バグ修正、機能追加�
 
 # Track Project Intake
 
-CLI を使う前に[実行環境](../track/references/runtime.md)を読む。
+CLI を使う前に[実行環境](../../references/runtime.md)を読む。振り分けは[track-task-triage](../track-task-triage/SKILL.md)、消化は[track-task-runner](../track-task-runner/SKILL.md)に従う。
 
-入ってきたプロジェクト作業の依頼を、プロジェクトの track ノートにあるチェックリスト項目へ変換する。これはワークフローの**取り込み**側であり、作業を捕捉して記録する。`track-task-runner` は**実行**側で、同じチェックリストから後で項目を取り上げ、実装し、worklog ノートへ移す。
+入ってきたプロジェクト作業の依頼を、プロジェクトの track ノートにあるチェックリスト項目へ変換する。これはワークフローの**取り込み**側であり、作業を捕捉して記録する。[track-task-runner](../track-task-runner/SKILL.md) は**実行**側で、同じチェックリストから後で項目を取り上げ、実装し、worklog ノートへ移す。
 
 プロジェクトノートは**開発者とエージェントの共有記録**である。双方が、未処理のものと既に決定したものを見るために参照する場所である。相手が問い直さずに行動できるだけの情報を記録すること。
 
@@ -17,7 +17,7 @@ CLI を使う前に[実行環境](../track/references/runtime.md)を読む。
 
 プロジェクトにスコープされた作業依頼をユーザーがしたときに発動する。たとえば「このバグを直して」（fix this bug）、「機能を追加して」（add a feature）、「X の TODO がある」（here's a TODO for X）といった依頼で、その依頼を実行するのではなく（あるいは実行する前に）そのプロジェクトに対して記録すべき場合である。典型的な言い回し: 「このバグを <repo> 用に記録して」（record this bug for <repo>）、「〜する必要があるとメモして」（note that we need to …）、「<project> ノートに TODO を追加して」（add a TODO to the <project> note）。
 
-純粋なノート作成（`track-create-note`）、読み取り専用の検索（`track-search-notes`）、既に記録された項目の*実装*（`track-task-runner`）にはこれを使わない。
+純粋なノート作成（note プラグインの `track-create-note`）、読み取り専用の検索（note プラグインの `track-search-notes`）、既に記録された項目の*実装*（[track-task-runner](../track-task-runner/SKILL.md)）にはこれを使わない。サイズの振り分けが必要なら先に [track-task-triage](../track-task-triage/SKILL.md) を使う。
 
 ## 前提条件
 

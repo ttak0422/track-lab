@@ -7,12 +7,12 @@ description: >-
   日付つき worklog ノートへ移す。項目にプランノートがある場合はそれに従う。
   ユーザーが TODO や Bug リストの処理・消化を依頼したとき、つまり「タスクノートを
   処理して」（handle the task note）や track ノートで管理された項目への対処を求められた
-  ときに使う。項目の記録と計画を担う track-project-intake と対になる。
+  ときに使う。項目の記録と計画を担う [track-project-intake](../track-project-intake/SKILL.md) と対になり、振り分けは [track-task-triage](../track-task-triage/SKILL.md) が担う。
 ---
 
 # Track Task Runner
 
-CLI を使う前に[実行環境](../track/references/runtime.md)を読む。
+CLI を使う前に[実行環境](../../references/runtime.md)を読む。振り分けは[track-task-triage](../track-task-triage/SKILL.md)、記録は[track-project-intake](../track-project-intake/SKILL.md)に従う。
 
 track ノートの `## TODO` と `## Bug` チェックリストから実装作業を進める。ノート（ユーザーの
 track ボールト内）がタスクの源泉であり、コード変更は現在のプロジェクトの作業ディレクトリで

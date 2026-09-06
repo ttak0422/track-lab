@@ -1,0 +1,4 @@
+interface:
+  display_name: "Track Task Review"
+  short_description: "タスクノートの完了後を整理する"
+  default_prompt: "$track-task-review を使って、私のタスクノートの完了後を整理してください。"

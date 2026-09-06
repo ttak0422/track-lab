@@ -1,0 +1,4 @@
+interface:
+  display_name: "Track Task Triage"
+  short_description: "入ってきた TODO をサイズで振り分ける"
+  default_prompt: "$track-task-triage を使って、この TODO をサイズで振り分けてください。"
