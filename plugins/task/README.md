@@ -32,11 +32,13 @@ flowchart LR
 
 ## Conventions
 
-Project backlogs use `## TODO` and `## Bug`; an explicitly selected flat TODO note can
-keep its single list. The [shared task conventions](references/runtime.md#task-conventions)
+A flat TODO note holds nothing but task lines under one list. It is mechanically managed:
+change states and dates only through the CLI write path (`task set` / `cycle` / `date`,
+`triage` / `intake` for adds and moves), and do not hand-edit task lines. Mark the note
+with an HTML comment to that effect so the policy travels with the body without rendering.
+Project backlogs otherwise use `## TODO` and `## Bug`. The [shared task conventions](references/runtime.md#task-conventions)
 define state changes, permitted body edits, and phased work for all four skills.
-Existing state markers and dates must be changed through the CLI. A note may carry a
-stricter policy in an HTML comment; preserve and follow it.
+A note may carry a stricter policy in an HTML comment; preserve and follow it.
 
 ## Requirements
 

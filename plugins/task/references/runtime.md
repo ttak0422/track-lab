@@ -8,6 +8,7 @@ The procedures in this plugin are shared across Codex / Claude Code / OpenCode. 
 - Use the vault the user specified, and otherwise follow the normal track configuration. Carry over the `vault` from search results, and add `--vault NAME` when handling IDs from another vault.
 - The vault may live outside the workspace. A permission error does not mean the vault is absent. Do not change the destination on your own; use the environment's approval flow only for the operations that need it. When permission cannot be obtained, press on with non-write work, save the body in the work area, and report it as unapplied.
 - Prioritize the user's request and already-granted approvals. Using a skill never authorizes unrequested publishing, sending, or deletion. For record-only requests, do not start implementing; when implementation is also requested, keep working after recording.
+- Use today's local date for agenda and worklog operations; literal dates in examples are placeholders. Preserve original completion dates when moving older work.
 
 ## Task conventions
 
@@ -16,4 +17,3 @@ The procedures in this plugin are shared across Codex / Claude Code / OpenCode. 
 - Use the CLI for adding or moving items when it supports the operation (`append` for a flat list, `refile --line` for a list item). Direct body edits are limited to inserting under a heading, clarifying text, priority, and splitting items. Preserve unrelated text and metadata; respect stricter policies embedded in a note.
 - Re-read the source before each write and locate the intended text again. Line numbers become stale after inserts, removals, and moves. `--expect` on state changes checks the state, not the identity of the line. Reindex after direct edits and verify with `export`.
 - Parent items summarize phased work. Record dependencies and acceptance criteria when splitting. Run eligible leaves in dependency order; do not implement the parent again. Keep the parent until all required children are complete and its acceptance criteria pass. A WAITING or CANCELLED ancestor blocks automatic execution of its children.
-- Use today's local date for agenda and worklog operations; literal dates in examples are placeholders. Preserve original completion dates when moving older work.

@@ -65,10 +65,12 @@ track tasks --id <note_id> --overdue
 
 ## 5. 状態・優先度・期限を付ける
 
-状態の一覧と更新規則は[共通規約](../../references/runtime.md#task-conventions)に従う。振り分けだけで DOING にはしない。状態変更の直前に対象行を読み直し、既知の状態を `--expect` で指定する。
+状態の一覧と更新規則は[共通規約](../../references/runtime.md#task-conventions)に従う。振り分けだけで DOING にはしない。状態変更の直前に対象行を読み直し、既知の状態を `--expect` で指定する。単純な開閉だけ `toggle` を使う。
 
 ```sh
 track task set --id <note_id> --line <N> --state WAITING --expect TODO
+track task set --id <note_id> --line <N> --state DOING
+track task cycle --id <note_id> --line <N>
 track task date --id <note_id> --line <N> --sched 2026-09-10 --due 2026-09-12
 ```
 

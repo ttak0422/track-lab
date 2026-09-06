@@ -11,10 +11,10 @@ CLI を使う前に[実行環境](../track/references/runtime.md)を読む。
 
 ## 前提条件
 
-- 真実の情報源として `track` CLI を使う。track のソースリポジトリでは、`go run ./cmd/track` を代わりとして使ってよい。
+- 真実の情報源として `track` CLI を使う。実行ファイルは 1 回解決し、セッション中は使い続ける（通常は `PATH` 上の `track`、track のソースリポジトリ内では `go run ./cmd/track`。失敗したら正確なエラーを報告して止まり、別の実行ファイルへ切り替えない）。
 - ユーザーの通常の track 設定を優先する。`TRACK_VAULT` はテストや一回限りの上書き用である。
-- コマンドは単一行の JSON を出力する（`export` は Markdown を出力する）。exit code 1 の `{"error":...}` は失敗として扱う。
-- `track-fetch-web` を `PATH` 上に置く。これは track に付属する別バイナリであり、track 本体はネットワーク通信をしない。ソースリポジトリからは `go run ./cmd/track-fetch-web`。
+- コマンドは単一行の JSON を出力する（`export` は Markdown を出力する）。exit code 1 の `{"error":...}` は失敗として扱う。人間向けと JSON を選べる場合は `--json` を付ける。
+- `track-fetch-web` を `PATH` 上に置く。これは track に付属する別バイナリであり、track 本体はネットワーク通信をしない。ソースリポジトリからは `go run ./cmd/track-fetch-web` を使う。`track` と同じく 1 回解決して使い続ける。
 
 ## ページを読む
 
