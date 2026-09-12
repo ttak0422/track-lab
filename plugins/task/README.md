@@ -8,6 +8,7 @@
 
 | Skill | Purpose |
 | ----- | ------- |
+| [clean-room-implement](skills/clean-room-implement/SKILL.md) | 参照実装を実装担当から隔離し、仕様と観測可能な振る舞いから実装・検証する。単独でも runner からでも使える。 |
 | [track-task-triage](skills/track-task-triage/SKILL.md) | 依頼や既存チェックリストを S/M/L に振り分け、曖昧なものは書く前に明確化し、サイズ別の経路（直接・プランノート付き・分割）へ回す。 |
 | [track-project-intake](skills/track-project-intake/SKILL.md) | 入ってきたバグ/TODO をプロジェクトノートの `## Bug` / `## TODO` に記録し、合意が必要な場合だけリンクするプランノートを下書きする。 |
 | [track-task-runner](skills/track-task-runner/SKILL.md) | プロジェクトノートのチェックリストを自律的に消化し、完了項目をコミットとともに日付つき worklog ノートへ移す。 |
@@ -55,10 +56,11 @@ plugins/task/
     ├── track-task-triage/SKILL.md
     ├── track-project-intake/SKILL.md
     ├── track-task-runner/SKILL.md
+    ├── clean-room-implement/SKILL.md
     └── track-task-review/SKILL.md
 ```
 
-個々の skill は `../../references/runtime.md` を実行環境として読む。プラグインレベルに置くのは、`skills/` 直下の全ディレクトリが配布上の skill と見なされるためである。
+track を操作する skill は `../../references/runtime.md` を実行環境として読む。プラグインレベルに置くのは、`skills/` 直下の全ディレクトリが配布上の skill と見なされるためである。
 
 ## Install
 
@@ -96,4 +98,5 @@ only links owned by the synced plugins are touched.
 
 Standalone: copy the complete `plugins/task/` directory, preserving `skills/` and
 `references/`, then expose its skill directories through your runtime's skill discovery.
-The four skills link to each other; copying one skill alone leaves those links broken.
+The four track skills link to each other; copying one alone leaves those links broken.
+`clean-room-implement` also works independently without track.
