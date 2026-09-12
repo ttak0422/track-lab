@@ -43,6 +43,8 @@ Project backlogs otherwise use `## TODO` and `## Bug`. The [shared task conventi
 define state changes, permitted body edits, and phased work for the track task lifecycle skills.
 A note may carry a stricter policy in an HTML comment; preserve and follow it.
 
+実装は[共通方針](references/runtime.md#worktrees-and-parallel-execution)に従い、専用ブランチと worktree を既定とする。同じ作業を現在のブランチで対応中なら継続し、独立した項目は可能なら別エージェントで並列実行する。ノート更新は調整役が直列に行う。記録・振り分け・棚卸しだけなら worktree は不要。
+
 ## Requirements
 
 - `track` CLI が `PATH` 上にあり、ユーザーの通常のボールトに対して解決できること。
