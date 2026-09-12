@@ -8,7 +8,7 @@
 
 | Skill | Purpose |
 | ----- | ------- |
-| [clean-room-implement](skills/clean-room-implement/SKILL.md) | 参照実装を実装担当から隔離し、仕様と観測可能な振る舞いから実装・検証する。単独でも runner からでも使える。 |
+| [clean-room-implement](skills/clean-room-implement/SKILL.md) | 参照実装を実装担当から隔離し、仕様と観測可能な振る舞いから実装・検証する。専用スキルとして呼び出せ、runner の明示指定からも利用する。 |
 | [track-task-triage](skills/track-task-triage/SKILL.md) | 依頼や既存チェックリストを S/M/L に振り分け、曖昧なものは書く前に明確化し、サイズ別の経路（直接・プランノート付き・分割）へ回す。 |
 | [track-project-intake](skills/track-project-intake/SKILL.md) | 入ってきたバグ/TODO をプロジェクトノートの `## Bug` / `## TODO` に記録し、合意が必要な場合だけリンクするプランノートを下書きする。 |
 | [track-task-runner](skills/track-task-runner/SKILL.md) | プロジェクトノートのチェックリストを自律的に消化し、完了項目をコミットとともに日付つき worklog ノートへ移す。 |
@@ -26,6 +26,8 @@ flowchart LR
   plan --> checklist
   split --> checklist
   checklist --> runner[track-task-runner]
+  runner -->|clean-room requested| cleanroom[clean-room-implement]
+  cleanroom -->|implementation verified| runner
   runner --> worklog["worklog note<br/>#worklog"]
   runner --> review[track-task-review]
   review --> checklist
@@ -38,7 +40,7 @@ change states and dates only through the CLI write path (`task set` / `cycle` / 
 `triage` / `intake` for adds and moves), and do not hand-edit task lines. Mark the note
 with an HTML comment to that effect so the policy travels with the body without rendering.
 Project backlogs otherwise use `## TODO` and `## Bug`. The [shared task conventions](references/runtime.md#task-conventions)
-define state changes, permitted body edits, and phased work for all four skills.
+define state changes, permitted body edits, and phased work for the track task lifecycle skills.
 A note may carry a stricter policy in an HTML comment; preserve and follow it.
 
 ## Requirements
@@ -99,4 +101,3 @@ only links owned by the synced plugins are touched.
 Standalone: copy the complete `plugins/task/` directory, preserving `skills/` and
 `references/`, then expose its skill directories through your runtime's skill discovery.
 The four track skills link to each other; copying one alone leaves those links broken.
-`clean-room-implement` also works independently without track.
