@@ -25,17 +25,17 @@ const DEFAULT_LENSES = [
 const LENSES = (args.lenses && args.lenses.length ? args.lenses : DEFAULT_LENSES)
 const MAX_GAP_FILLS = args.maxGapFills || 3
 
-const COMMON = `あなたはWeb調査エージェント。最初に ToolSearch で "select:WebSearch,WebFetch" を実行してツールを読み込むこと。今日は${args.today}。
+const COMMON = `あなたはWeb調査エージェント。現在の環境で利用可能な Web 検索・ページ取得ツールを使う。今日は${args.today}。
 対象事象: ${args.event}
 依頼文に含まれる前提は検証対象であり、事実として引き継がないこと。
-日本語と英語の両方で検索し、一次情報を優先する。すべての事実に出典URLを付ける。数値は正確に転記する。
+対象に合う言語で検索し、一次情報を優先する。すべての事実に出典URLを付ける。数値は正確に転記する。
 確証が持てない情報は confidence を下げて明示する。
-最終出力はStructuredOutputで返す。summaryは日本語で具体的・詳細に(数値・固有名詞・日付を含める)。`
+指定された schema に従って返す。summary は日本語で、確認できた数値・固有名詞・日付を必要に応じて含める。`
 
 const FACTS = {
   type: 'object',
   properties: {
-    summary: { type: 'string', description: '日本語での詳細な要約。数値・固有名詞・日付を必ず含める' },
+    summary: { type: 'string', description: '日本語の要約。確認できた数値・固有名詞・日付を必要に応じて含める' },
     facts: {
       type: 'array',
       items: {
@@ -116,7 +116,7 @@ const lensResults = await pipeline(
     if (!found) return null
     const keyFacts = (found.facts || []).filter((f) => f.confidence !== 'low').slice(0, 12)
     const keyQuotes = (found.quotes || []).slice(0, 5)
-    return agent(`あなたは懐疑的な検証エージェント。最初に ToolSearch で "select:WebSearch,WebFetch" を実行してツールを読み込むこと。今日は${args.today}。
+    return agent(`あなたは懐疑的な検証エージェント。現在の環境で利用可能な Web 検索・ページ取得ツールを使う。今日は${args.today}。
 別の調査者が「${args.event}」について集めた以下の主張を、元の出典とは別の独立ソースで照合し、反証を試みよ。数値の食い違い、日付のずれ、引用の改変を特に疑うこと。確認できなければ unverified とする。
 主張リスト:
 ${JSON.stringify(keyFacts, null, 1)}
@@ -156,7 +156,7 @@ ${digest}`, {
 let filler = null
 if (critic && critic.missing && critic.missing.length > 0) {
   filler = await agent(COMMON + `
-以下は調査の欠落として指摘された観点である。上位${MAX_GAP_FILLS}件までをWebSearch/WebFetchで調査して埋めよ。矛盾の指摘があれば、どちらが正しいか一次情報で決着させよ。
+以下は調査の欠落として指摘された観点である。上位${MAX_GAP_FILLS}件までを利用可能な検索・ページ取得ツールで調査して埋めよ。矛盾の指摘があれば、どちらが正しいか一次情報で決着させよ。
 欠落: ${JSON.stringify(critic.missing.slice(0, MAX_GAP_FILLS))}
 矛盾: ${JSON.stringify((critic && critic.contradictions) || [])}`, { label: 'gap-filler', phase: 'Gaps', schema: FACTS })
 }

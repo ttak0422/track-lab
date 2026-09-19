@@ -18,7 +18,7 @@ if (!args || !args.topic || !args.today || !args.stance) {
 const ASSUMPTIONS = args.assumptions || []
 const MAX_STRESS = args.maxStress || 6
 
-const WEB = `最初に ToolSearch で "select:WebSearch,WebFetch" を実行してツールを読み込むこと。今日は${args.today}。すべての事実に出典URLを付け、確証が持てないものは confidence を明示する。`
+const WEB = `現在の環境で利用可能な Web 検索・ページ取得ツールを使う。今日は${args.today}。すべての事実に出典URLを付け、確証が持てないものは confidence を明示する。`
 
 phase('Excavate')
 const excavated = await agent(`あなたは敵対的な前提発掘エージェント。対象テーマ: ${args.topic}。

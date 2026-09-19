@@ -12,7 +12,7 @@ the `track` plugin. track itself now carries only the CLI and its tool-neutral c
 
 | Skill | Purpose |
 | ----- | ------- |
-| [track-create-note](skills/track-create-note/SKILL.md) | Create or open notes, journals, and template-backed notes — including the rich body constructs (diagrams, mindmaps, charts, queries, babel, embeds) that plain prose leaves on the table. |
+| [track-create-note](skills/track-create-note/SKILL.md) | Create or open notes, journals, and template-backed notes — with links to drawing and embed references when the body needs them. |
 | [track-search-notes](skills/track-search-notes/SKILL.md) | Read-only discovery: search by title/body/tag, resolve links, export bodies, inspect backlinks and the local graph. |
 | [track-report](skills/track-report/SKILL.md) | File the findings of an investigation as a **report note**, so the answer survives the session. |
 | [track-explainer](skills/track-explainer/SKILL.md) | Fold a topic's reports into one **explainer note** — the page a human actually opens, with a diagram and routes down into the reports and their sources. |
@@ -104,7 +104,7 @@ Skills here lean on the `track` CLI — and occasionally a sidecar binary such a
 
 **Keep the skill thin at the CLI boundary.** The version-matched CLI contract lives with the binary, in the track repository's `docs/spec/agent-workflows.md`, not in these skills. A skill that needs the full command surface either points at that contract or lists only what it actually uses. For an external CLI the skill does not control — `plaud`, `yap` — stay a discovery stub: name the tool and how to check it, and defer the flag surface to the tool's own `--help`. Do not enumerate flags that can drift.
 
-**Resolve once, prefer JSON, fail closed.** Before touching the vault, settle the executable and keep it for the whole session. Resolve the CLI once — `track` on `PATH` on a normal setup, `go run ./cmd/track` in the track source repo — and reuse that choice; the two can target different builds, so do not switch between them mid-session. Prefer machine-readable output: `track` prints one compact JSON object per command, and where a CLI offers a human/JSON split pass `--json` (`plaud files --json`). Parse that, never human prose. Fail closed: if the resolved executable fails, report its exact error and stop. Do not fall through to another build or binary — that can silently target a different vault or build — and do not guess subcommands or flags from memory.
+**Resolve once, prefer JSON, fail closed.** Before touching the vault, settle the executable and keep it for the whole session. Resolve the CLI once — `track` on `PATH` on a normal setup, `go run ./cmd/track` in the track source repo — and reuse that choice; the two can target different builds, so do not switch between them mid-session. Prefer machine-readable output: `track` prints one compact JSON object per command, and where a CLI offers a human/JSON split pass `--json` (`plaud files --json`). Parse that, never human prose. If the resolved executable fails, check the affected operation's saved state and report its exact error. Continue independent work. Do not fall through to another build or binary — that can silently target a different vault or build — and do not guess subcommands or flags from memory.
 
 ## Layout
 
@@ -121,13 +121,15 @@ plugins/note/
     ├── track-japanese-tech-writing/SKILL.md
     ├── track-markdown/
     │   ├── SKILL.md
-    │   └── references/{EMBEDS,PROPERTIES}.md
+    │   └── references/{DRAWING,EMBEDS,PROPERTIES}.md
     ├── track-news-analysis/SKILL.md
     ├── track-report/SKILL.md
     ├── track-search-notes/SKILL.md
     ├── track-service-integration/SKILL.md
     ├── track-tool/SKILL.md
-    ├── track-watch/SKILL.md
+    ├── track-watch/
+    │   ├── SKILL.md
+    │   └── references/{light,mid,high}.md
     └── track/SKILL.md
 ```
 

@@ -8,6 +8,8 @@ The procedures in this plugin are shared across Codex / Claude Code / OpenCode. 
 - Use the vault the user specified, and otherwise follow the normal track configuration. Carry over the `vault` from search results, and add `--vault NAME` when handling IDs from another vault.
 - The vault may live outside the workspace. A permission error does not mean the vault is absent. Do not change the destination on your own; use the environment's approval flow only for the operations that need it. When permission cannot be obtained, press on with non-write work, save the body in the work area, and report it as unapplied.
 - Prioritize the user's request and already-granted approvals. Using a skill never authorizes unrequested publishing, sending, or deletion. For record-only requests, do not start implementing; when implementation is also requested, keep working after recording.
+- Treat workflow and formatting defaults as adjustable to the user's request. Ask only for missing decisions that materially affect scope, correctness, or authorization; continue independent work. If a skill instruction requires a pause, link the file and quote the instruction rather than silently stopping.
+- Complete the requested outcome, including relevant validation and task records. A plan or first implementation is not completion when implementation is requested. Run required checks and those affected by the change; repeat them after fixes or new evidence, not merely to add another review pass.
 - Use today's local date for agenda and worklog operations; literal dates in examples are placeholders. Preserve original completion dates when moving older work.
 
 ## Task conventions

@@ -1,6 +1,6 @@
 ---
 name: memory
-description: Persistent agent memory backed by a track vault. Use when the user asks to remember or recall something across sessions, when durable facts emerge (corrections, preferences, decisions, project constraints), or before substantial tasks to recall relevant context.
+description: Record or recall durable cross-session facts in a track vault when requested or relevant stored context is needed.
 ---
 
 # Memory
@@ -24,7 +24,7 @@ Titles express scope the way Confluence page titles do: `foo / bar` is a child o
 
 ## Recall
 
-At the start of a substantial task, or when stored context about the user, project, or workflow might exist:
+Search when the task needs stored context about the user, project, or workflow. A substantial task alone does not require a memory lookup.
 
 ```sh
 track search --query "#memory <keywords>" --limit 10
@@ -65,4 +65,4 @@ track new --title "<scope-prefixed topic>" --tag memory --body "<one-line summar
 
 ## Maintenance
 
-When recall starts returning duplicated, contradictory, or stale hits, run the dream skill to consolidate memory.
+Correct an isolated stale fact in place. Use the dream skill when recall reveals a broader consolidation need within the requested scope.

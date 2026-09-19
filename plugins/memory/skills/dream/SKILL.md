@@ -1,6 +1,6 @@
 ---
 name: dream
-description: Consolidate track-based agent memory - merge duplicates, resolve contradictions, refresh stale facts, prune noise. Use when the user says "dream", asks to clean up or reorganize memory, or when memory recall returns duplicated or outdated hits.
+description: Consolidate track memory when requested or duplicated, contradictory, or stale recall results need cleanup.
 ---
 
 # Dream
@@ -9,9 +9,7 @@ Reorganize the memory notes in a track vault (memory consolidation). Recording i
 
 ## Triggers
 
-- Right after a large refactor (mass renames, framework migration, API restructuring) — stale entries actively mislead, so this takes priority.
-- When many sessions have accumulated since the last dream (roughly 20-30 sessions in practice). `track gen list` shows generation labels — a long gap since the last `dream`-labeled generation is a signal to suggest a dream.
-- When the user says "dream" or asks to tidy memory, or recall returns duplicated or contradictory hits.
+- When the user asks to tidy memory, or recall reveals duplicated, contradictory, or stale memory that needs consolidation. A refactor or elapsed session count alone does not require a vault-wide cleanup.
 
 ## Preconditions
 
@@ -81,7 +79,7 @@ For partial adoption, write back individual sections from `gen peek` output with
 
 - Keep only currently-true knowledge, rules, and reproducible procedures. Strip provenance and history from note bodies: who said it, when it was learned, how often it recurred. Technical causality ("A breaks B, so do C") stays.
 - Never restate a fact another note owns; link to it with `[[Title]]`.
-- The host's always-loaded instructions (CLAUDE.md / AGENTS.md) are the layer above the vault: silently delete memory notes that restate rules defined there — the host side is not yours to edit.
+- Remove memory notes that only restate the host's always-loaded instructions (CLAUDE.md / AGENTS.md), and include those removals in the report. Do not modify the host instructions as part of memory consolidation.
 - Consolidation can hallucinate: merged text may assert things no source note said. Present the changes for review before the final `increment`; never adopt silently.
 
 ## Checklist

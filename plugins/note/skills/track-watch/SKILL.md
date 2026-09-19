@@ -1,7 +1,6 @@
 ---
 name: track-watch
-description: >-
-  track vault 内のあるトピックに対して、3段階の思考深度で定点観測ループを実行する: light（デイリーブリーフ、トークン最小、その日の動き・懸念事項への反応・新規イベント）、mid（ウィークリーレビュー、トレンド＋前提の点検）、high（オンデマンドの深掘りレビュー、前提の発掘、崩壊シナリオ分析、反証可能な予想）。ユーザーが daily brief、weekly review、定点観測、デイリー/ウィークリー分析、light/mid/high の watch 実行、あるいは継続的なニュース・マーケット watch のセットアップや継続を求めたときに使う。1つのイベントを深掘りする track-news-analysis と対をなす。本スキルはイベントとイベントの間のループを回す。
+description: track に記録する定点観測を light/mid/high の深度で実行するときに使う。反復スケジュールは依頼時に設定する。
 ---
 
 # Track Watch
@@ -10,10 +9,9 @@ CLI を使う前に[実行環境](../track/references/runtime.md)を読む。
 
 watch はレポートではなくループである。各回は前回が残したものを読み、1日分（または1週間分）の差分を
 加え、次回がより賢く始められるよう共有状態を更新する。vault こそがループ状態であり、タグが検索
-インデックスである。このスキルで唯一の罪は、前回の実行がすでに確立したことを再調査することだ。
+インデックスである。前回の根拠を再利用し、変化した情報や古くなった前提を確認する。
 
-`track` CLI を正（source of truth）として使う。シェルに環境変数 `TRACK_VAULT` が設定されていないか
-注意し、ユーザーが特定の vault を指定していない限り、`env -u TRACK_VAULT` で取り除くこと。
+保存先は共通の実行環境に従う。既存の watch ノートと同じ vault を使う。
 
 ## 深度の段階
 
@@ -58,81 +56,13 @@ watch ごとに kebab-case の **トピックタグ**を1つ選び（例: `jp-ma
   デイリー実行は `trigger` が発火したときだけフラグを立てる。ウィークリーの `high` 実行は、古く
   なった項目や発火した項目を再点検する。トークン効率はここから生まれる。
 
-## light: デイリーブリーフ（最小限に保つ）
+## 深度に応じた手順
 
-調査は1パス。メインエージェントが利用可能な Web 検索ツールで調べる。少数のクエリで済ませる。重労働はループ状態が担う。
+指定された深度の参照だけを読む。指定がなく当日分の確認なら light を使う。
 
-1. 状態を読む: watch ノート（`track export`）、その未解決の懸念（`track tasks`）、前回のブリーフ
-   （`track search --query "#<topic> #daily"` の最新ヒット）。
-2. トピックにデータフィードがあれば先に更新する:
-   `track-fetch-jquants --code <code> --out <vault>/data/<topic>.jsonl`: フィードからの数値は検証
-   済み。フィードが答えてくれることを検索で消費してはならない。
-3. 以下の3つの問いだけを調査し、他は何もしない:
-   - (a) 今日、未解決の懸念に応答するものはあったか？ (未解決の懸念ごとに最大1クエリ);
-   - (b) 真に新しいイベントは現れたか？
-   - (c) その日の動き・数値は？（フィードがカバーしていない場合のみ）
-4. ブリーフを書く。`track new --title "<YYYYMMDD> <topic> daily" --tag daily --tag <topic>`:
-
-   ```markdown
-   from [[<topic> 定点観測]]
-
-   ## 当日の動き
-   ## 懸念への反応      ← one line per open concern; 「動きなし」 is a valid and useful answer
-   ## 新規イベント
-   ## 引き継ぎ          ← what this run changed in the watch note (resolved/added concerns, fired triggers)
-   ```
-
-   40行程度に保つ。チャートは描かない。watch ノートの `data.source` チャートが時系列を担う。
-5. watch ノートを更新する: 懸念タスクの遷移、新規懸念の追加、発火したトリガーをレジスタ項目に
-   記す。
-6. その日、本格的な分析に値するイベントが生じた場合、ブリーフ内で深掘りしては**ならない**。
-   `track-news-analysis` に引き渡し、分析ノートを watch ノートとブリーフの両方からリンクする。
-
-検証は比例的に行う: 昨日の数値との算術比較、そしてブリーフが主張する重要な数値それぞれについて
-一次ソース1つ。それ以上はしない。
-
-## mid: ウィークリーレビュー
-
-デイリーがすでに集めた材料に対するメインループでの作業。調査のファンアウトなし。
-
-1. 1週間分を集める: `track search --query "#<topic> #daily"` → その週のブリーフをエクスポートする。
-2. `<YYYYMMDD> <topic> weekly` を書く（タグは `weekly` ＋トピック）:
-
-   ```markdown
-   from [[<topic> 定点観測]]
-
-   ## 週間推移        ← numbers and events; one viewspec if the series moved meaningfully
-   ## トレンド評価    ← against previous weeklies (#<topic> #weekly): what continued, what broke
-   ## 前提の点検      ← walk the register; only items with contrary evidence this week get a re-check search
-   ## 来週の注視点    ← feeds back into the watch note's concern list
-   ```
-
-3. watch ノートを更新する: 見立ての段落、懸念リスト、レジスタの `[checked::]` 日付。
-
-## high: 深掘りレビュー（オンデマンド）
-
-毎月、または mid がレジスタの綻びを繰り返し見つけたときに実行する。mid の内容すべてに加えて、
-現在の見立て、週のブリーフの要約、前提レジスタ、懸念を材料に以下を行う。
-メインエージェントだけで実行できる。並列化が利用可能かつ許可されている場合に限り、独立した前提の照合を分担してよい。
-vault の更新はメインエージェントがまとめて行う。
-
-ワークフローは収穫優先で実行する: **excavate → stress → forecast → critic**。
-
-- *Excavate*: 見立てを疑う立場から、見立てが依存しながらレジスタにまだ挙がっていない前提を
-  列挙する (暗黙の前提)。
-- *Stress*: 点検期限切れ・トリガー発火済みの前提と新規発掘した高リスクの前提（最大6件）それぞれに独立した Web 照合を行う:
-  現在の根拠、何がそれを崩すか、崩れた場合の帰結、推奨される対応。
-- *Forecast*: 過去のパターンから推論した今後期間の予想。**すべての予想は反証マーカーを伴う**
-  （何が起きたらこの予想を捨てるか）。それがない予想は書かない。
-- *Critic*: レビュー全体に対する完全性パス。
-
-Workflow ツールが提供される環境では、同梱の `weekly-workflow.js` に `topic`、`today`、`stance`、
-`week_digest`、`assumptions: [{text, checked, trigger, due}]` を渡してもよい。`due` は点検期限切れまたはトリガー発火を示す。
-このスクリプトは Workflow ランタイム専用で、Node.js や Codex の JavaScript 実行ツールでは直接実行しない。
-
-結果はウィークリーノートの追加セクションに置かれる。`## 暗黙の前提の洗い出し`、
-`## シナリオ(前提が壊れたら)`、`## 予想(反証条件つき)`。そして新規の前提は本日の `[checked::]`
-日付付きでレジスタに加わる。
+- [light](references/light.md): 当日の変化と懸念への反応を記録する。
+- [mid](references/mid.md): 週の材料をまとめ、トレンドと前提を点検する。
+- [high](references/high.md): mid に加え、暗黙の前提、崩壊シナリオ、反証条件付き予想を扱う。
 
 ## ケイデンスとループ実行
 
