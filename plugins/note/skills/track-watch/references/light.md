@@ -10,7 +10,7 @@
    - (a) 今日、未解決の懸念に応答するものはあったか？ (既存の結果で答えられなければ検索する);
    - (b) 真に新しいイベントは現れたか？
    - (c) その日の動き・数値は？（フィードがカバーしていない場合のみ）
-4. ブリーフを書く。`track new --title "<YYYYMMDD> <topic> daily" --tag daily --tag <topic>`:
+4. 既存の同日ブリーフは本文を確認して未完了部分を更新する。初回だけ `track new --title "<YYYYMMDD> <topic> daily" --tag daily --tag <topic>` で作る。
 
    ```markdown
    from [[<topic> 定点観測]]
@@ -19,6 +19,7 @@
    ## 懸念への反応      ← one line per open concern; 「動きなし」 is a valid and useful answer
    ## 新規イベント
    ## 引き継ぎ          ← what this run changed in the watch note (resolved/added concerns, fired triggers)
+                      ← 対象期間、取得・保存の成功／失敗、未確認範囲、再実行対象
    ```
 
    40行程度に保つ。チャートは描かない。watch ノートの `data.source` チャートが時系列を担う。

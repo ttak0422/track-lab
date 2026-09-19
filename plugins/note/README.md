@@ -98,6 +98,24 @@ Division of labor: reports follow `track-japanese-tech-writing` + `track-japanes
 - `track` CLI on `PATH`, resolving against the user's normal vault.
 - `track-fetch-web` on `PATH` for `track-clip`. It ships with track as a separate binary.
 
+## Knowledge intake checks
+
+Clips retain source versions; reports and watch results identify the inputs they used.
+The shared [intake contract](skills/track/references/knowledge-intake.md) uses existing notes and metadata when the selected CLI has no version-storage API.
+This fallback requires serial writes and does not enforce immutability in the CLI.
+
+From the repository root, run the offline checks:
+
+```sh
+node scripts/check-research-workflows.mjs
+python3 scripts/check-knowledge-intake.py "$(command -v track)"
+```
+
+The first mocks Workflow responses to check retained results, failures, and limits. It does not execute live agents or web requests.
+The second uses an isolated temporary vault and cache to rehearse version retention, metadata repair, citations, and period boundaries.
+Its fixed search cases compare opening all matches with title-first selection capped at five notes: conflicting cache specifications, a body-only retry rule, and six capacity notes.
+It reports searches, notes opened, characters fetched, and missed evidence. The capped case deliberately misses one capacity note; these fixtures do not establish recall on real research questions.
+
 ## CLI resolution
 
 Skills here lean on the `track` CLI — and occasionally a sidecar binary such as `track-fetch-web` or a third-party CLI like `plaud`. The CLI is the source of truth, not the skill prose. A skill that embeds a command surface the binary may not have is a skill that has already drifted. Two rules keep that boundary honest.

@@ -6,8 +6,9 @@ description: Web ページを track 用の Markdown として読む、または�
 # Track Clip
 
 CLI を使う前に[実行環境](../track/references/runtime.md)を読む。
+保存・再取得では[出典と時点の契約](../track/references/knowledge-intake.md)に従う。
 
-`track-fetch-web` はページを取得し、ナビゲーション・サイドバー・広告・その他の付帯要素を取り除き、残りを Markdown に変換する。Markdown 抽出が必要な場合に使う。既に本文を取得できている場合は再取得しない。出力はより小さく、すでにボールトの形式になっている。保存に値するページは、同じ出力をそのまま `track new` にパイプで渡せる。
+`track-fetch-web` はページを取得し、ナビゲーション・サイドバー・広告・その他の付帯要素を取り除き、残りを Markdown に変換する。Markdown 抽出が必要な場合に使う。既に本文を取得できている場合は再取得しない。保存するときは取得記録と内容ハッシュを揃えてから `track new` に渡す。
 
 ## 前提条件
 
@@ -39,7 +40,7 @@ Container gardening rewards small, steady adjustments…
 
 ## ボールトにクリップする
 
-本文を一度保存し、その後で読み取った内容からタイトルを選ぶ。
+本文を一度作業ファイルへ保存し、その後で読み取った内容からタイトルを選ぶ。版として保存する前に下記の「本文を仕上げる」を済ませ、ハッシュ対象を確定する。
 
 ```sh
 track-fetch-web --note "<url>" > /tmp/clip.md
@@ -61,9 +62,10 @@ track new --title "<title>" --tag clip < /tmp/clip.md
 track meta --title "<title>" --description "<one line on what the page says>"
 ```
 
-すでに持っているページを再クリップする場合: 接尾辞付きタイトルを新たに作らず、そのノートの本文を置き換える。`track update --id <id> < /tmp/clip.md`。
+再クリップでは元の所在と内容ハッシュを照合し、同じ版なら既存ノートを使う。内容が変わった場合だけ版ノートを作り、旧本文と引用先を保持する。
+取得本文に要約を混ぜない。要約が必要なら別の生成物として入力版と生成日時を残す。
 
-今日のジャーナルにも記録しておくと、日付からもクリップに到達できる。`track journal` には `--body` を渡すこと。これがないとコマンドは stdin を読み込み、エージェントがハングする。
+今日のジャーナルにも記録しておくと、日付からもクリップに到達できる。既存本文を確認し、同じ版へのリンクがある場合は追記しない。`track journal` には `--body` を渡すこと。これがないとコマンドは stdin を読み込み、エージェントがハングする。
 
 ```sh
 track journal --body ""                                        # ensure today's journal exists
@@ -72,9 +74,9 @@ track append --id "$(date +%Y%m%d)" --body "- [[<title>]]"     # journal ids are
 
 ## 本文を仕上げる
 
-- 抽出器は通常の Markdown を出力するが、ページには track が文字どおり描画する構文（`==highlight==`、`%%comments%%`、インラインの `#tags`、`![[file]]` 埋め込み）が残ることがある。これらを変換する。完全な表は **track-markdown** スキルにある。
-- ノート（作成時の JSON がパスを出力する）に `track fmt <path>` を実行し、本文をボールトの正規形式に合わせる。
-- このノートが関連するノートへ `[[links]]` を追加する。何からもリンクされないクリップは、二度と誰にも見つからないクリップである。
+- 抽出器の出力を版として確定する前に必要な機械的変換を行い、変換方法とハッシュ対象を記録する。構文の扱いは **track-markdown** スキルを参照する。原文を変更する変換が必要なら、取得本文を添付として保持し、表示用本文を分ける。
+- `track fmt` は版の確定前に行う。確定後の取得本文へ整形や関連リンクを追記しない。
+- ジャーナルや関連ノートから版ノートへリンクし、`track export` と `track meta` で本文・ハッシュ・取得日時を確認する。
 
 ## データとしてのクリップ
 
