@@ -8,7 +8,7 @@
 
 | Skill | Purpose |
 | ----- | ------- |
-| [clean-room-implement](skills/clean-room-implement/SKILL.md) | 参照実装を実装担当から隔離し、仕様と観測可能な振る舞いから実装・検証する。専用スキルとして呼び出せ、runner の明示指定からも利用する。 |
+| [clean-room-implement](skills/clean-room-implement/SKILL.md) | 既存実装を参考にした機能移植・再実装で原則利用する。参照元固有の名称や内部構造を仕様から除き、別の担当が実装・検証する。互換性に必要な名称は保持する。 |
 | [track-task-triage](skills/track-task-triage/SKILL.md) | 依頼や既存チェックリストを S/M/L に振り分け、曖昧なものは書く前に明確化し、サイズ別の経路（直接・プランノート付き・分割）へ回す。 |
 | [track-project-intake](skills/track-project-intake/SKILL.md) | 入ってきたバグ/TODO をプロジェクトノートの `## Bug` / `## TODO` に記録し、合意が必要な場合だけリンクするプランノートを下書きする。 |
 | [track-task-runner](skills/track-task-runner/SKILL.md) | プロジェクトノートのチェックリストを自律的に消化し、完了項目をコミットとともに日付つき worklog ノートへ移す。 |
@@ -26,7 +26,7 @@ flowchart LR
   plan --> checklist
   split --> checklist
   checklist --> runner[track-task-runner]
-  runner -->|clean-room requested| cleanroom[clean-room-implement]
+  runner -->|feature port or clean-room requested| cleanroom[clean-room-implement]
   cleanroom -->|implementation verified| runner
   runner --> worklog["worklog note<br/>#worklog"]
   runner --> review[track-task-review]
