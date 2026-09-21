@@ -20,6 +20,17 @@ The procedures in this plugin are shared across Codex / Claude Code / OpenCode. 
 - Re-read the source before each write and locate the intended text again. Line numbers become stale after inserts, removals, and moves. `--expect` on state changes checks the state, not the identity of the line. Reindex after direct edits and verify with `export`.
 - Parent items summarize phased work. Record dependencies and acceptance criteria when splitting. Run eligible leaves in dependency order; do not implement the parent again. Keep the parent until all required children are complete and its acceptance criteria pass. A WAITING or CANCELLED ancestor blocks automatic execution of its children.
 
+## Model selection per task
+
+- Honor user and project model choices first. When dispatching a task, use the least costly available model suited to its uncertainty and impact; S/M/L size alone does not determine the model.
+- Lightweight: the specification, change locations, and validation are clear, with little design judgment and limited impact.
+- Standard: the task needs root-cause investigation, coordinated changes, or bounded design decisions.
+- High capability: the task needs complex design, has broad impact, or retains substantial uncertainty.
+- Map these tiers to models exposed by the current runtime or configured by the project. They are capability labels, not model IDs; do not invent model names or command flags. If the mapping is unknown or model selection is unavailable, inherit the current configuration and continue.
+- Use the runtime's supported delegation and context options for the chosen model. Preserve task scope, validation requirements, and clean-room reference boundaries when handing off.
+- Reassess when new evidence changes the task. If diagnosis or fixes stop making progress, hand findings, changes, and validation results to a more capable available model rather than repeating the same attempt. Missing requirements, authorization, or external dependencies still follow the normal deferral rules; changing models does not resolve them.
+- Keep validation and completion requirements unchanged at every tier.
+
 ## Worktrees and parallel execution
 
 - For implementation, use a dedicated branch and worktree by default, without waiting for the user to request one. First check `git status --short --branch` and `git worktree list`. Continue in the current branch/worktree only when this same task is already in progress there, or the user explicitly requests it. A feature branch name or unrelated changes alone are not evidence of ongoing work on this task. Reuse an existing worktree for the task if available; do not duplicate or take over another agent's active work.
