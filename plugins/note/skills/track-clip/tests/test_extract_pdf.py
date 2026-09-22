@@ -108,20 +108,29 @@ def consistency_and_timeout(directory: Path) -> None:
     tools = directory / "fake-poppler"
     tools.mkdir()
     fake = """#!/usr/bin/env python3
-import pathlib, sys, time
+import os, pathlib, sys, time
 if pathlib.Path(sys.argv[0]).name == 'pdfinfo':
-    print('Pages:', __import__('os').environ.get('FAKE_PAGE_COUNT', '1'))
+    print('Pages:', os.environ.get('FAKE_PAGE_COUNT', '1'))
 else:
-    time.sleep(float(__import__('os').environ.get('FAKE_DELAY', '0')))
+    marker = os.environ.get('FAKE_STARTED')
+    if marker:
+        pathlib.Path(marker).touch()
+    time.sleep(float(os.environ.get('FAKE_DELAY', '0')))
     data = pathlib.Path(sys.argv[-2]).read_bytes()
-    print('first' if b'FIRST' in data else 'second', end=__import__('os').environ.get('FAKE_END', '\\f'))
-    print(__import__('os').environ.get('FAKE_WARNING', ''), end='', file=sys.stderr)
+    print('first' if b'FIRST' in data else 'second', end=os.environ.get('FAKE_END', '\\f'))
+    print(os.environ.get('FAKE_WARNING', ''), end='', file=sys.stderr)
 """
     for name in ("pdfinfo", "pdftotext"):
         path = tools / name
         path.write_text(textwrap.dedent(fake), encoding="utf-8")
         path.chmod(0o755)
-    environment = {**os.environ, "PATH": f"{tools}{os.pathsep}{os.environ['PATH']}", "FAKE_DELAY": "0.3"}
+    marker = directory / "pdftotext-started"
+    environment = {
+        **os.environ,
+        "PATH": f"{tools}{os.pathsep}{os.environ['PATH']}",
+        "FAKE_DELAY": "0.3",
+        "FAKE_STARTED": str(marker),
+    }
     source = directory / "raced.pdf"
     first = b"%PDF-FIRST"
     source.write_bytes(first)
@@ -130,7 +139,10 @@ else:
         [sys.executable, str(SCRIPT), str(source), "--text-out", str(output), "--original-out", str(output.with_suffix('.original.pdf'))],
         text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=environment,
     )
-    time.sleep(0.1)
+    deadline = time.monotonic() + 5
+    while not marker.exists() and time.monotonic() < deadline:
+        time.sleep(0.01)
+    assert marker.exists(), "fake pdftotext did not start"
     source.write_bytes(b"%PDF-SECOND")
     stdout, stderr = process.communicate()
     assert process.returncode == 0, stderr
@@ -160,6 +172,17 @@ else:
 
     result = invoke(source, directory / "nan.txt", timeout=float("nan"), env=environment)
     assert result.returncode == 1 and json.loads(result.stderr)["code"] == "invalid_timeout"
+
+    missing_output = directory / "missing-poppler.txt"
+    result = invoke(source, missing_output, env={**os.environ, "PATH": ""})
+    assert result.returncode == 1 and json.loads(result.stderr)["code"] == "poppler_missing"
+    assert not missing_output.exists()
+
+    collision = subprocess.run(
+        [sys.executable, str(SCRIPT), str(source), "--text-out", str(source), "--original-out", str(directory / "copy.pdf")],
+        text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+    )
+    assert collision.returncode == 1 and json.loads(collision.stderr)["code"] == "path_collision"
 
 
 def main() -> None:

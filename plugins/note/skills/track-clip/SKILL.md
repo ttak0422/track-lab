@@ -1,6 +1,6 @@
 ---
 name: track-clip
-description: Web ページを track 用の Markdown として読む、またはボールトへクリップするときに使う。回答だけの依頼では保存しない。
+description: Web ページやローカル PDF を読み、track 用の本文として抽出またはボールトへクリップするときに使う。回答だけの依頼では vault へ保存しない。
 ---
 
 # Track Clip
@@ -40,16 +40,15 @@ Container gardening rewards small, steady adjustments…
 
 ## ローカル PDF を読む
 
-Poppler の `pdfinfo` と `pdftotext` を `PATH` に用意し、同梱スクリプトで取得済み PDF を抽出する。macOS では `brew install poppler`、Nix では `nix shell nixpkgs#poppler-utils` で導入できる。OCR は行わない。
+Poppler の `pdfinfo` と `pdftotext` を `PATH` に用意し、同梱スクリプトで取得済み PDF を抽出する。macOS では `brew install poppler`、Nix では `nix shell nixpkgs#poppler-utils` で導入できる。OCR は行わない。次のパスは、この `SKILL.md` がある skill ディレクトリを起点にする。
 
 ```sh
-python3 scripts/extract_pdf.py input.pdf --text-out /tmp/input.txt --original-out /tmp/input.pdf
 python3 scripts/extract_pdf.py input.pdf --text-out /tmp/input.txt --original-out /tmp/input.pdf --timeout 60
 ```
 
 本文は物理ページごとに `\f` で終わる UTF-8 である。JSON 出力の `text_path`、`original_path`、`page_count`、`empty_pages`、`source_sha256`、`text_sha256`、`extraction_method`、`warnings` を取得記録に使う。一部の空ページは警告付きで成功し、全ページが空なら OCR が必要な可能性を示して失敗する。依存不足、破損、タイムアウト、ページ境界不整合も失敗であり、本文・原本ファイルを残さない。入力 PDF と既存の出力ファイルは上書きしない。
 
-スクリプトは入力を一度確保し、その同じバイト列から本文と `source_sha256` を作る。原本を保存する場合も入力パスを再読込せず、この確保済みバイト列を使う。抽出だけの依頼ではノートや原本を保存しない。
+スクリプトは入力を一度確保し、その同じバイト列から本文、ローカルの `original_path`、`source_sha256` を作る。vault へ原本を保存する場合も入力パスを再読込せず、`original_path` を使う。抽出だけの依頼では vault へノートや原本を保存しない。PDF 本文には `track fmt`、出典行、要約を混ぜない。保存や引用まで依頼された場合は[出典と時点の契約](../track/references/knowledge-intake.md)の、選択済み CLI に対応する保存・引用機能へ進む。
 
 ## ボールトにクリップする
 
