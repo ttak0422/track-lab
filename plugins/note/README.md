@@ -87,8 +87,16 @@ lives here instead of inside the skills.
 
 | Skill | Source | Relationship to upstream |
 | ----- | ------ | ------------------------ |
-| `track-japanese-tech-writing` | <https://gist.github.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d> | Body byte-identical to upstream; `name:` prefixed |
+| `track-japanese-tech-writing` | <https://gist.github.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d> | Adapted for track; retains local formatting rules and incorporates upstream guidance on concept order, comparisons, translation-like metaphors, and necessary repetition |
 | `track-cognitive-rhythm-writing` | <https://gist.github.com/k16shikano/eb2929f13ed19c97188393d297be8432> | Forked and re-aimed at explainer notes — track surfaces, figures, and wikilink routes replace the book-chapter vocabulary; the machinery (topic test, tension ledger, leak test) is preserved |
+
+Reviewed on 2026-09-22 against Japanese tech writing revision
+[`8f2d576`](https://gist.github.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d/8f2d57610a73efc97d743c9b0b0ecb1002e09fa4) (2026-09-09)
+and cognitive rhythm revision
+[`a3b1e26`](https://gist.github.com/k16shikano/eb2929f13ed19c97188393d297be8432/a3b1e26beced71d582e13314fb6f5b179b023c76) (2026-07-09).
+Upstream removed its formatting section; track keeps its footnote, punctuation, and list-label conventions.
+For reading in Neovim and other editors, prose breaks at sentence endings and, for long sentences, at meaningful clause boundaries rather than fixed widths.
+Report guidance also preserves explanations that add evidence or conditions during the deletion pass; cognitive rhythm needed no content update.
 
 Division of labor: reports follow `track-japanese-tech-writing` + `track-japanese-report-readability`; explainers add
 `track-cognitive-rhythm-writing` on top. Watch and project notes are history-first and are out of scope for all three.
