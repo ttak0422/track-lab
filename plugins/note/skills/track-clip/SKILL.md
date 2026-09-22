@@ -38,6 +38,19 @@ Container gardening rewards small, steady adjustments…
 
 回答や実装の資料として読む依頼なら、取得した本文で元の作業を続ける。ノート保存は依頼範囲に含まれる場合に行う。
 
+## ローカル PDF を読む
+
+Poppler の `pdfinfo` と `pdftotext` を `PATH` に用意し、同梱スクリプトで取得済み PDF を抽出する。macOS では `brew install poppler`、Nix では `nix shell nixpkgs#poppler-utils` で導入できる。OCR は行わない。
+
+```sh
+python3 scripts/extract_pdf.py input.pdf --text-out /tmp/input.txt --original-out /tmp/input.pdf
+python3 scripts/extract_pdf.py input.pdf --text-out /tmp/input.txt --original-out /tmp/input.pdf --timeout 60
+```
+
+本文は物理ページごとに `\f` で終わる UTF-8 である。JSON 出力の `text_path`、`original_path`、`page_count`、`empty_pages`、`source_sha256`、`text_sha256`、`extraction_method`、`warnings` を取得記録に使う。一部の空ページは警告付きで成功し、全ページが空なら OCR が必要な可能性を示して失敗する。依存不足、破損、タイムアウト、ページ境界不整合も失敗であり、本文・原本ファイルを残さない。入力 PDF と既存の出力ファイルは上書きしない。
+
+スクリプトは入力を一度確保し、その同じバイト列から本文と `source_sha256` を作る。原本を保存する場合も入力パスを再読込せず、この確保済みバイト列を使う。抽出だけの依頼ではノートや原本を保存しない。
+
 ## ボールトにクリップする
 
 本文を一度作業ファイルへ保存し、その後で読み取った内容からタイトルを選ぶ。版として保存する前に下記の「本文を仕上げる」を済ませ、ハッシュ対象を確定する。
