@@ -119,12 +119,15 @@ From the repository root, run the offline checks:
 ```sh
 node scripts/check-research-workflows.mjs
 python3 scripts/check-knowledge-intake.py "$(command -v track)"
+python3 scripts/check-pdf-intake.py "$(command -v track)"
 ```
 
 The first mocks Workflow responses to check retained results, failures, and limits. It does not execute live agents or web requests.
 The second uses an isolated temporary vault and cache to rehearse version retention, metadata repair, citations, and period boundaries.
 Its fixed search cases compare opening all matches with title-first selection capped at five notes: conflicting cache specifications, a body-only retry rule, and six capacity notes.
 It reports searches, notes opened, characters fetched, and missed evidence. The capped case deliberately misses one capacity note; these fixtures do not establish recall on real research questions.
+The PDF check also uses an isolated vault and requires Poppler's `pdfinfo` and `pdftotext` on `PATH`.
+It rehearses extraction, immutable original and text hashes, idempotent source saves, physical-page citations, and corrected source versions.
 
 ## CLI resolution
 
