@@ -96,10 +96,12 @@ and cognitive rhythm revision
 [`a3b1e26`](https://gist.github.com/k16shikano/eb2929f13ed19c97188393d297be8432/a3b1e26beced71d582e13314fb6f5b179b023c76) (2026-07-09).
 Upstream removed its formatting section; track keeps its footnote, punctuation, and list-label conventions.
 For reading in Neovim and other editors, prose breaks at sentence endings and, for long sentences, at meaningful clause boundaries rather than fixed widths.
-Report guidance also preserves explanations that add evidence or conditions during the deletion pass; cognitive rhythm needed no content update.
+Local review also preserves necessary explanations, conditions, and source links during deletion passes; unresolved questions are included only when they remain in the source material.
 
-Division of labor: reports follow `track-japanese-tech-writing` + `track-japanese-report-readability`; explainers add
-`track-cognitive-rhythm-writing` on top. Watch and project notes are history-first and are out of scope for all three.
+Division of labor: reports follow `track-japanese-tech-writing` + `track-japanese-report-readability`.
+Explainers use the same sentence guidance and relevant density/deletion checks, with `track-cognitive-rhythm-writing` for pacing;
+they do not inherit the report's conclusion-first, four-layer structure.
+Watch and project notes are history-first and do not use the report or explainer structure.
 
 ## Requirements
 
