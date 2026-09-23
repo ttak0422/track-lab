@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Extract page-delimited UTF-8 text from a local PDF with Poppler."""
+"""Extract page-delimited UTF-8 text from a local PDF with Xberg."""
 
 from __future__ import annotations
 
@@ -41,48 +41,48 @@ def run(command: list[str], deadline: float, stage: str) -> subprocess.Completed
         )
     except subprocess.TimeoutExpired as error:
         raise ExtractionError(stage, "timeout", "PDF extraction timed out") from error
+    except OSError as error:
+        raise ExtractionError(stage, "xberg_failed", str(error)) from error
     detail = result.stderr.decode("utf-8", "replace").strip()
     if result.returncode:
-        raise ExtractionError(stage, "poppler_failed", detail or f"{command[0]} failed")
+        raise ExtractionError(stage, "xberg_failed", detail or f"{command[0]} failed")
     if detail:
-        raise ExtractionError(stage, "poppler_diagnostic", detail)
+        raise ExtractionError(stage, "xberg_diagnostic", detail)
     return result
 
 
-def page_count(pdfinfo_output: bytes) -> int:
-    for line in pdfinfo_output.decode("utf-8", "replace").splitlines():
-        name, separator, value = line.partition(":")
-        if separator and name.strip() == "Pages":
-            try:
-                pages = int(value.strip())
-            except ValueError as error:
-                raise ExtractionError("inspect", "invalid_page_count", "pdfinfo returned an invalid page count") from error
-            if pages > 0:
-                return pages
-    raise ExtractionError("inspect", "missing_page_count", "pdfinfo did not report a positive page count")
-
-
-def normalize(raw: bytes, expected_pages: int) -> tuple[bytes, list[int]]:
+def normalize(raw: bytes) -> tuple[bytes, int, list[int], str]:
     try:
-        decoded = raw.decode("utf-8")
-    except UnicodeDecodeError as error:
-        raise ExtractionError("extract", "invalid_utf8", "pdftotext did not return UTF-8") from error
-    decoded = decoded.replace("\r\n", "\n").replace("\r", "\n")
-    if not decoded.endswith("\f"):
-        raise ExtractionError("validate", "missing_page_terminator", "pdftotext output lacks its final page terminator")
-    pages = decoded.split("\f")
-    if pages and pages[-1] == "":
-        pages.pop()
-    if len(pages) != expected_pages:
+        result = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, ValueError) as error:
+        raise ExtractionError("extract", "invalid_engine_output", "Xberg did not return UTF-8 JSON") from error
+    if not isinstance(result, dict):
+        raise ExtractionError("validate", "invalid_engine_output", "Xberg output must be an object")
+    expected_pages = result.get("page_count")
+    if type(expected_pages) is not int or expected_pages <= 0:
+        raise ExtractionError("validate", "invalid_page_count", "Xberg did not report a positive page count")
+    warnings = result.get("warnings")
+    engine = result.get("engine")
+    if not isinstance(warnings, list) or not isinstance(engine, str) or not engine.strip():
+        raise ExtractionError("validate", "invalid_engine_output", "Xberg omitted warnings or engine identity")
+    if warnings:
+        raise ExtractionError("extract", "xberg_diagnostic", json.dumps(warnings, ensure_ascii=False))
+    pages = result.get("pages")
+    if not isinstance(pages, list) or len(pages) != expected_pages:
         raise ExtractionError(
             "validate",
             "page_boundary_mismatch",
-            f"extracted {len(pages)} page boundaries for a {expected_pages}-page PDF",
+            "Xberg page array does not match the PDF page count",
         )
     normalized = []
     empty_pages = []
-    for number, page in enumerate(pages, 1):
-        page = page.strip("\n")
+    for number, item in enumerate(pages, 1):
+        if (not isinstance(item, dict) or type(item.get("page_number")) is not int
+                or item["page_number"] != number or not isinstance(item.get("content"), str)):
+            raise ExtractionError("validate", "page_boundary_mismatch", "Xberg returned missing or unordered physical pages")
+        page = item["content"].replace("\r\n", "\n").replace("\r", "\n").strip("\n")
+        if "\f" in page:
+            raise ExtractionError("validate", "ambiguous_page_boundary", "page text contains a reserved form-feed character")
         if not page.strip():
             page = ""
             empty_pages.append(number)
@@ -93,7 +93,11 @@ def normalize(raw: bytes, expected_pages: int) -> tuple[bytes, list[int]]:
             "no_extractable_text",
             "all pages contain no extractable text; OCR may be required",
         )
-    return ("\f".join(normalized) + "\f").encode("utf-8"), empty_pages
+    try:
+        text = ("\f".join(normalized) + "\f").encode("utf-8")
+    except UnicodeEncodeError as error:
+        raise ExtractionError("validate", "invalid_engine_output", "Xberg page text contains invalid Unicode") from error
+    return text, expected_pages, empty_pages, engine
 
 
 def extract(input_path: Path, output_path: Path, original_path: Path, timeout: float) -> dict[str, object]:
@@ -115,22 +119,16 @@ def extract(input_path: Path, output_path: Path, original_path: Path, timeout: f
     if not source.startswith(b"%PDF-"):
         raise ExtractionError("input", "not_pdf", "input does not have a PDF header")
 
-    pdfinfo = shutil.which("pdfinfo")
-    pdftotext = shutil.which("pdftotext")
-    if not pdfinfo or not pdftotext:
-        raise ExtractionError("dependency", "poppler_missing", "pdfinfo and pdftotext must be available on PATH")
+    engine = shutil.which("track-pdf-engine")
+    if not engine:
+        raise ExtractionError("dependency", "xberg_missing", "track-pdf-engine must be available; use the Nix extract-pdf app")
 
     deadline = time.monotonic() + timeout
     with tempfile.TemporaryDirectory(prefix="track-clip-pdf-") as directory:
         secured_pdf = Path(directory) / "source.pdf"
         secured_pdf.write_bytes(source)
-        pages = page_count(run([pdfinfo, str(secured_pdf)], deadline, "inspect").stdout)
-        raw_text = run(
-            [pdftotext, "-enc", "UTF-8", "-eol", "unix", str(secured_pdf), "-"],
-            deadline,
-            "extract",
-        ).stdout
-        text, empty_pages = normalize(raw_text, pages)
+        raw = run([engine, str(secured_pdf)], deadline, "extract").stdout
+        text, pages, empty_pages, engine_identity = normalize(raw)
 
     created: list[Path] = []
     try:
@@ -158,7 +156,7 @@ def extract(input_path: Path, output_path: Path, original_path: Path, timeout: f
         "empty_pages": empty_pages,
         "source_sha256": hashlib.sha256(source).hexdigest(),
         "text_sha256": hashlib.sha256(text).hexdigest(),
-        "extraction_method": "poppler-pdftotext -enc UTF-8 -eol unix; LF-normalized; page-edge-LF-trimmed",
+        "extraction_method": f"{engine_identity}; OCR-disabled; LF-normalized; page-edge-LF-trimmed; physical-page-form-feeds",
         "warnings": warnings,
     }
 
@@ -168,7 +166,7 @@ def main() -> int:
     parser.add_argument("input", type=Path, help="local PDF path")
     parser.add_argument("--text-out", required=True, type=Path, help="new file for extracted UTF-8 text")
     parser.add_argument("--original-out", required=True, type=Path, help="new file for the secured original PDF")
-    parser.add_argument("--timeout", type=float, default=DEFAULT_TIMEOUT, help="total Poppler timeout in seconds (default: 30)")
+    parser.add_argument("--timeout", type=float, default=DEFAULT_TIMEOUT, help="Xberg timeout in seconds (default: 30)")
     arguments = parser.parse_args()
     try:
         result = extract(arguments.input, arguments.text_out, arguments.original_out, arguments.timeout)

@@ -17,6 +17,27 @@
     in
     {
       packages = forAllSystems (pkgs: rec {
+        pdf-engine = pkgs.rustPlatform.buildRustPackage {
+          pname = "track-pdf-engine";
+          version = "0.1.0";
+          src = pkgs.lib.cleanSourceWith {
+            src = ./tools/pdf-engine;
+            filter = path: _type: baseNameOf path != "target";
+          };
+          cargoLock.lockFile = ./tools/pdf-engine/Cargo.lock;
+          buildInputs = pkgs.lib.optionals pkgs.stdenv.hostPlatform.isDarwin [ pkgs.libiconv ];
+          # The PDF contract is exercised against this binary by checks.pdf-extraction.
+          doCheck = false;
+        };
+
+        extract-pdf = pkgs.writeShellApplication {
+          name = "track-extract-pdf";
+          runtimeInputs = [ pdf-engine pkgs.python3 ];
+          text = ''
+            exec python3 ${./plugins/note/skills/track-clip/scripts/extract_pdf.py} "$@"
+          '';
+        };
+
         # textlint と ai-writing preset を lock ごと nix store に固定する。
         # npx が版を引き直さないので、誰が実行しても指摘が一致する。
         textlint = pkgs.buildNpmPackage {
@@ -65,6 +86,10 @@
       });
 
       apps = forAllSystems (pkgs: rec {
+        extract-pdf = {
+          type = "app";
+          program = "${self.packages.${pkgs.stdenv.hostPlatform.system}.extract-pdf}/bin/track-extract-pdf";
+        };
         lint = {
           type = "app";
           program = "${self.packages.${pkgs.stdenv.hostPlatform.system}.lint}/bin/track-lab-lint";
@@ -72,8 +97,15 @@
         default = lint;
       });
 
-      # `nix flake check` runs the linter, so CI needs no separate step.
+      # `nix flake check` runs prose lint and the isolated PDF extraction contract.
       checks = forAllSystems (pkgs: {
+        pdf-extraction = pkgs.runCommand "track-pdf-extraction-check" {
+          nativeBuildInputs = [ pkgs.python3 self.packages.${pkgs.stdenv.hostPlatform.system}.pdf-engine ];
+        } ''
+          python3 ${./plugins/note/skills/track-clip/tests/test_extract_pdf.py} \
+            ${./plugins/note/skills/track-clip/scripts/extract_pdf.py}
+          touch "$out"
+        '';
         lint = pkgs.runCommand "track-lab-lint-check" { } ''
           export HOME="$TMPDIR"
           cd ${self}
@@ -84,7 +116,15 @@
 
       devShells = forAllSystems (pkgs: {
         default = pkgs.mkShell {
-          packages = [ self.packages.${pkgs.stdenv.hostPlatform.system}.textlint ];
+          packages = [
+            self.packages.${pkgs.stdenv.hostPlatform.system}.textlint
+            self.packages.${pkgs.stdenv.hostPlatform.system}.extract-pdf
+            self.packages.${pkgs.stdenv.hostPlatform.system}.pdf-engine
+            pkgs.python3
+            pkgs.cargo
+            pkgs.rustc
+          ];
+          buildInputs = pkgs.lib.optionals pkgs.stdenv.hostPlatform.isDarwin [ pkgs.libiconv ];
         };
       });
     };

@@ -20,7 +20,7 @@ the `track` plugin. track itself now carries only the CLI and its tool-neutral c
 | [track-watch](skills/track-watch/SKILL.md) | Run a recurring watch loop over a topic at three depths — `light` daily brief, `mid` weekly review, `high` deep review (assumption excavation, break scenarios, falsifiable forecasts) — with a standing **watch note** as the loop state. |
 | [track](skills/track/SKILL.md) | Vault maintenance: rename with backlink rewrite, doctor, reindex, generations, task toggles. |
 | [track-markdown](skills/track-markdown/SKILL.md) | The body syntax itself: wikilinks and level-based heading anchors, block anchors, transclusion, GitHub alerts, task lines, inline properties, and the `track fmt` house style. |
-| [track-clip](skills/track-clip/SKILL.md) | Read a web page as clean Markdown with `track-fetch-web`, and save it as a `clip`-tagged note with provenance. |
+| [track-clip](skills/track-clip/SKILL.md) | Read web pages with `track-fetch-web` or local PDFs with Xberg, and retain source versions when saving a clip. |
 | [track-tool](skills/track-tool/SKILL.md) | Write a small single-file HTML tool for a note to embed: what survives the sandboxed iframe, and the one stylesheet that keeps a vault's tools looking like one set. |
 | [track-japanese-report-readability](skills/track-japanese-report-readability/SKILL.md) | Keep a Japanese report readable while it stays detailed: conclusion-first layers, a density gradient, and a deletion pass over the writing an agent produced. |
 | [track-japanese-tech-writing](skills/track-japanese-tech-writing/SKILL.md) | Sentence-and-paragraph craft for Japanese technical prose: formatting, argument rigor, reader load, and a ban on LLM filler. The base layer under every writing skill here. |
@@ -67,7 +67,7 @@ no gradient, which costs the reader the same effort on the conclusion as on a fo
 re-aimed at track primitives. `obsidian-markdown` became `track-markdown`, rewritten to describe track's
 own dialect only — no frontmatter (metadata is a sidecar plus inline `key:: value` fields), GitHub
 alerts, heading anchors that count `#` for the level. `defuddle` became `track-clip`, but the engine is
-track's own `track-fetch-web` rather than a Node CLI, so the plugin adds no external dependency.
+track's own `track-fetch-web` rather than a Node CLI. Local PDF extraction additionally uses Xberg and a Python standard-library wrapper, packaged together with Nix.
 
 The skills themselves never mention Obsidian: an agent writing track notes has no use for what the
 syntax used to be, so that context lives here in the README instead.
@@ -107,6 +107,7 @@ Watch and project notes are history-first and do not use the report or explainer
 
 - `track` CLI on `PATH`, resolving against the user's normal vault.
 - `track-fetch-web` on `PATH` for `track-clip`. It ships with track as a separate binary.
+- `track-extract-pdf` for local PDFs. Use this repository's Nix `extract-pdf` package to supply Xberg and Python together; see the [PDF setup](../../README.md#pdf-extraction).
 
 ## Knowledge intake checks
 
@@ -119,15 +120,16 @@ From the repository root, run the offline checks:
 ```sh
 node scripts/check-research-workflows.mjs
 python3 scripts/check-knowledge-intake.py "$(command -v track)"
-python3 scripts/check-pdf-intake.py "$(command -v track)"
+nix develop path:. --command python3 scripts/check-pdf-intake.py "$(command -v track)"
 ```
 
 The first mocks Workflow responses to check retained results, failures, and limits. It does not execute live agents or web requests.
 The second uses an isolated temporary vault and cache to rehearse version retention, metadata repair, citations, and period boundaries.
 Its fixed search cases compare opening all matches with title-first selection capped at five notes: conflicting cache specifications, a body-only retry rule, and six capacity notes.
 It reports searches, notes opened, characters fetched, and missed evidence. The capped case deliberately misses one capacity note; these fixtures do not establish recall on real research questions.
-The PDF check also uses an isolated vault and requires Poppler's `pdfinfo` and `pdftotext` on `PATH`.
+The PDF check also uses an isolated vault and requires the Nix-provided `track-pdf-engine` on `PATH`.
 It rehearses extraction, immutable original and text hashes, idempotent source saves, physical-page citations, and corrected source versions.
+The `pdf-extraction` flake check independently exercises Japanese text, empty physical pages, malformed PDFs, engine diagnostics, deadlines, and original retention without the track CLI.
 
 ## CLI resolution
 
