@@ -63,7 +63,8 @@ Rust に移行する場合も Nix の配布入口は維持できる。
 実装、flake、lockfile の変更は行っていない。
 
 Intel Mac の扱いは PDF ライブラリとは独立した判断になる。
-現行 flake の対象一覧には `x86_64-darwin` が残るため、Nix 化の際にサポート対象を整理する必要がある。
+調査時点の flake の対象一覧には `x86_64-darwin` が残っていたが、現在は対象から除外している。
+macOS のサポート対象は Apple Silicon (`aarch64-darwin`) のみ。
 維持が必要なら 26.05 系への固定を検討するが、公式のサポート期間は 2026 年末までである。
 [Nixpkgs のプラットフォーム変更](https://nixos.org/manual/nixpkgs/unstable/release-notes)
 

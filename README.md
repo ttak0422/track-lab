@@ -14,6 +14,11 @@ Agent plugins and skills for track-related workflows.
 | [task](plugins/task/) | Size-aware task handling: triage TODOs by size, record project work with plan notes, and work checklists through into dated worklogs |
 
 
+## Platform support
+
+The Nix flake supports Linux (`x86_64-linux`, `aarch64-linux`) and macOS on Apple Silicon (`aarch64-darwin`).
+Intel macOS (`x86_64-darwin`) is no longer supported.
+
 ## Lint
 
 Skill prose is checked with [textlint-rule-preset-ai-writing](https://github.com/textlint-ja/textlint-rule-preset-ai-writing), pinned in `nix/textlint/` so every run reports the same findings.
