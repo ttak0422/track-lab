@@ -16,6 +16,7 @@ the `track` plugin. track itself now carries only the CLI and its tool-neutral c
 | [track-search-notes](skills/track-search-notes/SKILL.md) | Read-only discovery: search by title/body/tag, resolve links, export bodies, inspect backlinks and the local graph. |
 | [track-report](skills/track-report/SKILL.md) | File the findings of an investigation as a **report note**, so the answer survives the session. |
 | [track-explainer](skills/track-explainer/SKILL.md) | Fold a topic's reports into one **explainer note** — the page a human actually opens, with a diagram and routes down into the reports and their sources. |
+| [track-batch-maintenance](skills/track-batch-maintenance/SKILL.md) | Review scoped note-consolidation candidates and TODO responses in bounded batches; proposals are the default, and only revalidated approvals may be applied. |
 | [track-news-analysis](skills/track-news-analysis/SKILL.md) | Research a current-events topic from multiple lenses (sweep, verify, and gap-fill; an optional Workflow script is bundled) and file a visualized, source-cited **analysis note**. |
 | [track-watch](skills/track-watch/SKILL.md) | Run a recurring watch loop over a topic at three depths — `light` daily brief, `mid` weekly review, `high` deep review (assumption excavation, break scenarios, falsifiable forecasts) — with a standing **watch note** as the loop state. |
 | [track](skills/track/SKILL.md) | Vault maintenance: rename with backlink rewrite, doctor, reindex, generations, task toggles. |
