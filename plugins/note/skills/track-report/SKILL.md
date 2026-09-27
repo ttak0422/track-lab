@@ -101,9 +101,7 @@ printf 'from [[<project>]]\n\n<現時点の結論>\n\n## <節>\n\n## 未決\n\n[
 タグ `report` を付け、`from [[<project>]]` 行で属するプロジェクトまたは主題ノートへリンクする。
 骨子を流し込んだあと、冒頭の結論から埋めていく。
 
-発見が構造的である場合、散文よりも track の豊かな構造を使う。辿ったフローには `mermaid`
-ダイアグラム、計測値には `viewspec` チャート、比較には表を。図表を書く場合は
-[描画フェンス](../track-markdown/references/DRAWING.md)を参照する。
+発見が構造的である場合、散文よりも track の豊かな構造を使う。図の種類と記述形式は[描画フェンスの選択指針](../track-markdown/references/DRAWING.md#ダイアグラムの選び方)に従う。計測値には `viewspec` チャート、比較には表を使う。
 
 ### 4. 出典へリンクする
 
