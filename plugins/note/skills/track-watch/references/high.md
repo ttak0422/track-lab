@@ -19,6 +19,7 @@ Workflow ツールが提供される環境では、スキル直下の [weekly-wo
 `week_digest`、`assumptions: [{text, checked, trigger, due}]` を渡してもよい。`due` は点検期限切れまたはトリガー発火を示す。
 このスクリプトは Workflow ランタイム専用で、Node.js や Codex の JavaScript 実行ツールでは直接実行しない。
 `execution` と完了ごとのログを引き継ぎへ取り込む。打ち切った前提や失敗した段階を未確認として残し、再開時は保存済み結果から必要な段階だけ個別に実行する。スクリプト自体に自動再開はない。
+Stress と Forecast の `source_provenance` には、snapshot manifest の取得時刻・日時精度と `track cite` で固定確認した ID・版・位置・ハッシュ・引用を含める。旧 CLI や引用未検証の入力は `citation_verified:false` と制限を記録し、取得時刻を補わない。
 
 結果はウィークリーノートの追加セクションに置かれる。`## 暗黙の前提の洗い出し`、
 `## シナリオ(前提が壊れたら)`、`## 予想(反証条件つき)`。新規の前提はレジスタへ加え、実際に照合できたものだけに `[checked::]` 日付を付ける。発掘のみ・打ち切り・照合失敗は未確認とする。

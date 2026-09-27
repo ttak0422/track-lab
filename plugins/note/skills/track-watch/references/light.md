@@ -20,6 +20,7 @@
    ## 新規イベント
    ## 引き継ぎ          ← what this run changed in the watch note (resolved/added concerns, fired triggers)
                       ← 対象期間、取得・保存の成功／失敗、未確認範囲、再実行対象
+                      ← Web 根拠ごとの要求／最終 URL、固定版・引用位置、取得日時、ハッシュ。対象日で代用しない
    ```
 
    40行程度に保つ。チャートは描かない。watch ノートの `data.source` チャートが時系列を担う。
