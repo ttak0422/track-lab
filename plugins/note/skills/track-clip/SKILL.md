@@ -60,7 +60,8 @@ track-extract-pdf input.pdf --text-out /tmp/input.txt --original-out /tmp/input.
 
 ```sh
 snapshot_dir="$(mktemp -d)"
-track-fetch-web --snapshot-dir "$snapshot_dir" "<url>" > /tmp/manifest.json
+manifest_path="$snapshot_dir/manifest.json"
+track-fetch-web --snapshot-dir "$snapshot_dir" "<url>" > "$manifest_path"
 ```
 
 manifest について `schema_version: 1`、要求 URL、リダイレクト後の `final_url`、RFC 3339 の `retrieved_at`、SHA-256 形式、`original.html` と `text.md` の実在パスを確認する。実ファイルのハッシュを再計算し、manifest と一致するまでノートを作らない。保存には manifest が返したファイルをそのまま使い、URL や作業用コピーから取り直さない。
@@ -70,10 +71,10 @@ manifest について `schema_version: 1`、要求 URL、リダイレクト後�
 作成前に URL とタイトルから既存候補を探し、`export`、`meta`、`source list --id <ID>` の保存版を調べる。同じ URL・原本ハッシュ・本文ハッシュがある場合は既存版を再利用する。新しい本文は同じノートへ更新して新しい `source save` 版にし、内容が異なるなら既存版を上書きせず版の系譜を保つ。既存の CLI で再利用できるか確認できない場合は重複作成せず、照合できなかった点を残す。
 
 ```sh
-text_path="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["text_path"])' /tmp/manifest.json)"
-source_url="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["source_url"])' /tmp/manifest.json)"
-retrieved_at="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["retrieved_at"])' /tmp/manifest.json)"
-original_path="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["original_path"])' /tmp/manifest.json)"
+text_path="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["text_path"])' "$manifest_path")"
+source_url="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["source_url"])' "$manifest_path")"
+retrieved_at="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["retrieved_at"])' "$manifest_path")"
+original_path="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["original_path"])' "$manifest_path")"
 track new --title "<title>" --tag clip < "$text_path"
 track source save --id <ID> --source "$source_url" \
   --format text/html --at "$retrieved_at" --original "$original_path"
