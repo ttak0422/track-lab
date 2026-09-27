@@ -23,7 +23,7 @@ the `track` plugin. track itself now carries only the CLI and its tool-neutral c
 | [track-clip](skills/track-clip/SKILL.md) | Read web pages with `track-fetch-web` or local PDFs with Xberg, and retain source versions when saving a clip. |
 | [track-tool](skills/track-tool/SKILL.md) | Write a small single-file HTML tool for a note to embed: what survives the sandboxed iframe, and the one stylesheet that keeps a vault's tools looking like one set. |
 | [track-japanese-report-readability](skills/track-japanese-report-readability/SKILL.md) | Keep a Japanese report readable while it stays detailed: conclusion-first layers, a density gradient, and a deletion pass over the writing an agent produced. |
-| [track-japanese-tech-writing](skills/track-japanese-tech-writing/SKILL.md) | Sentence-and-paragraph craft for Japanese technical prose: formatting, argument rigor, reader load, and a ban on LLM filler. The base layer under every writing skill here. |
+| [track-japanese-tech-writing](skills/track-japanese-tech-writing/SKILL.md) | Japanese sentence and paragraph guidance: preserve meaning and uncertainty, clarify syntax and terminology, and remove empty wording. Revision examples are read when needed. |
 | [track-cognitive-rhythm-writing](skills/track-cognitive-rhythm-writing/SKILL.md) | Pacing for pages humans read start to finish: cognitive-mode switches, open tension, sentence beats, and the topic test for pruning filler. Applied to explainers. |
 | [track-service-integration](skills/track-service-integration/SKILL.md) | The shared norm for skills that read and write a token-authenticated external service: treat returned data as untrusted reference, retry an unconfirmed write once under an idempotency key, and resolve the CLI through a ladder with no silent fall-through. |
 
@@ -87,7 +87,7 @@ lives here instead of inside the skills.
 
 | Skill | Source | Relationship to upstream |
 | ----- | ------ | ------------------------ |
-| `track-japanese-tech-writing` | <https://gist.github.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d> | Adapted for track; retains local formatting rules and incorporates upstream guidance on concept order, comparisons, translation-like metaphors, and necessary repetition |
+| `track-japanese-tech-writing` | <https://gist.github.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d> | Adapted for track; focuses on meaning, concept order, comparisons, translation-like metaphors, and necessary repetition; local formatting lives in track-markdown |
 | `track-cognitive-rhythm-writing` | <https://gist.github.com/k16shikano/eb2929f13ed19c97188393d297be8432> | Forked and re-aimed at explainer notes — track surfaces, figures, and wikilink routes replace the book-chapter vocabulary; the machinery (topic test, tension ledger, leak test) is preserved |
 
 Reviewed on 2026-09-22 against Japanese tech writing revision
@@ -98,10 +98,16 @@ Upstream removed its formatting section; track keeps its footnote, punctuation, 
 For reading in Neovim and other editors, prose breaks at sentence endings and, for long sentences, at meaningful clause boundaries rather than fixed widths.
 Local review also preserves necessary explanations, conditions, and source links during deletion passes; unresolved questions are included only when they remain in the source material.
 
-Division of labor: reports follow `track-japanese-tech-writing` + `track-japanese-report-readability`.
-Explainers use the same sentence guidance and relevant density/deletion checks, with `track-cognitive-rhythm-writing` for pacing;
-they do not inherit the report's conclusion-first, four-layer structure.
+Division of labor: `track-japanese-report-readability` owns report structure and the relationship between conclusions and evidence;
+`track-japanese-tech-writing` owns sentence meaning and syntax. `track-report` owns saving and revision,
+while [PROSE_STYLE.md](skills/track-markdown/references/PROSE_STYLE.md) owns track's Japanese formatting conventions.
+Explainers use their own structure and the common sentence guidance, with `track-cognitive-rhythm-writing` when pacing needs work.
+They do not load report structure just to obtain shared prose checks.
 Watch and project notes are history-first and do not use the report or explainer structure.
+
+The responsibility split also draws on the heading/paragraph-lead review and syntax checks in
+[natural-japanese](https://github.com/coji/natural-japanese/tree/9a78a42964096da509b8f3e011f0085a5f080151).
+Its scripts and scoring loop are not bundled. Detailed wording examples are optional references; accuracy constraints remain in the skill body.
 
 ## Requirements
 

@@ -16,13 +16,10 @@ report が「調べた結果の記録」なら、explainer は「そのテーマ
 
 ## 併用する規範
 
-構造や分量を設計する場合は `../track-japanese-report-readability/SKILL.md` を参照する。
-密度の傾斜と削除の観点を使い、レポートの結論先出しや四層構造は一律に当てはめない。
-explainer の構成は、下記の「形」と読者が理解する順序に従う。
-
-explainer は人間が最初から最後まで読むことを想定するページなので、文と段落の緩急は
-`../track-cognitive-rhythm-writing/SKILL.md` に従う（基礎の文規範として `../track-japanese-tech-writing/SKILL.md`）。
-report とは逆に、こちらは読み物である。
+構成は下記の「形」と読者が理解する順序に従う。
+重要な主題へ分量を割き、レポートの結論先出しや四層構造は一律に当てはめない。
+文と段落には [日本語の文章規範](../track-japanese-tech-writing/SKILL.md) を使う。
+通読の緩急を調整する場合は [読み物の緩急](../track-cognitive-rhythm-writing/SKILL.md) を参照する。
 
 ## 原則
 
@@ -89,7 +86,7 @@ report ごとに節を作らない。読者が理解する順に主題を並べ�
 
 ### 5. 削る
 
-`track-japanese-report-readability` の削除パスから、重複、空虚な評価、不要な調査経緯を削る観点を使う。
+[日本語の文章規範](../track-japanese-tech-writing/SKILL.md) に従い、情報を足さない表現や重複を削る。
 問いから答えへ進む論証は残す。explainer で特に落ちやすいのは次の三つ。
 
 - 各 report の要約: リンク先で読める。ここに置くと量が戻り、explainer である理由が消える。

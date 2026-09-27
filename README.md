@@ -23,7 +23,7 @@ nix run .#lint                    # all SKILL.md files
 nix run .#lint -- path/to/note.md # any Markdown file
 ```
 
-The preset detects what the writing skills already forbid in prose (hype, empty emphasis, redundancy) plus two patterns they did not cover: bold list labels (`- **label**: text`) and predicate-plus-colon before a block (`実行します:`). Detection lives in the linter; how to rewrite a hit lives in `track-japanese-tech-writing`.
+The preset flags hype, empty emphasis, redundancy, bold list labels (`- **label**: text`), and predicate-plus-colon before a block (`実行します:`). Interpret wording findings with `track-japanese-tech-writing`; formatting conventions live in [track's prose style](plugins/note/skills/track-markdown/references/PROSE_STYLE.md). Findings are review prompts, not permission to remove necessary qualifications or source records.
 
 ## PDF extraction
 

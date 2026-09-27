@@ -86,8 +86,10 @@ track search --query "#report <topic keywords>"
 track update --title "<主題>" < revised-body.md
 ```
 
-改訂で構造や主張が変わる場合は `track-japanese-report-readability` を参照する。冒頭の結論を確認し、主張が変わった
-節を置換し、陳腐化した事実を揃える。読者に新旧の取捨選択をさせてはならない。
+改訂では、結論が変わる場合に冒頭も直し、主張が変わった節を置換する。
+数値、日付、バージョン、外部の状態は本文と脚注の両方で揃え、解決済みの問いは `## 未決` から除く。
+調査の順路や後方訂正を積まず、現状として読める本文にする。
+構成や分量も変わる場合は [レポートの構成](../track-japanese-report-readability/SKILL.md) で点検する。
 
 ### 3. レポートノートを作成する
 
@@ -146,9 +148,8 @@ track export --title "<主題>"
 
 日本語の本文を新規執筆・大幅改訂する場合に、必要な規範を参照する。小さな修正で全規範を読み直さない。
 
-- `../track-japanese-tech-writing/SKILL.md`: 文と段落のレベル。整形、論証の厳密さ、冗長の排除。
-- `../track-japanese-report-readability/SKILL.md`: 層構造、密度の傾斜、削除パス。冒頭の結論が L0+L1、
-  自由な節が L2、脚注と `## 未決` が L3 に対応する。
+- [日本語の文章規範](../track-japanese-tech-writing/SKILL.md): 文と段落の意味、係り受け、用語、推敲。
+- [レポートの構成](../track-japanese-report-readability/SKILL.md): 結論と根拠の対応、要約、分量、構造レビュー。
+- [本文の表記](../track-markdown/references/PROSE_STYLE.md): 日本語本文の改行、記号、強調。整形する場合に読む。
 
-explainer を書くときは、さらに `../track-cognitive-rhythm-writing/SKILL.md` の緩急を適用する
-（`track-explainer` を参照）。レポートには適用しない。
+通読する解説は [track-explainer](../track-explainer/SKILL.md) が担当する。読み物の緩急をレポートへ適用しない。

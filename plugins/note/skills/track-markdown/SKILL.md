@@ -151,6 +151,9 @@ track new --title "<title>" --tag <tag> --body "<body>"
 
 ## ハウススタイル（track fmt）
 
+日本語本文を新規執筆・整形する場合は [本文の表記](references/PROSE_STYLE.md) を参照する。
+以下の Markdown 整形とは別に、改行、句読点、強調の既定を扱う。引用や保存した原文は書き換えない。
+
 `track fmt` はノートを標準スタイルに書き換えます。`fmt` が何もしなくて済むよう、すでに準拠した Markdown を生成してください。
 
 - 箇条書きは `-` のみ。`*` や `+` は使わない。
