@@ -13,8 +13,12 @@ import sys
 import tempfile
 
 
-assert len(sys.argv) in (2, 3), "usage: check-pdf-intake.py /absolute/path/to/track [extractor-root]"
-binary = str(Path(sys.argv[1]).resolve(strict=True))
+if len(sys.argv) not in (2, 3):
+    raise SystemExit("usage: check-pdf-intake.py /absolute/path/to/compatible/track [lab-source-root]")
+binary_path = Path(sys.argv[1]).resolve(strict=True)
+if not binary_path.is_file() or not os.access(binary_path, os.X_OK):
+    raise SystemExit(f"track binary is not executable: {binary_path}")
+binary = str(binary_path)
 root = Path(sys.argv[2]).resolve(strict=True) if len(sys.argv) == 3 else Path(__file__).parents[1]
 extractor = root / "plugins/note/skills/track-clip/scripts/extract_pdf.py"
 fixture = root / "plugins/note/skills/track-clip/tests/test_extract_pdf.py"
@@ -34,6 +38,9 @@ with tempfile.TemporaryDirectory(prefix="track-pdf-intake-") as temporary:
         TRACK_VAULT=str(directory / "vault"),
         TRACK_CACHE_DIR=str(directory / "cache"),
     )
+    assert Path(env["TRACK_VAULT"]).resolve().is_relative_to(directory.resolve())
+    assert Path(env["TRACK_CONFIG"]).resolve().is_relative_to(directory.resolve())
+    assert Path(env["TRACK_CACHE_DIR"]).resolve().is_relative_to(directory.resolve())
 
     def invoke(command: list[str], *, environment: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
         return subprocess.run(command, env=environment or env, text=True, capture_output=True)
@@ -57,7 +64,7 @@ with tempfile.TemporaryDirectory(prefix="track-pdf-intake-") as temporary:
         result = invoke(
             [sys.executable, str(extractor), str(source), "--text-out", str(text_path),
              "--original-out", str(original_path)],
-            environment=os.environ.copy(),
+            environment=env,
         )
         assert result.returncode == 0, result.stderr
         metadata = json.loads(result.stdout)
@@ -81,7 +88,7 @@ with tempfile.TemporaryDirectory(prefix="track-pdf-intake-") as temporary:
     failed_original = directory / "failed" / "broken.pdf"
     failed_source.write_bytes(b"%PDF-not-a-real-pdf")
     failure = invoke([sys.executable, str(extractor), str(failed_source), "--text-out", str(failed_text),
-                      "--original-out", str(failed_original)], environment=os.environ.copy())
+                      "--original-out", str(failed_original)], environment=env)
     assert failure.returncode != 0 and not failed_text.exists() and not failed_original.exists()
     assert json.loads(failure.stderr)["ok"] is False
     assert track("notes")["notes"] == []

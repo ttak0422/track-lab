@@ -7,11 +7,12 @@ const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor
 async function run(file, args, responses) {
   const source = (await readFile(new URL(`../plugins/note/skills/${file}`, import.meta.url), 'utf8'))
     .replace('export const meta', 'const meta')
-  const calls = [], logs = []
+  const calls = [], logs = [], prompts = []
   const result = await new AsyncFunction('args', 'agent', 'phase', 'pipeline', 'parallel', 'log', source)(
     args,
     async (prompt, { label }) => {
       calls.push(label)
+      prompts.push(prompt)
       assert.ok(Object.hasOwn(responses, label), `unexpected call: ${label}`)
       const value = responses[label]
       if (value instanceof Error) throw value
@@ -24,7 +25,7 @@ async function run(file, args, responses) {
   )
   assert.deepEqual(logs, result.execution.steps)
   assert.ok(Date.parse(result.execution.finished_at) >= Date.parse(result.execution.started_at))
-  return { result, calls }
+  return { result, calls, prompts }
 }
 
 const news = 'track-news-analysis/workflow.js'
@@ -60,23 +61,26 @@ const watchArgs = { topic: 'fixture', today: '2026-09-19', stance: 'unknown', ma
   assumptions: [{ text: 'first', due: true }, { text: 'second', due: true }] }
 const reviewed = await run(watch, watchArgs, {
   excavate: { hidden: [] }, 'stress:1': new Error('source unavailable'),
-  forecast: { forecasts: [], coverage: 'insufficient evidence' }, critic: null,
+  forecast: { forecasts: [], coverage: 'insufficient evidence', source_provenance: [] }, critic: null,
 })
 assert.deepEqual(reviewed.result.stressed, [])
 assert.equal(reviewed.result.execution.unreviewed[0].text, 'second')
 assert.equal(reviewed.result.execution.steps.filter((s) => s.status === 'failed').length, 2)
 const zero = await run(watch, { ...watchArgs, maxStress: 0 }, {
-  excavate: null, forecast: { forecasts: [] }, critic: { missing: [], overall: 'partial' },
+  excavate: null, forecast: { forecasts: [], coverage: 'not run', source_provenance: [] },
+  critic: { missing: [], overall: 'partial' },
 })
 assert.ok(!zero.calls.some((label) => label.startsWith('stress:')))
 assert.equal(zero.result.execution.unreviewed.length, 3)
 
 const success = await run(watch, { ...watchArgs, assumptions: [watchArgs.assumptions[0]] }, {
-  excavate: { hidden: [] }, 'stress:1': { holds: 'holds', evidence: 'fixture', break_scenario: 'change' },
-  forecast: { forecasts: [] }, critic: { missing: [], overall: 'complete' },
+  excavate: { hidden: [] }, 'stress:1': { holds: 'holds', evidence: 'fixture', break_scenario: 'change',
+    response: 'none', coverage: 'fixture', source_provenance: [] },
+  forecast: { forecasts: [], coverage: 'fixture', source_provenance: [] }, critic: { missing: [], overall: 'complete' },
 })
 assert.equal(success.result.stressed[0].text, 'first')
 assert.ok(success.result.execution.steps.every((s) => s.status === 'succeeded'))
+assert.ok(success.prompts.some((prompt) => prompt.includes('--snapshot-dir') && prompt.includes('retrieved_at')))
 await assert.rejects(run(watch, { ...watchArgs, maxStress: -1 }, {}), /non-negative integer/)
 await assert.rejects(run(news, { ...newsArgs, maxGapFills: 0.5 }, {}), /non-negative integer/)
 console.log('Workflow checks passed: success, partial failure, null responses, limits, retained results.')

@@ -39,3 +39,13 @@ nix build path:.#checks.aarch64-darwin.pdf-extraction # use your host's Nix syst
 `nix develop path:.` exposes `track-extract-pdf`, its engine, and the development tools.
 For an installed plugin, use `nix run github:ttak0422/track-lab#extract-pdf -- <arguments>` or install that package into a Nix profile.
 The supported input for this workflow remains PDF. Web clipping continues to use `track-fetch-web`.
+
+The PDF intake rehearsal also runs against an explicitly supplied compatible `track` binary in a temporary vault:
+
+```sh
+nix run path:.#check-pdf-intake -- /absolute/path/to/track
+# CI entry point; same explicit binary requirement
+scripts/ci-check-pdf-intake.sh /absolute/path/to/track
+```
+
+The Nix app pins the lab-side Python and Xberg engine. It does not fetch or build the track core repository: pass a binary that provides `source save/list` and fixed-version `cite`. Cross-repository CI should obtain that binary from a pinned compatible core build or published artifact and pass its path; do not silently track an unpublished branch. The rehearsal strips inherited `TRACK_*` settings and uses only its temporary config, vault, and cache.

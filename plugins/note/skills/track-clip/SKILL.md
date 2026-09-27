@@ -8,7 +8,7 @@ description: Web ページやローカル PDF を読み、track 用の本文と�
 CLI を使う前に[実行環境](../track/references/runtime.md)を読む。
 保存・再取得では[出典と時点の契約](../track/references/knowledge-intake.md)に従う。
 
-`track-fetch-web` はページを取得し、ナビゲーション・サイドバー・広告・その他の付帯要素を取り除き、残りを Markdown に変換する。Markdown 抽出が必要な場合に使う。既に本文を取得できている場合は再取得しない。保存するときは取得記録と内容ハッシュを揃えてから `track new` に渡す。
+`track-fetch-web` はページを取得し、ナビゲーション・サイドバー・広告・その他の付帯要素を取り除き、残りを Markdown に変換する。Markdown 抽出が必要な場合に使う。既に本文を取得できている場合は再取得しない。保存するときは URL を一度だけ取得し、返された版の本文と原本を対にして `track` に渡す。
 
 ## 前提条件
 
@@ -16,6 +16,7 @@ CLI を使う前に[実行環境](../track/references/runtime.md)を読む。
 - ユーザーの通常の track 設定を優先する。`TRACK_VAULT` はテストや一回限りの上書き用である。
 - コマンドは単一行の JSON を出力する（`export` は Markdown を出力する）。exit code 1 の `{"error":...}` は失敗として扱う。人間向けと JSON を選べる場合は `--json` を付ける。
 - `track-fetch-web` を `PATH` 上に置く。これは track に付属する別バイナリであり、track 本体はネットワーク通信をしない。ソースリポジトリからは `go run ./cmd/track-fetch-web` を使う。`track` と同じく 1 回解決して使い続ける。
+- 保存・引用が必要な Web クリップでは、使う前に選択済みバイナリの `--help` で `--snapshot-dir` を確認する。途中で別のバイナリへ切り替えない。
 
 ## ページを読む
 
@@ -24,7 +25,7 @@ track-fetch-web --note "<url>"                 # Markdown note body on stdout
 track-fetch-web --note --timeout 60s "<url>"   # the fetch timeout defaults to 30s
 ```
 
-本文は出典行とリード画像で始まり、その後に内容が続く。
+`--note` の本文は取得日ラベルとリード画像で始まり、その後に内容が続く。取得日ラベルは日付精度の legacy 記録であり、正確な取得時刻や保存対象の原本を示さない。
 
 ```markdown
 [Source](https://example.com/essays/growing-tomatoes) — clipped 2026-07-26
@@ -53,32 +54,42 @@ track-extract-pdf input.pdf --text-out /tmp/input.txt --original-out /tmp/input.
 
 スクリプトは入力を一度確保し、その同じバイト列から本文、ローカルの `original_path`、`source_sha256` を作る。vault へ原本を保存する場合も入力パスを再読込せず、`original_path` を使う。抽出だけの依頼では vault へノートや原本を保存しない。PDF 本文には `track fmt`、出典行、要約を混ぜない。保存や引用まで依頼された場合は[出典と時点の契約](../track/references/knowledge-intake.md)の、選択済み CLI に対応する保存・引用機能へ進む。
 
-## ボールトにクリップする
+## 固定版として Web クリップを保存する
 
-本文を一度作業ファイルへ保存し、その後で読み取った内容からタイトルを選ぶ。版として保存する前に下記の「本文を仕上げる」を済ませ、ハッシュ対象を確定する。
+`--snapshot-dir` は URL を一度取得し、成功時に manifest v1 を stdout へ1行出力する。指定した DIR はコンテナであり、その下に一意の `snapshot-*` 子ディレクトリが作られる。manifest の `original_path` は取得した `original.html`、`text_path` は抽出本文だけの `text.md` を指す。`text.md` に Source 行、要約、取得日を足してはならない。
 
 ```sh
-track-fetch-web --note "<url>" > /tmp/clip.md
+snapshot_dir="$(mktemp -d)"
+track-fetch-web --snapshot-dir "$snapshot_dir" "<url>" > /tmp/manifest.json
 ```
+
+manifest について `schema_version: 1`、要求 URL、リダイレクト後の `final_url`、RFC 3339 の `retrieved_at`、SHA-256 形式、`original.html` と `text.md` の実在パスを確認する。実ファイルのハッシュを再計算し、manifest と一致するまでノートを作らない。保存には manifest が返したファイルをそのまま使い、URL や作業用コピーから取り直さない。
 
 タイトルはノートの同一性であり、ボールト全体で一意で、他の全ノートが使う `[[link]]` キーワードになる。ページ自身のタイトルから始めるが、サイトの付帯要素を取り除き（`Growing tomatoes | Example Blog` → `Growing tomatoes`）、ボールト内で単独では曖昧すぎるタイトルは明確化する。
 
-作成前に既存のクリップを探す。`track new` はタイトル衝突で失敗し、同じページが別のタイトルで既に保存されていることがある。
+作成前に URL とタイトルから既存候補を探し、`export`、`meta`、`source list --id <ID>` の保存版を調べる。同じ URL・原本ハッシュ・本文ハッシュがある場合は既存版を再利用する。新しい本文は同じノートへ更新して新しい `source save` 版にし、内容が異なるなら既存版を上書きせず版の系譜を保つ。既存の CLI で再利用できるか確認できない場合は重複作成せず、照合できなかった点を残す。
 
 ```sh
-track search --query "<title>" --scope title
-track search --query "<domain>"           # matches the Source line in already-clipped bodies
+text_path="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["text_path"])' /tmp/manifest.json)"
+source_url="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["source_url"])' /tmp/manifest.json)"
+retrieved_at="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["retrieved_at"])' /tmp/manifest.json)"
+original_path="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["original_path"])' /tmp/manifest.json)"
+track new --title "<title>" --tag clip < "$text_path"
+track source save --id <ID> --source "$source_url" \
+  --format text/html --at "$retrieved_at" --original "$original_path"
+track source list --id <ID>
+track cite --id <record.note_id> --version <record.version> --heading '<見出し>'
 ```
 
-それから、`clip` タグを付けて作成する（`--body` を省略すると stdin が本文になる）。
+`source save` の入力は要求元 `source_url`、実際の `retrieved_at`、取得済みの `original_path`。戻り値の `record.note_id` と `record.version` を必ず後続の引用に使う。`record.original_hash` は保存した原本、`record.content_hash` は `track export` した保存本文の SHA-256 と照合する。抽出本文の `text_sha256` と保存本文の `content_hash` は、CLI が末尾改行を加える場合があるため同一視しない。
 
-```sh
-track new --title "<title>" --tag clip < /tmp/clip.md
-track meta --title "<title>" --description "<one line on what the page says>"
-```
+引用では `heading`、`block`、または確認済み行位置を固定版に対して指定する。`pinned: true`、ID、版、位置、版全体の `content_hash` を確認し、戻った本文に引用断片があることを読む。失敗した場合は現行ページや別版で代替せず、引用未解決として残す。
 
-再クリップでは元の所在と内容ハッシュを照合し、同じ版なら既存ノートを使う。内容が変わった場合だけ版ノートを作り、旧本文と引用先を保持する。
-取得本文に要約を混ぜない。要約が必要なら別の生成物として入力版と生成日時を残す。
+出典記録には要求元 `source_url` とリダイレクト後 `final_url` を区別して残す。公開・更新日時は manifest の `raw`、`precision`、`timestamp` をそのまま記録する。`timestamp: null`、`date`、`local_datetime`、`unknown`、`absent` から時刻を作らない。`modified` を公開日時として扱わず、`retrieved_at` は取得日時のまま保つ。
+
+一部の古い `track-fetch-web` が `--snapshot-dir` を持たない場合は、`--help` で未対応を確認してから `--note` による明示的な限定フォールバックを使う。旧出力の取得日ラベルしかない場合は正確な取得時刻・原本バイト・固定版引用を「不明／未提供」とし、`track source save` 済みの固定版と呼ばない。回答だけに使うか、限定版で保存することを利用者に明示する。`date now`、ファイル時刻、公表日時を取得日時として補わない。
+
+要約が必要なら取得本文から分離し、入力版・固定引用・生成日時・処理方法を記録する。取得に成功した後にノート作成や保存で失敗した場合、snapshot ディレクトリを残して `track source list` を確認し、欠けた段階だけ再実行する。取得・保存・固定引用が全て検証できた後だけ、一時 snapshot の削除を検討する。
 
 今日のジャーナルにも記録しておくと、日付からもクリップに到達できる。既存本文を確認し、同じ版へのリンクがある場合は追記しない。`track journal` には `--body` を渡すこと。これがないとコマンドは stdin を読み込み、エージェントがハングする。
 

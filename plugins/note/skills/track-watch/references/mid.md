@@ -13,6 +13,7 @@
    ## 前提の点検      ← walk the register; only items with contrary evidence this week get a re-check search
    ## 来週の注視点    ← feeds back into the watch note's concern list
    ## 引き継ぎ        ← 対象期間、成功／失敗、未確認範囲、再実行対象
+                      ← Web 根拠の固定 ID・版・引用位置・取得時刻・ハッシュ。対象週で取得時刻を代用しない
    ```
 
    同じ週のレビューがあれば本文を確認して未完了部分を更新する。

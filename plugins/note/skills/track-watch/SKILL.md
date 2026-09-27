@@ -63,6 +63,8 @@ watch ごとに kebab-case の **トピックタグ**を1つ選び（例: `jp-ma
 取得成功・失敗、範囲確認済みか、保存済み ID、未確認範囲と再実行対象を引き継ぎに残す。取得不能を「動きなし」としない。
 資料取得や検証が失敗した懸念は解決済みにせず、実際に点検できた前提だけ `[checked::]` を更新する。
 
+Web 資料を根拠に使う場合、保存・再引用に必要なページは `track-fetch-web --snapshot-dir <container> <URL>` で一度だけ取得し、manifest v1 の URL・`retrieved_at`・原本／抽出本文ハッシュ・日時精度を確認してから `track source save` する。[共通 intake 契約](../track/references/knowledge-intake.md#web-の取得-snapshot-v1) の手順で `record.note_id` / `record.version` を固定し、`track cite` の `pinned`、版、位置、保存本文ハッシュ、引用本文を確認する。日次・週次の対象日やレビュー作成時刻を取得時刻にしない。引き継ぎと脚注には要求／最終 URL、固定版、位置、引用断片、取得時刻、公開・更新日時の raw 値・precision・timestamp を残す。旧 CLI は限定フォールバックとして明示し、固定版として扱わない。
+
 指定された深度の参照だけを読む。指定がなく当日分の確認なら light を使う。
 
 - [light](references/light.md): 当日の変化と懸念への反応を記録する。

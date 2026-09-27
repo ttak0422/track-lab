@@ -52,6 +52,23 @@ PDF は [track-clip](../../track-clip/SKILL.md) の同梱スクリプトで先�
 更新された資料は別版として保存し、旧版への参照を維持する。保存途中で失敗した場合は、作成済みノートと `source list` を読み、同じノートで欠けた処理だけ再開する。
 抽出成功と保存成功は分けて報告し、保存に失敗したノートを引用可能な固定版と呼ばない。生成物は本文から分離し、入力版と処理設定を記録する。
 
+## Web の取得 snapshot v1
+
+`track-fetch-web --snapshot-dir <container> <http(s)-url>` が利用できる場合、保存・固定引用する Web 資料はこのモードで一度だけ取得する。`--note` や JSONL モードとの併用はしない。stdout の manifest v1 が唯一の取得記録で、成功時に1行の JSON が返る。
+
+- `source_url` は要求 URL、`final_url` はリダイレクト後の URL。異なる値を同一視しない。
+- `retrieved_at` は応答本文を受信した実際の RFC 3339 時刻。実行日、公表日、更新日で置き換えない。
+- `original_path` は取得 HTML の保持ファイル、`text_path` は抽出 Markdown。いずれも一意の `snapshot-*` 子ディレクトリ内にあり、manifest は絶対パスを返す。
+- 実ファイルを読み、両 SHA-256 を再計算して manifest と照合する。`text.md` には Source 行や要約を足さない。
+- `published` / `modified` は `raw`、`precision`、nullable `timestamp` を保つ。`date`、`local_datetime`、`unknown`、`absent` から instant を推測しない。`modified` は公開日時ではない。
+- snapshot の原本を `track source save --original` に直接渡し、`--at` には manifest の `retrieved_at` を渡す。`--source` は要求元 `source_url`。`final_url`、公開・更新日時の raw 値と精度、抽出方法、抽出本文ハッシュは固定版の記録と混同しない形で残す。
+
+`source save` の返却 `record.note_id` / `record.version` を使い、保存本文のハッシュが `record.content_hash`、原本のハッシュが `record.original_hash` と一致することを確認する。`created:false` なら返却された既存版と初回記録時刻を使い、今回の取得時刻で上書きしない。同一 URL・原本・本文なら再利用し、訂正本文は新しい版として保存する。
+
+Web の根拠は固定版を指定した `track cite --id <ID> --version <VERSION> --heading <見出し>` または検証済みの `--block` / 行位置で解決する。`pinned:true`、ID、版、位置、`content_hash` と引用本文を照合する。report/watch の脚注には要求 URL、固定ノートと版、読んだ位置、引用断片、本文・原本ハッシュ、manifest の `retrieved_at` と公表・更新ラベルを残す。レポートの作成日時や watch の対象日を資料の取得日時として使わない。
+
+`--snapshot-dir` がない旧バイナリでは `--help` で未対応を確認し、明示した限定フォールバックだけを使う。`--note` が返す日付ラベルから正確な取得時刻・原本バイト・snapshot のハッシュを補わない。その資料は取得日時不明または日付精度のみの未固定資料であり、manifest v1 の固定引用として報告しない。必要な固定引用が依頼条件なら、対応 CLI が使えるまで保存・引用を完了扱いにしない。
+
 ## 既存ノートで版を保持する
 
 1. 取得した本文を確保し、取得日時や付加したリンクを除いた内容の SHA-256 を計算する。ハッシュの対象と正規化方法を固定する。

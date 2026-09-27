@@ -127,16 +127,27 @@ From the repository root, run the offline checks:
 ```sh
 node scripts/check-research-workflows.mjs
 python3 scripts/check-knowledge-intake.py "$(command -v track)"
-nix develop path:. --command python3 scripts/check-pdf-intake.py "$(command -v track)"
+python3 scripts/check-web-intake.py --self-test
+
+export TRACK_BIN=/absolute/path/to/compatible/track
+args=(--track "$TRACK_BIN")
+if [ -n "${TRACK_WEB_MANIFEST:-}" ]; then args+=(--manifest "$TRACK_WEB_MANIFEST"); fi
+nix run path:.#intake-check -- "${args[@]}"
+```
+
+To verify an already acquired manifest without a track CLI, set `TRACK_WEB_MANIFEST` and run:
+
+```sh
+python3 scripts/check-web-intake.py --verify-only --manifest "$TRACK_WEB_MANIFEST"
 ```
 
 The first mocks Workflow responses to check retained results, failures, and limits. It does not execute live agents or web requests.
 The second uses an isolated temporary vault and cache to rehearse version retention, metadata repair, citations, and period boundaries.
 Its fixed search cases compare opening all matches with title-first selection capped at five notes: conflicting cache specifications, a body-only retry rule, and six capacity notes.
 It reports searches, notes opened, characters fetched, and missed evidence. The capped case deliberately misses one capacity note; these fixtures do not establish recall on real research questions.
-The PDF check also uses an isolated vault and requires the Nix-provided `track-pdf-engine` on `PATH`.
-It rehearses extraction, immutable original and text hashes, idempotent source saves, physical-page citations, and corrected source versions.
-The `pdf-extraction` flake check independently exercises Japanese text, empty physical pages, malformed PDFs, engine diagnostics, deadlines, and original retention without the track CLI.
+The Web manifest self-test uses only temporary local files; it checks schema, precision, path, permission, and hash failures without a network or a track CLI. The integration rehearsal accepts `--manifest FILE`; without it, it creates a synthetic offline snapshot. Both modes use an isolated vault and test raw/text/saved hashes, retrieval time, source save/reuse/correction, and fixed citations.
+`intake-check` runs the existing PDF rehearsal and the Web rehearsal, supplies the Nix-pinned `track-pdf-engine` and Python, and requires an explicit compatible core binary. In CI, set `TRACK_BIN` to the compatible binary produced by the parent/core build and run this app; optionally set `TRACK_WEB_MANIFEST` to exercise a real acquired snapshot. This flake does not fetch or build an unpublished core dependency, and the runner does not change the selected vault.
+`nix flake check` runs the offline Web-manifest test and the `pdf-extraction` contract (Japanese text, empty physical pages, malformed PDFs, diagnostics, deadlines, and original retention). It does not claim that the track CLI integration ran unless `intake-check --track ...` was explicitly invoked.
 
 ## CLI resolution
 
