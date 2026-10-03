@@ -32,7 +32,7 @@ CLI を使う前に[実行環境](../track/references/runtime.md)を読む。状
 
 ## 振り分け
 
-- `#memory` のみを memory plugin の `dream` の対象とする。dream の通常の直接編集よりこのスキルの proposal 制約を優先する。適用時も dream を読み、変更後は最終採用レビューをユーザーに求める。共有変更を巻き戻す全体 undo は行わず、差分を照合できない場合は保留する。journal は書き換えない。
+- 共有変更を巻き戻す全体 undo は行わず、差分を照合できない場合は保留する。journal は書き換えない。
 - 複数 report の入口統合には [track-explainer](../track-explainer/SKILL.md) を使い、report 本文を保持する。時点の異なる report を記憶のように上書きしない。
 - 完了・期限・WAITING の棚卸しは `track-task-review`、S/M/L・依存・次の提案は `track-task-triage` に従う。該当 skill が実行環境で使えない場合は、その種別を保留し、コマンドや手順を補わない。
 - 一般ノートの統廃合は根拠と情報保持を確かめ、提案を基本とする。統合案では canonical 候補、移す内容、出典、失われる情報の有無を示す。削除や履歴の消去を暗黙に含めない。

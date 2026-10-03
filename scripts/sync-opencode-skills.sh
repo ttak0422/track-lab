@@ -9,7 +9,7 @@
 # Usage:
 #   scripts/sync-opencode-skills.sh [plugin ...] [--project]
 #
-#   plugin ...  Plugin names to sync (e.g. "note memory"). Defaults to all
+#   plugin ...  Plugin names to sync (e.g. "note task"). Defaults to all
 #               plugins in the repository.
 #   --project   Link into <cwd>/.opencode/skills/ instead of the global
 #               ~/.config/opencode/skills/.
@@ -25,7 +25,7 @@ Usage: scripts/sync-opencode-skills.sh [plugin ...] [--project]
 
 Sync track-lab plugin skills into an opencode skills directory as symlinks.
 
-  plugin ...  Plugin names to sync (e.g. "note memory"). Defaults to all.
+  plugin ...  Plugin names to sync (e.g. "note task"). Defaults to all.
   --project   Target <cwd>/.opencode/skills/ (default: ~/.config/opencode/skills/)
 EOF
 }
