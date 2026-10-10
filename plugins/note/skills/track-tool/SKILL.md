@@ -9,6 +9,9 @@ CLI を使う前に[実行環境](../track/references/runtime.md)を読む。
 
 ノートに埋め込むツールは、HTML アセット1枚として置かれ、サンドボックス iframe の中で動く。
 このスキルは、その制約の中で成立するツールの形を定める。
+構成図や C4 のビュー切替だけが必要なら、まず[描画フェンスの選択指針](../track-markdown/references/DRAWING.md#ダイアグラムの選び方)を使う。
+Mermaid architecture や LikeC4 で表せる図に、手作業の SVG や独自 HTML ビューアを用意する必要はない。
+入力に応じた計算や独自の操作が必要な場合に、この HTML ツールを選ぶ。
 埋め込みの構文（`:height`、`:frame none`、リモート URL）は
 `../track-markdown/references/EMBEDS.md` の担当なので、ここでは繰り返さない。
 
