@@ -57,7 +57,7 @@ track asset import "<file>"    # copies the file into assets/ and prints the ref
 | ツイート URL（`x.com` / `twitter.com` の status） | Twitter ウィジェットによる実際の投稿 |
 | PDF（アセットまたは URL） | ページ送りのスライドデッキビューア |
 | テキストアセット（`.txt`, `.json`, `.yaml`, `.csv`, `.sh`, ...） | シンタックスハイライト付きコードブロック |
-| Mermaid ソースアセット（`.mmd` / `.mermaid`） | 描画されたダイアグラム |
+| 図のソースアセット (`.mmd` / `.mermaid`, `.dot` / `.gv`, `.d2`, `.c4` / `.likec4`, `.drawio`) | 対応する図のレンダラーで描画。[構成図の例](ARCHITECTURE.md)も参照 |
 | `.viewspec.json` アセット | インタラクティブチャート |
 | HTML アセット（`.html` / `.htm`） | サンドボックス化された iframe |
 | その他の `http(s)` ページ（`.html` を含む） | Open Graph カード（タイトル、説明、プレビュー画像） |
@@ -71,7 +71,9 @@ HTML 埋め込みは、埋め込みの後に `:height` オプションをとる�
 
 ## フェンスレンダラー
 
-特別なフェンス付きブロックは、コードを表示する代わりに描画する: ` ```mermaid `, ` ```dot `/` ```graphviz `, ` ```d2 `, ` ```mindmap `, ` ```viewspec `, ` ```track-query `, ` ```dashboard `, ` ```taskboard `, および babel 注釈付き言語フェンス。**track-create-note** スキルがそれぞれの用途を目録化している。完全な構文は track リポジトリの `docs/help/{diagrams,mindmaps,charts,query,dashboard,babel}.md` にあり、ヘルプサイトにも公開されている。
+特別なフェンス付きブロックは、コードを表示する代わりに描画する。
+使える形式と選択基準は [DRAWING.md](DRAWING.md) にまとめている。
+完全な構文は track リポジトリのヘルプボールト `docs/help/note/` にあり、ヘルプサイトにも公開されている。
 
 本文を書く際に知っておくべき2つの挙動:
 

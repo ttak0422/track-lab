@@ -61,9 +61,7 @@ Node.js や Codex の JavaScript 実行ツールでは直接実行しない。
 
 - 前提の検証が先: ユーザーの前提が誤りまたは不正確と判明したら、結論部の `[!IMPORTANT]` alert で
   一次ソースとともにそう述べる。判定の段落（`^premise`）を transclusion 用にアンカーする。
-- 埋め込む前に図をすべて検証する: `viewspec` の JSON は使い捨てコピーに対して `track render --spec` で、
-  `d2` ブロックは `d2` CLI で検証する（`link` などの予約語はノード名にしない）。mermaid の構文は保守的に
-  保つ。壊れた fence はエラーボックスとして出力されてしまう。
+- 因果、時系列、システムの構成を混同せず、[図の選択指針](../track-markdown/references/DRAWING.md#ダイアグラムの選び方)で形式を選ぶ。構成を扱う場合は[構成図の例](../track-markdown/references/ARCHITECTURE.md)を参照する。埋め込む前に[図の検証](../track-markdown/references/DRAWING.md#図の検証)と `viewspec` の検証を行い、実行できなかった確認は記録する。
 - 出典を添えた chart: `display: "box"` のイベントマーカーのオーバーレイは事象ごとに `url` を持ち、chart が
   そのまま証拠の索引を兼ねる。期間は帯で、過去の基準値は閾値線で示す。
 - 調査した日次系列（sweep の `daily_closes`）は、jq 一行で inline record になる。生成プログラムは不要:
@@ -89,7 +87,7 @@ Node.js や Codex の JavaScript 実行ツールでは直接実行しない。
 
 ## Verify
 
-- `track export --title "<analysis note>"` がレンダリングできる。すべての fence は埋め込み前に検証済みである。
+- `track export --title "<analysis note>"` で保存された Markdown を確認する。図の描画結果は別途確認し、未検証のフェンスを明示する。
 - `track backlinks` が、メモと project note が分析 note を指していることを示す。
 - note のタイトル、前提の判定、未検証のまま残ったものをユーザーに伝える。note の再貼り付けではなく、
   短い一段落で。

@@ -147,7 +147,10 @@ track new --title "<title>" --tag <tag> --body "<body>"
 
 数式は KaTeX による LaTeX です。インラインは `$...$`、ブロックは `$$...$$`。
 
-図表やクエリなどの描画フェンスを使うときは [DRAWING.md](references/DRAWING.md) を参照する。図の種類・記述形式は[問いから選ぶ指針](references/DRAWING.md#ダイアグラムの選び方)に従い、テーマに合わせた色、狭いカラムでの配置、viewspec の検証も確認する。
+図表やクエリなどの描画フェンスを使うときは [DRAWING.md](references/DRAWING.md) を参照する。
+図の種類と記述形式は[問いから選ぶ指針](references/DRAWING.md#ダイアグラムの選び方)に従う。
+構成図には [Mermaid architecture、LikeC4、D2 の例と制約](references/ARCHITECTURE.md)がある。
+狭いカラムやテーマでの見やすさと、構文検査、描画、viewspec の検証も確認する。
 
 ## ハウススタイル（track fmt）
 
