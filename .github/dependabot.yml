@@ -1,0 +1,25 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /nix/textlint
+    schedule:
+      interval: weekly
+    # Exact direct versions remain in package.json. Every lock update also
+    # requires scripts/update-textlint-deps.py and a successful Nix build.
+    versioning-strategy: increase-if-necessary
+    open-pull-requests-limit: 1
+    groups:
+      textlint-version-updates:
+        applies-to: version-updates
+        patterns: ["*"]
+      textlint-security-updates:
+        applies-to: security-updates
+        patterns: ["*"]
+  - package-ecosystem: nix
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
