@@ -104,7 +104,7 @@
           pname = "track-lab-textlint";
           version = "0.1.0";
           src = ./nix/textlint;
-          npmDepsHash = "sha256-FhtP8Up6VSMdXXIVKLA03iNvMnbX3fySRqxFJnwixmY=";
+          npmDepsHash = "sha256-IRhyGgGSQ6RNalKKZyNjqJHk4ZD/GsKKw48woanQcDo=";
           dontNpmBuild = true;
           nativeBuildInputs = [ pkgs.makeWrapper ];
           installPhase = ''
