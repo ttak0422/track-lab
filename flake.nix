@@ -118,6 +118,14 @@
           '';
         };
 
+        update-textlint-deps = pkgs.writeShellApplication {
+          name = "track-lab-update-textlint-deps";
+          runtimeInputs = [ pkgs.prefetch-npm-deps pkgs.python3 ];
+          text = ''
+            exec python3 ${./scripts/update-textlint-deps.py} "$@"
+          '';
+        };
+
         lint = pkgs.writeShellApplication {
           name = "track-lab-lint";
           runtimeInputs = [
@@ -157,6 +165,10 @@
         intake-check = {
           type = "app";
           program = "${self.packages.${pkgs.stdenv.hostPlatform.system}.intake-check}/bin/track-lab-intake-check";
+        };
+        update-textlint-deps = {
+          type = "app";
+          program = "${self.packages.${pkgs.stdenv.hostPlatform.system}.update-textlint-deps}/bin/track-lab-update-textlint-deps";
         };
         lint = {
           type = "app";
