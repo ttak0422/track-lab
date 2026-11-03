@@ -53,3 +53,27 @@ scripts/ci-check-pdf-intake.sh /absolute/path/to/track
 ```
 
 The Nix app pins the lab-side Python and Xberg engine. It does not fetch or build the track core repository: pass a binary that provides `source save/list` and fixed-version `cite`. Cross-repository CI should obtain that binary from a pinned compatible core build or published artifact and pass its path; do not silently track an unpublished branch. The rehearsal strips inherited `TRACK_*` settings and uses only its temporary config, vault, and cache.
+
+## OpenSkills
+
+OpenSkills can load the skills in any project with an `AGENTS.md`-aware agent. Node.js 20.6+ and Git are required. Install the complete set: note and task skills refer to one another by relative paths. Selecting only a subset can leave required references missing.
+
+In the consuming project, after reviewing the source and checking the target for existing names:
+
+```sh
+npx --yes openskills@1.5.0 install ttak0422/track-lab --universal -y
+npx --yes openskills@1.5.0 sync -y
+npx --yes openskills@1.5.0 read track-task-runner
+```
+
+This installs copies to `.agent/skills/` and updates the project's `AGENTS.md`; `-y` overwrites matching skill names. The GitHub source follows its default branch, not a fixed revision. For a reproducible source, review and check out a specific commit locally, then pass that checkout's path to `install` instead. Pinning the top-level CLI version does not lock its transitive npm dependencies. The generated `AGENTS.md` invokes `npx openskills read`; use a locally locked OpenSkills dependency or update the generated invocation to `npx --yes openskills@1.5.0 read` after each sync if an exact CLI version is needed.
+
+See [the migration guide](docs/openskills-migration.md) before replacing an existing plugin or OpenCode setup. Existing plugin manifests and the OpenCode sync script are retained for native consumers.
+
+The offline layout check verifies that all source-resolving relative Markdown links still resolve in the copied set and that each bundled task runtime matches its canonical source:
+
+```sh
+python3 scripts/test-openskills-layout.py
+```
+
+To additionally exercise the real CLI, pre-populate npm's cache with `openskills@1.5.0`, then run `scripts/test-openskills-cli.sh`. The test uses an isolated temporary HOME and project and forces npm offline; it does not touch an existing agent setup or vault.
