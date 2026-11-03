@@ -5,7 +5,7 @@ description: 「task化して」「タスクにして」「TODOに追加して�
 
 # Track Project Intake
 
-CLI を使う前に[実行環境](../../references/runtime.md)を読む。振り分けは[track-task-triage](../track-task-triage/SKILL.md)、消化は[track-task-runner](../track-task-runner/SKILL.md)に従う。
+CLI を使う前に[実行環境](references/runtime.md)を読む。振り分けは[track-task-triage](../track-task-triage/SKILL.md)、消化は[track-task-runner](../track-task-runner/SKILL.md)に従う。
 
 入ってきたプロジェクト作業の依頼を、プロジェクトの track ノートにあるチェックリスト項目へ変換する。これはワークフローの**取り込み**側であり、作業を捕捉して記録する。[track-task-runner](../track-task-runner/SKILL.md) は**実行**側で、同じチェックリストから後で項目を取り上げ、実装し、worklog ノートへ移す。
 
@@ -81,7 +81,7 @@ printf '## TODO\n\n## Bug\n' | track open --title "<project>"
 
 フラットノートでは `track append` で末尾へ追加する。プロジェクトノートで対象見出しが欠けていれば、その見出しを追加する。
 
-`track append` はノートの末尾にしか追加できないため、特定の見出しの下に行を置けない。`## Bug` または `## TODO` の下に項目を登録するには、**ノート本文を直接編集する**（ステップ 2/3 のパス）。対象の見出しの下、そのセクションの既存項目の後ろに `- [ ]` 行を挿入する。編集範囲と競合確認は[共通規約](../../references/runtime.md#task-conventions)に従う。
+`track append` はノートの末尾にしか追加できないため、特定の見出しの下に行を置けない。`## Bug` または `## TODO` の下に項目を登録するには、**ノート本文を直接編集する**（ステップ 2/3 のパス）。対象の見出しの下、そのセクションの既存項目の後ろに `- [ ]` 行を挿入する。編集範囲と競合確認は[共通規約](references/runtime.md#task-conventions)に従う。
 
 セクションがまだ空の新規ノートでは、その行が単に見出しの下の最初のエントリになる。
 
