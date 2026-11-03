@@ -68,7 +68,11 @@ npx --yes openskills@1.5.0 read track-task-runner
 
 This installs copies to `.agent/skills/` and updates the project's `AGENTS.md`; `-y` overwrites matching skill names. The GitHub source follows its default branch, not a fixed revision. For a reproducible source, review and check out a specific commit locally, then pass that checkout's path to `install` instead. Pinning the top-level CLI version does not lock its transitive npm dependencies. The generated `AGENTS.md` invokes `npx openskills read`; use a locally locked OpenSkills dependency or update the generated invocation to `npx --yes openskills@1.5.0 read` after each sync if an exact CLI version is needed.
 
-See [the migration guide](docs/openskills-migration.md) before replacing an existing plugin or OpenCode setup. Existing plugin manifests and the OpenCode sync script are retained for native consumers.
+Existing plugin manifests remain available for native consumers. The `.agent/skills/` directory is distinct from native OpenCode and Codex plugin paths; agents must read the generated `AGENTS.md` and invoke OpenSkills. Review the generated section before sharing it: `sync` can include globally installed skills, including private names and descriptions.
+
+OpenSkills 1.5.0 overlays existing directories on reinstall: obsolete files and removed skills remain. Before an update, back up the installed copies and `AGENTS.md`, install the reviewed revision in an empty temporary project with an isolated `HOME`, and compare names and contents. After checking ownership and preserving local edits, reconcile only the obsolete paths belonging to this installation; then reinstall the complete set, sync, and verify retired names and files are gone. Do not remove ambiguous paths or another package's files.
+
+For maintainers, `plugins/task/references/runtime.md` is the canonical task runtime. Keep its per-skill copies in sync. They must be real files: OpenSkills 1.5.0 can preserve a symlink to a source checkout that may later disappear.
 
 The offline layout check verifies that all source-resolving relative Markdown links still resolve in the copied set and that each bundled task runtime matches its canonical source:
 
