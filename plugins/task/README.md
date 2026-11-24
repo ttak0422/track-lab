@@ -13,6 +13,8 @@
 | [track-project-intake](skills/track-project-intake/SKILL.md) | 入ってきたバグ/TODO をプロジェクトノートの `## Bug` / `## TODO` に記録し、合意が必要な場合だけリンクするプランノートを下書きする。 |
 | [track-task-runner](skills/track-task-runner/SKILL.md) | プロジェクトノートのチェックリストを自律的に消化し、完了項目をコミットとともに日付つき worklog ノートへ移す。 |
 | [track-task-review](skills/track-task-review/SKILL.md) | 対応完了後を整理する。取り残された完了項目を worklog へ移し、期限切れと WAITING を見直し、終わった議論を archive へ畳み、優先度を付け直す。 |
+| [track-timeline](skills/track-timeline/SKILL.md) | 依頼された作業の進捗を Track Timeline に記録し、Komado 用のプロジェクト ID を返す。 |
+| [track-timeline-interval-reports](skills/track-timeline-interval-reports/SKILL.md) | 明示依頼時のみ、作業中に閉じた15分区間のレポートを記録する。対応する Track CLI が必要。 |
 
 ## The loop
 
@@ -61,7 +63,9 @@ plugins/task/
     ├── track-project-intake/SKILL.md
     ├── track-task-runner/SKILL.md
     ├── clean-room-implement/SKILL.md
-    └── track-task-review/SKILL.md
+    ├── track-task-review/SKILL.md
+    ├── track-timeline/SKILL.md
+    └── track-timeline-interval-reports/SKILL.md
 ```
 
 各 task skill は同梱された `references/runtime.md` を読む。正本は `plugins/task/references/runtime.md` で、変更時は各コピーを更新して layout test で一致を確認する。
