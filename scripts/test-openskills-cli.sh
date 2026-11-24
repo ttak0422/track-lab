@@ -28,6 +28,10 @@ for skill in track-task-runner track-timeline track-timeline-interval-reports; d
 done
 test -f .agent/skills/track-timeline-interval-reports/../track-timeline/SKILL.md
 grep -Fq '[track-timeline skill](../track-timeline/SKILL.md)' "$tmp/track-timeline-interval-reports.txt"
+grep -Fq '[results, blockers, and next steps](references/progress.md)' "$tmp/track-timeline.txt"
+progress_ref=.agent/skills/track-timeline/references/progress.md
+test -f "$progress_ref" && test ! -L "$progress_ref"
+cmp "$root/plugins/task/skills/track-timeline/references/progress.md" "$progress_ref"
 for skill in track-timeline track-timeline-interval-reports; do
   test -f ".agent/skills/$skill/agents/openai.yaml"
 done

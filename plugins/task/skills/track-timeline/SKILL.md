@@ -83,6 +83,10 @@ track --vault "$VAULT" timeline-session task --project "$PROJECT" --run "$RUN" \
 - Mark done only after verification. If waiting for approval, use blocked or
   paused; session end is not completion. On revision conflict, reread, reconcile
   and retry only if still appropriate. Do not overwrite another run's tasks.
+- When the user asks to record progress or interval reports, record meaningful
+  [results, blockers, and next steps](references/progress.md), including while
+  a task remains active. This is optional if the CLI does not support it; keep
+  recording ordinary task milestones.
 - Write an authored report only when requested:
   `timeline-session report --project "$PROJECT" --run "$RUN" --event milestone-1 --summary="$SUMMARY"`
   under the same vault. Retry an event ID only with identical content.
