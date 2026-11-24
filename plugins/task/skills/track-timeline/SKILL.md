@@ -18,8 +18,8 @@ request to stop. Separately installed SessionStart automation remains opt-in; se
 
 - Check `command -v track`. If unavailable, say that a Track CLI with
   `timeline-session` is required on this environment's PATH; don't install it or
-  change permissions on the user's behalf. Check `track timeline-session --help`
-  for the commands below without opening or writing a project; if not available,
+  change permissions on the user's behalf. Check the usage from `track timeline-session` without an action (it may exit nonzero).
+  Confirm it lists `init|start|show|task|report`. If not available,
   continue the main task and report tracking unavailable.
 - Prefer the vault named by the user or already established for this work.
   `track vault list`, `track vault current`, and `track vault which NAME` show

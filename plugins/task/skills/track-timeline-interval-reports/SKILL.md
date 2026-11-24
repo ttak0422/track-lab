@@ -15,8 +15,9 @@ schedule work, call another model, launch Codex/Claude, or read private logs.
 
 ## Check CLI support
 
-Before writing any report, inspect `track timeline-project --help` for
-`intervals`. It requires a compatible Track CLI with that subcommand. If it
+Before writing an interval report, run `track timeline-project intervals --help`.
+A compatible Track CLI exits successfully and lists the `-id`, `-limit` and
+`-until` options. If the command
 is unavailable, do not guess flags, install a build, or write substitute
 interval reports. Continue the requested ordinary Timeline tracking with
 `$track-timeline` and report that interval reporting is unavailable.
