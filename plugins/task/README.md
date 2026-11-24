@@ -64,7 +64,7 @@ plugins/task/
     └── track-task-review/SKILL.md
 ```
 
-track を操作する skill は `../../references/runtime.md` を実行環境として読む。プラグインレベルに置くのは、`skills/` 直下の全ディレクトリが配布上の skill と見なされるためである。
+各 task skill は同梱された `references/runtime.md` を読む。正本は `plugins/task/references/runtime.md` で、変更時は各コピーを更新して layout test で一致を確認する。
 
 ## Install
 
@@ -88,18 +88,6 @@ codex plugin marketplace add ttak0422/track-lab
 codex plugin add task@track-lab
 ```
 
-OpenCode:
-
-```sh
-scripts/sync-opencode-skills.sh note task
-```
-
-Sync `note` first to remove the old intake/runner links, then install their `task` replacements.
-Links these plugins' skills into `~/.config/opencode/skills/`, where opencode discovers them
-natively; add `--project` to link into the current project's `.opencode/skills/` instead.
-Run it from the repository root and re-run after adding, renaming, or removing a skill —
-only links owned by the synced plugins are touched.
-
-Standalone: copy the complete `plugins/task/` directory, preserving `skills/` and
-`references/`, then expose its skill directories through your runtime's skill discovery.
-The four track skills link to each other; copying one alone leaves those links broken.
+For OpenCode and other `AGENTS.md`-aware agents, use the complete OpenSkills installation in
+[the repository README](../../README.md#openskills). The task skills link to siblings, so install
+the whole set.

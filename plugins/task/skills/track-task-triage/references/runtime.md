@@ -1,0 +1,47 @@
+# Runtime
+
+The procedures in this plugin are shared across Codex / Claude Code / OpenCode. Use whatever tools the current session provides.
+
+- Resolve relative paths against the directory of the `SKILL.md` being read. Read a related skill's `SKILL.md` when needed; loading every skill up front is unnecessary.
+- Resolve the `track` executable once per session and keep using it. In the track source repository, `go run ./cmd/track` is also an option chosen at the start. Commands usually return JSON (`export` returns Markdown). Check the exit code and output; on failure, stop that operation and report the exact error. Do not switch builds or guess unsupported commands or flags.
+- For commands taking the body from stdin, pipe the input or pass a file. Pass `--body ""` for creation/open without a body (except with `--template`).
+- Use the vault the user specified, and otherwise follow the normal track configuration. Carry over the `vault` from search results, and add `--vault NAME` when handling IDs from another vault.
+- The vault may live outside the workspace. A permission error does not mean the vault is absent. Do not change the destination on your own; use the environment's approval flow only for the operations that need it. When permission cannot be obtained, press on with non-write work, save the body in the work area, and report it as unapplied.
+- Prioritize the user's request and already-granted approvals. Using a skill never authorizes unrequested publishing, sending, or deletion. For record-only requests, do not start implementing; when implementation is also requested, keep working after recording.
+- Treat workflow and formatting defaults as adjustable to the user's request. Ask only for missing decisions that materially affect scope, correctness, or authorization; continue independent work. If a skill instruction requires a pause, link the file and quote the instruction rather than silently stopping.
+- Complete the requested outcome, including relevant validation and task records. A plan or first implementation is not completion when implementation is requested. Run required checks and those affected by the change; repeat them after fixes or new evidence, not merely to add another review pass.
+- Use today's local date for agenda and worklog operations; literal dates in examples are placeholders. Preserve original completion dates when moving older work.
+
+## Task conventions
+
+- The default project backlog uses `## TODO` and `## Bug`. An explicitly selected flat TODO note uses its task list without adding headings. Read the entire note; code fences and unrelated sections are not backlog items. Confirm that the note belongs to the working project before implementing.
+- Task states are `TODO` (`[ ]`), `DOING` (`[/]`), `WAITING` (`[?]`), `DONE` (`[x]`), and `CANCELLED` (`[-]`). Use `task set` for a known target state and `task date` for dates so completion stamps, transition logs, and progress cookies stay consistent. Do not hand-edit existing state markers or date tokens.
+- Use the CLI for adding or moving items when it supports the operation (`append` for a flat list, `refile --line` for a list item). Direct body edits are limited to inserting under a heading, clarifying text, priority, and splitting items. Preserve unrelated text and metadata; respect stricter policies embedded in a note.
+- Re-read the source before each write and locate the intended text again. Line numbers become stale after inserts, removals, and moves. `--expect` on state changes checks the state, not the identity of the line. Reindex after direct edits and verify with `export`.
+- Parent items summarize phased work. Record dependencies and acceptance criteria when splitting. Run eligible leaves in dependency order; do not implement the parent again. Keep the parent until all required children are complete and its acceptance criteria pass. A WAITING or CANCELLED ancestor blocks automatic execution of its children.
+
+## Model selection per task
+
+- Honor user and project model choices first. When dispatching a task, use the least costly available model suited to its uncertainty and impact; S/M/L size alone does not determine the model.
+- Lightweight: the specification, change locations, and validation are clear, with little design judgment and limited impact.
+- Standard: the task needs root-cause investigation, coordinated changes, or bounded design decisions.
+- High capability: the task needs complex design, has broad impact, or retains substantial uncertainty.
+- Map these tiers to models exposed by the current runtime or configured by the project. They are capability labels, not model IDs; do not invent model names or command flags. If the mapping is unknown or model selection is unavailable, inherit the current configuration and continue.
+- Use the runtime's supported delegation and context options for the chosen model. Preserve task scope, validation requirements, and clean-room reference boundaries when handing off.
+- Reassess when new evidence changes the task. If diagnosis or fixes stop making progress, hand findings, changes, and validation results to a more capable available model rather than repeating the same attempt. Missing requirements, authorization, or external dependencies still follow the normal deferral rules; changing models does not resolve them.
+- Keep validation and completion requirements unchanged at every tier.
+
+## Worktrees and parallel execution
+
+- For implementation, use a dedicated branch and worktree by default, without waiting for the user to request one. First check `git status --short --branch` and `git worktree list`. Continue in the current branch/worktree only when this same task is already in progress there, or the user explicitly requests it. A feature branch name or unrelated changes alone are not evidence of ongoing work on this task. Reuse an existing worktree for the task if available; do not duplicate or take over another agent's active work.
+- Before creating a worktree, identify the project and task note and retain their identity; a worktree directory name is not a new project name. Select the base from the project's branch policy and task dependencies, then use `git worktree add -b <task-branch> <worktree-path> <base>`. Leave unrelated changes in place; do not stash or move them to set up the task. Run edits, checks, and commits in the assigned worktree.
+- When multiple eligible tasks are independent and agent tools are available, delegate them to separate agents in separate worktrees by default. Give each agent its task, allowed scope, base, worktree path, and validation requirements. Respect dependencies and overlapping changes; serialize work that cannot be separated safely. If parallel execution is unavailable or only one task is eligible, proceed sequentially in a dedicated worktree and briefly state why. A worktree setup failure is not permission to silently edit the original tree.
+- One coordinator owns shared task-note and worklog writes. Record DOING before dispatch, keep the task-to-agent/branch/worktree mapping, and re-read the note before each update. Workers return results, validation evidence, and commit hashes instead of concurrently editing the shared vault. Apply the same single-writer rule when intake, triage, or review runs alongside implementation. Note-only work does not require a code worktree.
+- Verify and commit each task in its worktree. If the authorized workflow calls for integration, integrate serially into the designated branch and validate the combined result before declaring integration complete. Otherwise retain the task branches and report their worktree paths and integration status; a task commit does not imply it has been merged. Do not remove worktrees containing uncommitted or unintegrated work. Push, PR creation, and cleanup remain within the user's authorization.
+- Worktrees isolate changes, not access to reference material. For clean-room work, establish the reference boundary and separate agent contexts before inspecting diffs or code; follow `clean-room-implement` even when using separate worktrees.
+
+## Pull requests
+
+- Create PRs only when requested. Split by reviewable changes and actual dependencies, not by the number of worktrees. Changes that can be reviewed and merged independently get separate PRs targeting the project's integration branch.
+- For dependent changes, create stacked PRs: target the integration branch with the first PR and use each prerequisite branch as the base of its dependent PR. State dependency links and merge order in each PR, and check that its diff contains only that layer's changes.
+- After a prerequisite PR merges, update the dependent PR's base and adjust its branch as needed so merged changes do not reappear, including after squash merges. Recheck the diff and run relevant validation. Continue within the authorized workflow; PR creation does not itself authorize merging or force-pushing.

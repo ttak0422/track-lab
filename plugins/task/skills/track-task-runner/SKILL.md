@@ -5,7 +5,7 @@ description: track ノートの TODO/Bug を実装するときに使う。検証
 
 # Track Task Runner
 
-着手前に[実行環境](../../references/runtime.md)を読み、[worktree と並列実行の共通方針](../../references/runtime.md#worktrees-and-parallel-execution)に従う。振り分けは[track-task-triage](../track-task-triage/SKILL.md)、記録は[track-project-intake](../track-project-intake/SKILL.md)に従う。
+着手前に[実行環境](references/runtime.md)を読み、[worktree と並列実行の共通方針](references/runtime.md#worktrees-and-parallel-execution)に従う。振り分けは[track-task-triage](../track-task-triage/SKILL.md)、記録は[track-project-intake](../track-project-intake/SKILL.md)に従う。
 
 track ノートの `## TODO` と `## Bug` チェックリストから実装作業を進める。ノート（ユーザーの
 track ボールト内）がタスクの源泉であり、コード変更は対象プロジェクトの専用 worktree で
@@ -58,7 +58,7 @@ TODO (`[ ]`) は新規着手、DOING (`[/]`) は既存の差分・コミット�
 他者が作業中なら競合させず保留する。WAITING (`[?]`)、DONE (`[x]`)、CANCELLED (`[-]`) は実装しない。
 取り残された DONE は review の担当である。コードフェンス内の例は対象にしない。
 
-親子項目は[共通規約](../../references/runtime.md#task-conventions)に従う。
+親子項目は[共通規約](references/runtime.md#task-conventions)に従う。
 親は集約として残し、着手可能な子から進める。別ノートの子はリンク先を読み、依頼範囲と対象プロジェクトが一致するときだけ処理する。
 
 ## 3. 順序と担当を選ぶ
@@ -66,7 +66,7 @@ TODO (`[ ]`) は新規着手、DOING (`[/]`) は既存の差分・コミット�
 - 依存関係とユーザーが指定した順序を先に守り、期限・優先度を考慮する。同条件なら小さく局所的なものから着手する。
 - 難しいという理由だけで保留しない。仕様・承認・外部条件が不足して進められない場合は、その理由を残して次の着手可能な項目へ進む。
 - 独立した項目は共通方針に従って並列に割り当てる。runner が着手状態と担当・ブランチ・worktree の対応を管理し、ノート更新と worklog への移動を直列に行う。
-- 委譲時は[タスクごとのモデル選択](../../references/runtime.md#model-selection-per-task)に従い、各項目の不確実性と影響に見合うモデルを選ぶ。途中で難度が変わった場合も同方針で見直す。
+- 委譲時は[タスクごとのモデル選択](references/runtime.md#model-selection-per-task)に従い、各項目の不確実性と影響に見合うモデルを選ぶ。途中で難度が変わった場合も同方針で見直す。
 - 各項目の後に本文と状態を読み直し、先行作業の完了によって着手可能になった項目も再評価する。
 
 ## 4. Per-item loop (autonomous)

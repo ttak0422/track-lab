@@ -5,7 +5,7 @@ description: track の依頼やチェックリストをサイズと依存関係�
 
 # Track Task Triage
 
-CLI を使う前に[実行環境](../../references/runtime.md)を読む。記録の手順は[track-project-intake](../track-project-intake/SKILL.md)、消化の手順は[track-task-runner](../track-task-runner/SKILL.md)に従う。このスキルはその前段の振り分けだけを担い、記録や実装そのものはそちらへ引き渡す。
+CLI を使う前に[実行環境](references/runtime.md)を読む。記録の手順は[track-project-intake](../track-project-intake/SKILL.md)、消化の手順は[track-task-runner](../track-task-runner/SKILL.md)に従う。このスキルはその前段の振り分けだけを担い、記録や実装そのものはそちらへ引き渡す。
 
 タスクノート（ユーザーの track ボールト内）が振り分けの対象であり、実装へ引き渡した後のコード変更は、共通方針に従って対象プロジェクトの worktree で行う。両者は別の場所であってよい。
 
@@ -65,7 +65,7 @@ track tasks --id <note_id> --overdue
 
 ## 5. 状態・優先度・期限を付ける
 
-状態の一覧と更新規則は[共通規約](../../references/runtime.md#task-conventions)に従う。振り分けだけで DOING にはしない。状態変更の直前に対象行を読み直し、既知の状態を `--expect` で指定する。単純な開閉だけ `toggle` を使う。
+状態の一覧と更新規則は[共通規約](references/runtime.md#task-conventions)に従う。振り分けだけで DOING にはしない。状態変更の直前に対象行を読み直し、既知の状態を `--expect` で指定する。単純な開閉だけ `toggle` を使う。
 
 ```sh
 track task set --id <note_id> --line <N> --state WAITING --expect TODO

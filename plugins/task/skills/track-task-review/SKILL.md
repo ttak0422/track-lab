@@ -5,7 +5,7 @@ description: track の完了項目、期限切れ、WAITING、終わった議論
 
 # Track Task Review
 
-CLI を使う前に[実行環境](../../references/runtime.md)を読む。振り分けは[track-task-triage](../track-task-triage/SKILL.md)、記録は[track-project-intake](../track-project-intake/SKILL.md)、消化は[track-task-runner](../track-task-runner/SKILL.md)に従う。このスキルはその後始末だけを担い、新規の記録や実装はそちらへ引き渡す。
+CLI を使う前に[実行環境](references/runtime.md)を読む。振り分けは[track-task-triage](../track-task-triage/SKILL.md)、記録は[track-project-intake](../track-project-intake/SKILL.md)、消化は[track-task-runner](../track-task-runner/SKILL.md)に従う。このスキルはその後始末だけを担い、新規の記録や実装はそちらへ引き渡す。
 
 タスクノート（ユーザーの track ボールト内）が整理の対象である。コードには触らない。読んで、状態を直して、畳むだけのスキルである。
 

@@ -206,24 +206,9 @@ codex plugin marketplace add ttak0422/track-lab
 codex plugin add note@track-lab
 ```
 
-OpenCode:
-
-```sh
-scripts/sync-opencode-skills.sh note
-```
-
-Links this plugin's skills into `~/.config/opencode/skills/`, where opencode discovers them
-natively; add `--project` to link into the current project's `.opencode/skills/` instead.
-Run it from the repository root and re-run after adding, renaming, or removing a skill —
-only links owned by the synced plugins are touched.
-
-Standalone: copy or symlink the skill directories into `.agents/skills/` for Codex,
-`.claude/skills/` for Claude Code, or `.opencode/skills/` for OpenCode. Preserve sibling directory
-names: skills share `track/references/runtime.md`, and writing workflows reference the writing skills.
-Copying the complete `plugins/note/skills/` contents preserves those references.
-
-If you previously installed the `track` plugin from the track repository, uninstall it first — the
-skill names are the same and would otherwise collide.
+For OpenCode and other `AGENTS.md`-aware agents, use the complete OpenSkills installation in
+[the repository README](../../README.md#openskills). Skills share sibling references, so install the
+whole set.
 
 ## Agent execution
 
@@ -233,9 +218,9 @@ Relative references resolve from the skill directory, including in an installed 
 The existing `agents/openai.yaml` files provide optional UI metadata; the remaining skills are
 also discoverable in Codex through their `name` and `description` ([official skill documentation](https://learn.chatgpt.com/docs/build-skills)).
 
-OpenCode uses the same skill bodies through the sync command above; directory symlinks preserve
-the shared runtime reference and sibling writing-skill references. Codex UI metadata is optional
-and is not required to follow the skill instructions.
+OpenSkills installs the complete set together so the shared runtime and sibling writing-skill
+references remain available. Codex UI metadata is optional and is not required to follow the skill
+instructions.
 
 News analysis and high-depth watch reviews work with the session's web search and page retrieval.
 They can run sequentially, or delegate independent research when the session permits it.
