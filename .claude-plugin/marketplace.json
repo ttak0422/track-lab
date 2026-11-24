@@ -19,8 +19,8 @@
     {
       "name": "task",
       "source": "./plugins/task",
-      "description": "Size-aware task handling backed by the track CLI: triage incoming TODOs by size, record project work as checklist items with plan notes, and work through those checklists into dated worklogs.",
-      "version": "0.1.0",
+      "description": "Task workflows and opt-in Timeline recording backed by the track CLI.",
+      "version": "0.2.0",
       "author": {
         "name": "track-lab"
       },

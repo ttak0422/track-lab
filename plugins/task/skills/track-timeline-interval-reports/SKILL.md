@@ -5,8 +5,9 @@ description: Track work and write natural-language Track Timeline summaries for 
 
 # Track Timeline interval reports
 
-Read [the shared runtime](references/runtime.md) first. The destination checks
-below apply specifically to Timeline.
+Read [the shared runtime](references/runtime.md) and the installed
+[track-timeline skill](../track-timeline/SKILL.md). Track Timeline rules take
+precedence for vault, project, and run binding.
 
 One explicit request is enough for this conversation. Track meaningful task
 milestones and, while already working, write short authored summaries of
@@ -17,38 +18,22 @@ schedule work, call another model, launch Codex/Claude, or read private logs.
 
 Before writing an interval report, run `track timeline-project intervals --help`.
 A compatible Track CLI exits successfully and lists the `-id`, `-limit` and
-`-until` options. If the command
-is unavailable, do not guess flags, install a build, or write substitute
+`-until` options. If the command is unavailable, do not guess flags, install a build, or write substitute
 interval reports. Continue the requested ordinary Timeline tracking with
 `$track-timeline` and report that interval reporting is unavailable.
 
 ## Bind and track the work
 
-- Require `track` on this environment's PATH. Reuse this conversation's
-  confirmed vault/project/run if available. Follow the task plugin's
-  `track-timeline` skill if it is already available; no separate invocation
-  or user request is needed.
-- Otherwise, inspect existing destinations with `track vault list` and
-  `track vault which NAME`. Ask if the intended existing vault or project
-  is ambiguous; a default marker alone does not resolve ambiguity. Use a real
-  existing vault with a non-symlink `.track/` directory; never run `track init`
-  or register a vault. For an unknown project ID, list candidates with
-  `track --vault "$VAULT" timeline-project list` (Track may maintain its normal
-  index cache). Skip this list when the project ID is already confirmed.
-- Scope every call to the confirmed registered name with `track --vault "$VAULT"`,
-  or use the inline `TRACK_VAULT="$ABSOLUTE_PATH" track` form for a verified
-  unregistered vault; in that case replace `track --vault "$VAULT"` in every
-  example below with the inline form. Use `timeline-session show --project "$PROJECT"` before
-  writes. Only if the user wants a new project and it is definitely absent, use
-  `timeline-session init --project "$PROJECT" --title="$TITLE"`.
-- If needed, create one run using `timeline-session start --project "$PROJECT"
-  --agent codex --session "$LABEL"` (`--agent claude` in Claude). Generate a fresh,
-  non-sensitive random label, retain the returned JSON `run` in the conversation,
-  and use it with the same project and local task IDs. Record meaningful task
-  changes with `timeline-session task --project "$PROJECT" --run "$RUN"
-  --task implement --title="$TITLE" --status active`; mark done only after
-  verification. Do not use actual private session IDs or infer the destination
-  from the working directory.
+Follow `track-timeline` to verify the vault and project, recover or start the run,
+and record meaningful milestones. This interval-report request also authorizes
+that ordinary tracking; do not ask for a second invocation. If the sibling skill
+is not on disk, load it by name through the client. If unavailable, or if the
+binding cannot be verified, do not write to Track using this skill. Continue the
+main task and report the blocker.
+
+Use the exact binding obtained there for every call below. In the examples,
+replace `track --vault "$VAULT"` with the same inline
+`TRACK_VAULT="$VAULT_PATH" track` command if using a verified unregistered vault.
 
 ## Check closed intervals while working
 
@@ -79,7 +64,8 @@ The CLI strips title control characters, not private content.
 
 ## Save through the existing Track report API
 
-Build one JSON request using a serializer and submit it on stdin to
+Build one JSON request with a serializer that preserves integer values (for
+example, Python), and submit it on stdin to
 `track --vault "$VAULT" timeline-project apply --id "$PROJECT"`:
 
 - `source`: the returned `report_source`.

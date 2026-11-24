@@ -10,7 +10,7 @@ Agent plugins and skills for track-related workflows.
 | Plugin | Description |
 | ------ | ----------- |
 | [note](plugins/note/) | Notes as the shared record between developer and agent: create/search notes, track-flavored Markdown, web clipping, research reports, Japanese report readability, news analyses, watch loops, topic explainers, and embeddable HTML tools |
-| [task](plugins/task/) | Size-aware task handling: triage TODOs by size, record project work with plan notes, and work checklists through into dated worklogs |
+| [task](plugins/task/) | Size-aware task handling: triage TODOs by size, record project work with plan notes, work checklists through into dated worklogs, and record opt-in Timeline milestones and interval reports |
 
 
 ## Platform support

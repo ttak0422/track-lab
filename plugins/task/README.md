@@ -4,6 +4,8 @@
 
 `note` プラグインは共有記録のプリミティブ（ノート作成・検索・Markdown 方言・レポート・ Explainer・watch）を持ち、`task` はその上の TODO / Bug の運用を持つ。フルループで使う場合は両方を入れる。
 
+Timeline は別経路で、明示依頼があるときだけ既存の vault とプロジェクトを確認し、節目を記録する。区間レポートには対応 CLI が必要で、タイマーは起動しない。
+
 ## Skills
 
 | Skill | Purpose |
