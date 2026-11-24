@@ -4,7 +4,7 @@
 
 `note` プラグインは共有記録のプリミティブ（ノート作成・検索・Markdown 方言・レポート・ Explainer・watch）を持ち、`task` はその上の TODO / Bug の運用を持つ。フルループで使う場合は両方を入れる。
 
-Timeline は別経路で、明示依頼があるときだけ既存の vault とプロジェクトを確認し、節目を記録する。区間レポートには対応 CLI が必要で、タイマーは起動しない。
+Timeline は別経路で、明示依頼があるときだけ既存の vault とプロジェクトを確認し、節目を記録する。区間レポートには対応 CLI が必要で、タイマーは起動しない。`intervals --help` に `-evidence-version` が出る版では、タスクが進行中でも確認済みの成果・阻害要因・次の作業を記録して区間レポートに使える。未対応版では従来の状態遷移を使う。
 
 ## Skills
 
@@ -74,20 +74,19 @@ plugins/task/
 
 ## Install
 
-Claude Code (local development):
+Install the plugin in the client you already use; neither client needs hooks
+or persistent environment changes for the explicit workflow.
 
-```sh
-claude --plugin-dir ./plugins/task
-```
-
-Claude Code (marketplace):
+### Claude Code
 
 ```sh
 claude plugin marketplace add ttak0422/track-lab
 claude plugin install task@track-lab
 ```
 
-Codex:
+For local plugin development instead: `claude --plugin-dir ./plugins/task`.
+
+### Codex
 
 ```sh
 codex plugin marketplace add ttak0422/track-lab
@@ -97,3 +96,34 @@ codex plugin add task@track-lab
 For OpenCode and other `AGENTS.md`-aware agents, use the complete OpenSkills installation in
 [the repository README](../../README.md#openskills). The task skills link to siblings, so install
 the whole set.
+
+## Use Timeline in a normal session
+
+Both clients use the same existing vault and Timeline project. Replace `work-demo`
+with the project ID. Name the existing vault as well when the choice is ambiguous.
+Choose one of these requests; the interval request also turns on ordinary tracking.
+
+Claude Code, using the task plugin's native commands:
+
+```text
+/task:track-timeline この調査を work-demo に記録して。成果、阻害要因、次にやることを節目で残して。
+/task:track-timeline-interval-reports work-demo に記録して、閉じた15分区間も要約して。
+```
+
+Codex, using its skill mentions:
+
+```text
+$track-timeline この調査を work-demo に記録して。成果、阻害要因、次にやることを節目で残して。
+$track-timeline-interval-reports work-demo に記録して、閉じた15分区間も要約して。
+```
+
+A plain-language request for the same workflow also works when the client can
+load the skills. For example, while a regression investigation remains `active`,
+the agent can record a verified result (duplicate rows now pass), a blocker if
+present (a fixture lacks wrapped rows), and the next step (add that fixture).
+When asked for intervals, it can summarize those entries at the next ordinary
+milestone, with no need to wait for the task to become `done`. This evidence
+requires the version 2 capability; older Track builds use status transitions.
+If the agent delegates an investigation, the main conversation verifies and
+records the returned findings through its own run. It does not share the run
+with subagents or require Komado to be open.
