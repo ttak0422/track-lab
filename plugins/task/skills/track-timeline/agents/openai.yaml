@@ -1,0 +1,4 @@
+interface:
+  display_name: "Track Timeline"
+  short_description: "指定された作業の進捗をTrack Timelineに記録する"
+  default_prompt: "$track-timeline を使って、既存のTrack Timelineに、この作業の進捗を記録してください。"

@@ -22,11 +22,18 @@ test -f .agent/skills/retired-test-skill/SKILL.md
 rm .agent/skills/track-task-runner/obsolete-test-file
 rm -rf .agent/skills/retired-test-skill
 rm -rf "$tmp/source"
-npx --offline --yes openskills@1.5.0 read track-task-runner > "$tmp/read.txt"
+for skill in track-task-runner track-timeline track-timeline-interval-reports; do
+  npx --offline --yes openskills@1.5.0 read "$skill" > "$tmp/$skill.txt"
+  grep -q "name: $skill" "$tmp/$skill.txt"
+done
+test -f .agent/skills/track-timeline-interval-reports/../track-timeline/SKILL.md
+grep -Fq '[track-timeline skill](../track-timeline/SKILL.md)' "$tmp/track-timeline-interval-reports.txt"
+for skill in track-timeline track-timeline-interval-reports; do
+  test -f ".agent/skills/$skill/agents/openai.yaml"
+done
 npx --offline --yes openskills@1.5.0 sync -y
 grep -q 'Existing project instructions.' AGENTS.md
 test "$(grep -c '<name>' AGENTS.md)" -eq "$(find "$root/plugins" -name SKILL.md | wc -l | tr -d ' ')"
-grep -q 'track-task-runner' "$tmp/read.txt"
 test -f .agent/skills/track-task-runner/references/runtime.md
 test ! -L .agent/skills/track-task-runner/references/runtime.md
 cmp "$root/plugins/task/references/runtime.md" .agent/skills/track-task-runner/references/runtime.md
