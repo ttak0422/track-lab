@@ -1,6 +1,6 @@
 ---
 name: track-timeline
-description: Record task progress in Track Timeline when the user explicitly asks to track work in Track or invokes $track-timeline. Choose an existing vault, attach to an existing or requested project, update meaningful milestones, and report the project ID for Komado. Do not start tracking unrelated work.
+description: Record task progress in Track Timeline when the user explicitly asks to track work in Track or explicitly invokes this skill. Choose an existing vault, attach to an existing or requested project, update meaningful milestones, and report the project ID for Komado. Do not start tracking unrelated work.
 ---
 
 # Track Timeline
@@ -52,6 +52,8 @@ context, not in the user's persistent environment.
 track --vault "$VAULT" timeline-session init --project "$PROJECT" --title="$TITLE"
 
 track --vault "$VAULT" timeline-session show --project "$PROJECT"
+# Use only the line for the client hosting this conversation:
+track --vault "$VAULT" timeline-session start --project "$PROJECT" --agent claude --session "$LABEL"
 track --vault "$VAULT" timeline-session start --project "$PROJECT" --agent codex --session "$LABEL"
 ```
 
@@ -64,7 +66,14 @@ Reuse them on later turns and after resume/compaction. If the prior binding cann
 be recovered, ask before choosing or attaching again; do not hunt for history or
 read private client files. A successful optional Track hook run can be reused
 when its vault/project match the confirmed binding; never reuse stale or
-mismatched context. Use `--agent claude` instead only in Claude.
+mismatched context. Use `--agent claude` in Claude Code or `--agent codex` in
+Codex. Do not start both runs for the same conversation.
+
+The main conversation owns the binding and writes for this run. Claude Code
+subagents (including forks/background workers) and Codex workers return concise
+results, blockers and proposed next steps to that coordinator. They do not
+attach another run for this work, write using the coordinator's run, or mark its
+tasks complete. This holds even when a fork inherits conversation context.
 
 ## 3. Record meaningful work
 
@@ -86,7 +95,9 @@ track --vault "$VAULT" timeline-session task --project "$PROJECT" --run "$RUN" \
 - When the user asks to record progress or interval reports, record meaningful
   [results, blockers, and next steps](references/progress.md), including while
   a task remains active. This is optional if the CLI does not support it; keep
-  recording ordinary task milestones.
+  recording ordinary task milestones. For example, after reproducing the
+  failure and verifying an initial fix, keep the task active, note the verified
+  result, and record a separate remaining check as the next step.
 - Write an authored report only when requested:
   `timeline-session report --project "$PROJECT" --run "$RUN" --event milestone-1 --summary="$SUMMARY"`
   under the same vault. Retry an event ID only with identical content.

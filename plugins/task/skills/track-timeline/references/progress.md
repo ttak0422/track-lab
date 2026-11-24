@@ -17,7 +17,8 @@ install a build or infer support from a version number.
    `owner` equals the confirmed run. Use the full recorded ID, not the local
    value passed to `--task`. For a verified unregistered vault, use the exact
    inline `TRACK_VAULT="$VAULT_PATH" track` binding for both read and write.
-   If the task or binding cannot be verified, do not write.
+   If the task or binding cannot be verified, do not write. A delegated worker
+   should report the finding to the owner of the run, not append it itself.
 2. Choose one category: `result` for an observed outcome, `blocker` for a
    concrete obstacle, or `next` for a planned action. Write one printable line,
    at most 512 UTF-8 bytes, with ordinary spaces only and no leading, trailing
